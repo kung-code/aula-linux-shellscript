@@ -1,0 +1,833 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Linux &amp; Shell Script · Slides</title>
+  <meta name="description" content="Aula de Linux (terminal) e Shell Script básico: teoria, exemplos animados, exercícios e CTF.">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23ffcc33' stroke-width='2' stroke-linecap='round'><rect x='2' y='4' width='20' height='16' rx='3' fill='%230b1020'/><path d='M6 9l3 3-3 3M12 15h6'/></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="slides.css">
+</head>
+<body>
+
+<!-- ===================== ÍCONES (sprite) ===================== -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="i-chip" viewBox="0 0 24 24"><rect x="6" y="6" width="12" height="12" rx="2"/><rect x="9.5" y="9.5" width="5" height="5" rx="1"/><path d="M9 2v3M15 2v3M9 19v3M15 19v3M2 9h3M2 15h3M19 9h3M19 15h3"/></symbol>
+    <symbol id="i-box" viewBox="0 0 24 24"><path d="M3 7.5L12 3l9 4.5-9 4.5-9-4.5z"/><path d="M3 7.5v9L12 21l9-4.5v-9M12 12v9"/></symbol>
+    <symbol id="i-shell" viewBox="0 0 24 24"><path d="M4 7l5 5-5 5M12 17h8"/></symbol>
+    <symbol id="i-terminal" viewBox="0 0 24 24"><rect x="2.5" y="4" width="19" height="16" rx="2.5"/><path d="M7 9.5l3 2.5-3 2.5M12.5 15h4.5"/></symbol>
+    <symbol id="i-phone" viewBox="0 0 24 24"><rect x="6.5" y="2.5" width="11" height="19" rx="2.5"/><path d="M10.5 18.5h3"/></symbol>
+    <symbol id="i-cloud" viewBox="0 0 24 24"><path d="M7 18.5h10.5a4 4 0 0 0 .4-7.98A6 6 0 0 0 6.3 9.3 4.6 4.6 0 0 0 7 18.5z"/></symbol>
+    <symbol id="i-server" viewBox="0 0 24 24"><rect x="3" y="3.5" width="18" height="7" rx="1.5"/><rect x="3" y="13.5" width="18" height="7" rx="1.5"/><path d="M7 7h.01M7 17h.01M11 7h6M11 17h6"/></symbol>
+    <symbol id="i-router" viewBox="0 0 24 24"><rect x="3" y="14" width="18" height="6.5" rx="1.5"/><path d="M7 17.2h.01M10.5 17.2h.01M15 14v-3.5M9 8.5a4.3 4.3 0 0 1 6 0M6.3 5.8a8.2 8.2 0 0 1 11.4 0"/></symbol>
+    <symbol id="i-loop" viewBox="0 0 24 24"><path d="M17 2l3 3-3 3"/><path d="M4 11V9a4 4 0 0 1 4-4h12M7 22l-3-3 3-3"/><path d="M20 13v2a4 4 0 0 1-4 4H4"/></symbol>
+    <symbol id="i-container" viewBox="0 0 24 24"><rect x="3" y="11" width="5.5" height="5" rx=".8"/><rect x="9.25" y="11" width="5.5" height="5" rx=".8"/><rect x="15.5" y="11" width="5.5" height="5" rx=".8"/><rect x="9.25" y="5" width="5.5" height="5" rx=".8"/><path d="M2 19c3 2 17 2 20 0"/></symbol>
+    <symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 3l8 3v6c0 5-3.4 8-8 9-4.6-1-8-4-8-9V6l8-3z"/><path d="M9 12l2 2 4-4"/></symbol>
+    <symbol id="i-chat" viewBox="0 0 24 24"><path d="M4 4.5h16v11H10l-6 4.5V4.5z"/><path d="M8 8.5h8M8 11.5h5"/></symbol>
+    <symbol id="i-bulb" viewBox="0 0 24 24"><path d="M9 18h6M10 21h4"/><path d="M12 3a6 6 0 0 0-3.6 10.8c.6.5 1 1.2 1 2.2h5.2c0-1 .4-1.7 1-2.2A6 6 0 0 0 12 3z"/></symbol>
+    <symbol id="i-alert" viewBox="0 0 24 24"><path d="M12 3.5l9.5 17h-19L12 3.5z"/><path d="M12 10v4.5M12 17.5h.01"/></symbol>
+    <symbol id="i-key" viewBox="0 0 24 24"><circle cx="8" cy="15" r="4"/><path d="M11 12l9-9M16 7l3 3M13.5 9.5l2 2"/></symbol>
+    <symbol id="i-target" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.2"/></symbol>
+    <symbol id="i-blocks" viewBox="0 0 24 24"><rect x="3" y="3" width="7.5" height="7.5" rx="1.5"/><rect x="13.5" y="3" width="7.5" height="7.5" rx="1.5"/><rect x="3" y="13.5" width="7.5" height="7.5" rx="1.5"/><path d="M17.25 13.5v7.5M13.5 17.25H21"/></symbol>
+    <symbol id="i-keyboard" viewBox="0 0 24 24"><rect x="2" y="6" width="20" height="12" rx="2"/><path d="M6 10h.01M10 10h.01M14 10h.01M18 10h.01M7 14h10"/></symbol>
+    <symbol id="i-case" viewBox="0 0 24 24"><path d="M2.5 18L7 6l4.5 12M4.2 13.5h5.6"/><circle cx="17.5" cy="15" r="3"/><path d="M20.5 11.5V18"/></symbol>
+    <symbol id="i-eye-off" viewBox="0 0 24 24"><path d="M3 3l18 18M10.6 6.1A10 10 0 0 1 12 6c5 0 9 6 9 6a16 16 0 0 1-2.6 3.3M6.6 7.6C4.3 9.2 3 12 3 12s4 6 9 6a9 9 0 0 0 4.2-1"/><path d="M9.9 9.9a3 3 0 0 0 4.2 4.2"/></symbol>
+    <symbol id="i-tag" viewBox="0 0 24 24"><path d="M3 12V3.5h8.5l9.5 9.5-8.5 8.5L3 12z"/><circle cx="7.5" cy="8" r="1.3"/></symbol>
+    <symbol id="i-quote" viewBox="0 0 24 24"><path d="M5 7h5v5c0 3-2 5-4.5 6M14 7h5v5c0 3-2 5-4.5 6"/></symbol>
+    <symbol id="i-pencil" viewBox="0 0 24 24"><path d="M4 20l1-4.5L16 4.5l3.5 3.5-11 11L4 20z"/><path d="M13.5 7l3.5 3.5"/></symbol>
+    <symbol id="i-flag" viewBox="0 0 24 24"><path d="M5 21V3.5"/><path d="M5 4h12l-2.5 4.5L17 13H5"/></symbol>
+    <symbol id="i-home" viewBox="0 0 24 24"><path d="M3 11l9-7 9 7"/><path d="M5.5 9.5V20h13V9.5M10 20v-5.5h4V20"/></symbol>
+    <symbol id="i-book" viewBox="0 0 24 24"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v15H6.5A2.5 2.5 0 0 0 4 20.5v-15z"/><path d="M4 20.5A2.5 2.5 0 0 0 6.5 23H20v-5M8 7.5h8"/></symbol>
+    <symbol id="i-compass" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M15.5 8.5l-2 5-5 2 2-5 5-2z"/></symbol>
+    <symbol id="i-route" viewBox="0 0 24 24"><circle cx="6" cy="19" r="2.2"/><circle cx="18" cy="5" r="2.2"/><path d="M8.2 19H16a3.2 3.2 0 0 0 0-6.4H8a3.2 3.2 0 0 1 0-6.4h7.8"/></symbol>
+    <symbol id="i-file" viewBox="0 0 24 24"><path d="M6 2.5h8l4.5 4.5v14.5H6z"/><path d="M14 2.5V7h4.5M9 12h6M9 15.5h6"/></symbol>
+    <symbol id="i-folder" viewBox="0 0 24 24"><path d="M2.5 6.5a1.5 1.5 0 0 1 1.5-1.5h5l2 2.5h9a1.5 1.5 0 0 1 1.5 1.5v9.5a1.5 1.5 0 0 1-1.5 1.5H4a1.5 1.5 0 0 1-1.5-1.5v-12z"/></symbol>
+    <symbol id="i-search" viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M20 20l-4.8-4.8"/></symbol>
+    <symbol id="i-lock" viewBox="0 0 24 24"><rect x="4.5" y="10.5" width="15" height="10.5" rx="2"/><path d="M8 10.5V7.5a4 4 0 0 1 8 0v3M12 14.5v2.5"/></symbol>
+    <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/></symbol>
+    <symbol id="i-user" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></symbol>
+    <symbol id="i-apps" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1.8"/><rect x="14" y="3" width="7" height="7" rx="1.8"/><rect x="3" y="14" width="7" height="7" rx="1.8"/><rect x="14" y="14" width="7" height="7" rx="1.8"/></symbol>
+    <symbol id="i-drive" viewBox="0 0 24 24"><path d="M5.5 13.5L7.5 5h9l2 8.5"/><rect x="3" y="13.5" width="18" height="7" rx="2"/><path d="M7 17h.01M10.5 17h.01"/></symbol>
+    <symbol id="i-play" viewBox="0 0 24 24"><path d="M8 5.5l11 6.5-11 6.5z"/></symbol>
+    <symbol id="i-pause" viewBox="0 0 24 24"><path d="M8.5 5v14M15.5 5v14"/></symbol>
+    <symbol id="i-replay" viewBox="0 0 24 24"><path d="M4 4.5v5.5h5.5"/><path d="M5 14.5a7.5 7.5 0 1 0 1.8-7.7L4 10"/></symbol>
+    <symbol id="i-copy" viewBox="0 0 24 24"><rect x="8.5" y="8.5" width="12" height="12" rx="2"/><path d="M15.5 8.5V5a1.5 1.5 0 0 0-1.5-1.5H5A1.5 1.5 0 0 0 3.5 5v9A1.5 1.5 0 0 0 5 15.5h3.5"/></symbol>
+    <symbol id="i-step-next" viewBox="0 0 24 24"><path d="M7 5l8 7-8 7M18 5v14"/></symbol>
+    <symbol id="i-step-prev" viewBox="0 0 24 24"><path d="M17 5l-8 7 8 7M6 5v14"/></symbol>
+    <symbol id="i-pipe" viewBox="0 0 24 24"><path d="M12 3v18"/><path d="M3 12h6M15 12h6"/></symbol>
+    <symbol id="i-arrow-out" viewBox="0 0 24 24"><path d="M4 12h14M13 6l6 6-6 6"/></symbol>
+    <symbol id="i-gear" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 2.5v3M12 18.5v3M2.5 12h3M18.5 12h3M5.3 5.3l2.1 2.1M16.6 16.6l2.1 2.1M5.3 18.7l2.1-2.1M16.6 7.4l2.1-2.1"/></symbol>
+    <symbol id="i-notes" viewBox="0 0 24 24"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 8h8M8 12h8M8 16h5"/></symbol>
+    <symbol id="i-expand" viewBox="0 0 24 24"><path d="M4 9V4h5M15 4h5v5M20 15v5h-5M9 20H4v-5"/></symbol>
+    <symbol id="i-chev-left" viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></symbol>
+    <symbol id="i-chev-right" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></symbol>
+  </defs>
+</svg>
+
+<!-- ===================== ARTES (templates) ===================== -->
+<template id="art-penguin">
+  <svg class="penguin" viewBox="0 0 200 210" role="img" aria-label="Pinguim, mascote do Linux">
+    <ellipse class="pg-shadow" cx="100" cy="196" rx="52" ry="7"/>
+    <g class="pg-body">
+      <ellipse cx="78" cy="186" rx="20" ry="8" fill="#f59e0b"/>
+      <ellipse cx="122" cy="186" rx="20" ry="8" fill="#f59e0b"/>
+      <path class="pg-wing-l" d="M50 100 Q28 135 50 168 Q62 136 60 104z" fill="#1e293b"/>
+      <path class="pg-wing-r" d="M150 100 Q172 135 150 168 Q138 136 140 104z" fill="#1e293b"/>
+      <ellipse cx="100" cy="118" rx="54" ry="68" fill="#1e293b"/>
+      <ellipse cx="100" cy="130" rx="37" ry="52" fill="#f1f5f9"/>
+      <circle cx="100" cy="64" r="38" fill="#1e293b"/>
+      <ellipse cx="100" cy="74" rx="27" ry="22" fill="#f1f5f9"/>
+      <g class="pg-eyes">
+        <ellipse cx="89" cy="64" rx="6.5" ry="7.5" fill="#fff"/><ellipse cx="111" cy="64" rx="6.5" ry="7.5" fill="#fff"/>
+        <circle cx="90.5" cy="65" r="3.4" fill="#0f172a"/><circle cx="109.5" cy="65" r="3.4" fill="#0f172a"/>
+        <circle cx="91.6" cy="63.6" r="1.1" fill="#fff"/><circle cx="110.6" cy="63.6" r="1.1" fill="#fff"/>
+      </g>
+      <path d="M87 78 Q100 71 113 78 Q100 92 87 78z" fill="#f59e0b"/>
+    </g>
+  </svg>
+</template>
+
+<template id="art-cover-term">
+  <svg class="cover-term" viewBox="0 0 300 190" aria-hidden="true">
+    <rect x="1" y="1" width="298" height="188" rx="14" class="ct-win"/>
+    <rect x="1" y="1" width="298" height="30" rx="14" class="ct-bar"/>
+    <circle cx="22" cy="16" r="5" fill="#ff5f57"/><circle cx="40" cy="16" r="5" fill="#febc2e"/><circle cx="58" cy="16" r="5" fill="#28c840"/>
+    <g class="ct-lines" stroke-linecap="round" stroke-width="7">
+      <path d="M22 58h40" stroke="#3ddc84"/><path d="M72 58h110" stroke="#cbd5e1"/>
+      <path d="M22 84h150" stroke="#74a7ff"/><path d="M22 108h96" stroke="#74a7ff"/><path d="M128 108h60" stroke="#cbd5e1"/>
+      <path d="M22 134h40" stroke="#3ddc84"/><path d="M72 134h70" stroke="#ffd43b"/>
+    </g>
+    <rect class="ct-cursor" x="150" y="128" width="10" height="13" rx="2" fill="#ffcc33"/>
+  </svg>
+</template>
+
+<template id="art-stack">
+  <svg class="art art-stack" viewBox="0 0 300 240" aria-hidden="true">
+    <g class="st st5"><path d="M150 200l120-36-120-36-120 36z" fill="#334155"/><path d="M30 164v14l120 36v-14z" fill="#1e293b"/><path d="M270 164v14l-120 36v-14z" fill="#0f172a"/></g>
+    <g class="st st4"><path d="M150 166l120-36-120-36-120 36z" fill="#7c3aed"/><path d="M30 130v14l120 36v-14z" fill="#5b21b6"/><path d="M270 130v14l-120 36v-14z" fill="#4c1d95"/></g>
+    <g class="st st3"><path d="M150 132l120-36-120-36-120 36z" fill="#2563eb"/><path d="M30 96v14l120 36v-14z" fill="#1d4ed8"/><path d="M270 96v14l-120 36v-14z" fill="#1e40af"/></g>
+    <g class="st st2"><path d="M150 98l120-36-120-36-120 36z" fill="#0d9488"/><path d="M30 62v14l120 36v-14z" fill="#0f766e"/><path d="M270 62v14l-120 36v-14z" fill="#115e59"/></g>
+    <g class="st st1"><path d="M150 64l120-36-120-36-120 36z" fill="#f59e0b" transform="translate(0 2)"/></g>
+  </svg>
+</template>
+
+<template id="art-pipes">
+  <svg class="art art-pipes" viewBox="0 0 360 150" aria-hidden="true">
+    <path class="pp-line" d="M92 75h40M228 75h40"/>
+    <path class="pp-flow" d="M92 75h40M228 75h40"/>
+    <g class="pp-node"><rect x="8" y="48" width="84" height="54" rx="12"/><text x="50" y="81">cat</text></g>
+    <g class="pp-node"><rect x="132" y="48" width="96" height="54" rx="12"/><text x="180" y="81">grep</text></g>
+    <g class="pp-node"><rect x="268" y="48" width="84" height="54" rx="12"/><text x="310" y="81">wc</text></g>
+    <text class="pp-bar" x="112" y="40">|</text><text class="pp-bar" x="248" y="40">|</text>
+  </svg>
+</template>
+
+<template id="art-script">
+  <svg class="art art-script" viewBox="0 0 260 220" aria-hidden="true">
+    <path class="sc-doc" d="M40 14h120l40 40v152H40z"/>
+    <path class="sc-fold" d="M160 14v40h40"/>
+    <g class="sc-lines" stroke-linecap="round" stroke-width="7">
+      <path d="M62 78h44" stroke="#e599f7"/><path d="M62 102h96" stroke="#cbd5e1"/>
+      <path d="M78 126h80" stroke="#ffd43b"/><path d="M78 150h60" stroke="#a5d6a7"/><path d="M62 174h40" stroke="#e599f7"/>
+    </g>
+    <g class="sc-loop"><circle cx="206" cy="168" r="32" class="sc-ring"/><path d="M206 136l10-8-2 12" class="sc-arrow"/></g>
+  </svg>
+</template>
+
+<template id="art-flag">
+  <svg class="art art-flag" viewBox="0 0 240 240" aria-hidden="true">
+    <path d="M70 226V22" class="fl-pole"/>
+    <circle cx="70" cy="18" r="7" fill="#ffcc33"/>
+    <path class="fl-cloth" d="M72 30 C110 14 140 46 186 28 V108 C140 126 110 94 72 110z">
+      <animate attributeName="d" dur="2.6s" repeatCount="indefinite"
+        values="M72 30 C110 14 140 46 186 28 V108 C140 126 110 94 72 110z;M72 30 C110 46 140 14 186 34 V112 C140 94 110 126 72 110z;M72 30 C110 14 140 46 186 28 V108 C140 126 110 94 72 110z"/>
+    </path>
+    <text x="104" y="80" class="fl-text">{ }</text>
+    <ellipse cx="70" cy="228" rx="40" ry="6" fill="#0006"/>
+  </svg>
+</template>
+
+<template id="art-folders">
+  <svg class="art art-folders" viewBox="0 0 320 180" aria-hidden="true">
+    <g class="fo fo1"><path d="M20 80h50l10 12h60v70H20z" fill="#2563eb"/><text x="80" y="140">imagens</text></g>
+    <g class="fo fo2"><path d="M170 80h50l10 12h60v70H170z" fill="#0d9488"/><text x="230" y="140">docs</text></g>
+    <g class="fl fl1"><rect x="60" y="8" width="26" height="32" rx="4"/></g>
+    <g class="fl fl2"><rect x="146" y="2" width="26" height="32" rx="4"/></g>
+    <g class="fl fl3"><rect x="226" y="10" width="26" height="32" rx="4"/></g>
+  </svg>
+</template>
+
+<div class="deck" id="deck">
+
+<!-- ===================== ABERTURA ===================== -->
+<section class="slide cover" data-title="Capa">
+  <div class="cover-art">
+    <div data-art="cover-term"></div>
+    <div data-art="penguin" class="cover-penguin"></div>
+  </div>
+  <h1>Linux &amp; Shell Script</h1>
+  <p class="subtitle">do zero ao primeiro script, em 1 hora</p>
+  <p class="hint-keys"><kbd>→</kbd> avança (comando a comando nos terminais) · <kbd>Shift</kbd>+<kbd>→</kbd> pula slide · <kbd>N</kbd> notas · <kbd>F</kbd> tela cheia</p>
+  <aside class="notes">Abrir com energia. Pedir para todos deixarem o terminal aberto (ou o simulador: link no chat). Nos slides com terminal, cada → digita o próximo comando.</aside>
+</section>
+
+<section class="slide" data-title="Agenda">
+  <h2>Agenda de hoje</h2>
+  <div class="agenda">
+    <div><span>00–04</span> Abertura</div>
+    <div><span>04–12</span> Teoria: o que é Linux</div>
+    <div><span>12–24</span> Prática: terminal essencial</div>
+    <div class="ex"><span>24–29</span> Exercício 1</div>
+    <div><span>29–36</span> Superpoderes: pipes, busca, permissões</div>
+    <div><span>36–46</span> Shell Script</div>
+    <div class="ex"><span>46–49</span> Exercício 2</div>
+    <div class="ctf"><span>49–58</span> Capture The Flag</div>
+    <div><span>58–60</span> Encerramento e desafio para casa</div>
+  </div>
+  <aside class="notes">O CTF é o bloco elástico: se atrasar, ele continua depois da aula.</aside>
+</section>
+
+<section class="slide" data-title="Enquete">
+  <h2 class="with-icon"><span class="badge-ico">
+    <svg class="i"><use href="#i-chat"/></svg></span>Enquete rápida</h2>
+  <p class="big">Responda no chat:</p>
+  <ol class="poll">
+    <li>Você já abriu um terminal alguma vez?</li>
+    <li>Qual sistema você usa no dia a dia: Windows, macOS ou Linux?</li>
+    <li>Já ouviu falar de <code>sudo</code>?</li>
+  </ol>
+  <aside class="notes">Usar as respostas para calibrar o ritmo. Quem já sabe pode ajudar os colegas no chat.</aside>
+</section>
+
+<section class="slide" data-title="Você já usa Linux">
+  <h2>Você usa Linux todo dia, mesmo sem saber</h2>
+  <div class="grid cards4">
+    <div class="card"><div class="card-ico"><svg class="i"><use href="#i-phone"/></svg></div><b>Android</b><p>roda sobre o kernel Linux</p></div>
+    <div class="card"><div class="card-ico"><svg class="i"><use href="#i-cloud"/></svg></div><b>Nuvem</b><p>a maioria dos servidores da AWS, Google e Azure</p></div>
+    <div class="card"><div class="card-ico"><svg class="i"><use href="#i-server"/></svg></div><b>Supercomputadores</b><p>os 500 mais rápidos do mundo usam Linux</p></div>
+    <div class="card"><div class="card-ico"><svg class="i"><use href="#i-router"/></svg></div><b>Dispositivos</b><p>roteadores, smart TVs, carros, IoT</p></div>
+  </div>
+</section>
+
+<section class="slide" data-title="Por que o terminal">
+  <h2>Por que um profissional de TI precisa do terminal?</h2>
+  <ul class="icon-list">
+    <li><svg class="i"><use href="#i-server"/></svg><span><b>Servidores</b> geralmente não têm interface gráfica: é só você e o terminal</span></li>
+    <li><svg class="i"><use href="#i-loop"/></svg><span><b>Automação</b>: o que você faz 100 vezes à mão, um script faz em 1 segundo</span></li>
+    <li><svg class="i"><use href="#i-container"/></svg><span><b>DevOps e nuvem</b>: Docker, Kubernetes e CI/CD são operados por linha de comando</span></li>
+    <li><svg class="i"><use href="#i-shield"/></svg><span><b>Segurança</b>, <b>dados</b> e <b>desenvolvimento</b>: as ferramentas vivem no terminal</span></li>
+  </ul>
+  <p class="callout"><svg class="i"><use href="#i-target"/></svg><span>Hoje vocês vão escrever um script e capturar 8 flags.</span></p>
+</section>
+
+<!-- ===================== TEORIA ===================== -->
+<section class="slide divider" data-title="Teoria">
+  <div class="divider-grid">
+    <div>
+      <p class="kicker">Parte 1</p>
+      <h2>O que é Linux?</h2>
+      <p class="big muted">kernel, distribuições, shell e terminal</p>
+    </div>
+    <div data-art="stack"></div>
+  </div>
+</section>
+
+<section class="slide" data-title="Peças do quebra-cabeça">
+  <h2>As peças do quebra-cabeça</h2>
+  <div class="grid cards4">
+    <div class="card"><div class="card-ico c-kernel"><svg class="i"><use href="#i-chip"/></svg></div><b>Kernel</b><p>o núcleo que conversa com o hardware. Criado por Linus Torvalds em 1991.</p><p class="analogy">o motor do carro</p></div>
+    <div class="card"><div class="card-ico c-distro"><svg class="i"><use href="#i-box"/></svg></div><b>Distribuição</b><p>kernel + ferramentas GNU + gerenciador de pacotes + extras</p><p class="analogy">o modelo do carro</p></div>
+    <div class="card"><div class="card-ico c-shell"><svg class="i"><use href="#i-shell"/></svg></div><b>Shell</b><p>o programa que interpreta seus comandos (bash, zsh, sh)</p><p class="analogy">o volante e os pedais</p></div>
+    <div class="card"><div class="card-ico c-term"><svg class="i"><use href="#i-terminal"/></svg></div><b>Terminal</b><p>a janela onde o shell roda</p><p class="analogy">o painel</p></div>
+  </div>
+</section>
+
+<section class="slide" data-title="Camadas do Linux">
+  <h2>As camadas do Linux</h2>
+  <div class="layers-diagram"></div>
+  <aside class="notes">Clique nas camadas para explicar cada uma. Depois aperte → para mostrar a jornada do "ls -l" descendo até o disco e voltando.</aside>
+</section>
+
+<section class="slide" data-title="Distribuições">
+  <h2>Distribuições populares</h2>
+  <div class="grid cards5">
+    <div class="card small distro" style="--c:#e95420"><span class="mono-badge">U</span><b>Ubuntu</b><p>a mais popular para começar</p></div>
+    <div class="card small distro" style="--c:#d70751"><span class="mono-badge">D</span><b>Debian</b><p>estável, base do Ubuntu</p></div>
+    <div class="card small distro" style="--c:#3c6eb4"><span class="mono-badge">F</span><b>Fedora</b><p>novidades e tecnologia de ponta</p></div>
+    <div class="card small distro" style="--c:#1793d1"><span class="mono-badge">A</span><b>Arch</b><p>minimalista, "faça você mesmo"</p></div>
+    <div class="card small distro" style="--c:#557c94"><span class="mono-badge">K</span><b>Kali</b><p>focada em segurança</p></div>
+  </div>
+  <p class="callout"><svg class="i"><use href="#i-bulb"/></svg><span>Os comandos que vamos ver funcionam em praticamente todas.</span></p>
+</section>
+
+<section class="slide" data-title="Árvore de diretórios">
+  <h2>Uma única árvore, a partir de <code>/</code></h2>
+  <div class="two">
+<pre class="tree"><span class="tl">/                 <i>raiz de tudo</i></span><span class="tl">├── home/</span><span class="tl">│   └── aluno/    <i>sua casa (~)</i></span><span class="tl">├── etc/          <i>configurações</i></span><span class="tl">├── bin/  usr/    <i>programas</i></span><span class="tl">├── var/log/      <i>logs</i></span><span class="tl">├── tmp/          <i>temporários</i></span><span class="tl">└── root/         <i>casa do administrador</i></span></pre>
+    <ul class="icon-list compact">
+      <li><svg class="i"><use href="#i-folder"/></svg><span>Não existe <code>C:\</code>: tudo fica pendurado no <code>/</code></span></li>
+      <li><svg class="i"><use href="#i-drive"/></svg><span>Pendrives e discos aparecem como pastas (em <code>/media</code>, <code>/mnt</code>)</span></li>
+      <li><svg class="i"><use href="#i-file"/></svg><span><b>"Tudo é arquivo"</b>: até dispositivos, como <code>/dev/null</code></span></li>
+    </ul>
+  </div>
+</section>
+
+<section class="slide" data-title="Caminhos">
+  <h2>Caminhos: absolutos × relativos</h2>
+  <div class="two">
+    <div class="path-viz">
+      <p><b>Absoluto</b>: começa no <code>/</code> e funciona de qualquer lugar</p>
+      <div class="path-chips"><span>/</span><span>home</span><span>aluno</span><span>Documentos</span><span class="leaf">notas.txt</span></div>
+      <p><b>Relativo</b>: parte de onde você está (<code>~</code>)</p>
+      <div class="path-chips rel"><span class="here">você está aqui</span><span>Documentos</span><span class="leaf">notas.txt</span></div>
+    </div>
+    <table class="tbl">
+      <tr><th>Atalho</th><th>Significa</th></tr>
+      <tr><td><code>.</code></td><td>diretório atual</td></tr>
+      <tr><td><code>..</code></td><td>diretório pai (um nível acima)</td></tr>
+      <tr><td><code>~</code></td><td>sua home</td></tr>
+      <tr><td><code>-</code></td><td>diretório anterior (no <code>cd -</code>)</td></tr>
+    </table>
+  </div>
+</section>
+
+<section class="slide" data-title="Regras de ouro">
+  <h2>Regras de ouro</h2>
+  <div class="grid cards4">
+    <div class="card"><div class="card-ico"><svg class="i"><use href="#i-case"/></svg></div><b>Maiúsculas importam</b><p><code>Arquivo.txt</code> ≠ <code>arquivo.txt</code></p></div>
+    <div class="card"><div class="card-ico"><svg class="i"><use href="#i-eye-off"/></svg></div><b>Ocultos começam com .</b><p>como <code>.bashrc</code></p></div>
+    <div class="card"><div class="card-ico"><svg class="i"><use href="#i-tag"/></svg></div><b>Extensão é só nome</b><p>um script não precisa terminar em <code>.sh</code></p></div>
+    <div class="card"><div class="card-ico"><svg class="i"><use href="#i-quote"/></svg></div><b>Espaço separa argumentos</b><p>nome com espaço? <code>"meu arquivo.txt"</code></p></div>
+  </div>
+</section>
+
+<section class="slide" data-title="Anatomia de um comando">
+  <h2>Anatomia de um comando</h2>
+  <div class="anatomy2">
+    <div class="an-cmd"><span class="an an1">ls</span><span class="an an2">-la</span><span class="an an3">/etc</span></div>
+    <div class="an-labels">
+      <div class="an-l an1"><b>comando</b><span>o quê</span></div>
+      <div class="an-l an2"><b>opções (flags)</b><span>como</span></div>
+      <div class="an-l an3"><b>argumento</b><span>sobre o quê</span></div>
+    </div>
+  </div>
+  <div class="two">
+    <div class="prompt-anatomy">
+      <span class="pa pa-u">aluno</span><span class="pa-s">@</span><span class="pa pa-h">pinguimcorp</span><span class="pa-s">:</span><span class="pa pa-d">~</span><span class="pa pa-$">$</span>
+      <div class="pa-legend"><span class="pa-u">usuário</span><span class="pa-h">máquina</span><span class="pa-d">diretório</span><span class="pa-$">tipo</span></div>
+    </div>
+    <ul class="icon-list compact">
+      <li><svg class="i"><use href="#i-user"/></svg><span><code>$</code> = usuário comum · <code>#</code> = <b>root</b> (administrador)</span></li>
+      <li><svg class="i"><use href="#i-key"/></svg><span><code>sudo comando</code> executa como root. Com grandes poderes...</span></li>
+    </ul>
+  </div>
+</section>
+
+<!-- ===================== PRÁTICA 1 ===================== -->
+<section class="slide divider" data-title="Prática 1">
+  <div class="divider-grid">
+    <div>
+      <p class="kicker">Parte 2 · digite junto!</p>
+      <h2>Terminal essencial</h2>
+      <p class="big">Abra o seu terminal ou o <a href="../ctf/" target="_blank" rel="noopener">simulador no navegador ↗</a></p>
+    </div>
+    <div data-art="cover-term" class="art-term-big"></div>
+  </div>
+</section>
+
+<section class="slide" data-title="Onde estou">
+  <h2>Onde estou? Quem sou eu? O que tem aqui?</h2>
+  <div class="two wide-left">
+<pre class="code" data-demo="cmds"><code>$ pwd
+$ whoami
+$ ls
+$ ls -l
+$ ls -a
+$ ls -lh /etc</code></pre>
+    <ul class="icon-list compact">
+      <li><svg class="i"><use href="#i-compass"/></svg><span><code>pwd</code>: <i>print working directory</i> (diretório atual)</span></li>
+      <li><svg class="i"><use href="#i-notes"/></svg><span><code>-l</code> formato longo</span></li>
+      <li><svg class="i"><use href="#i-eye-off"/></svg><span><code>-a</code> mostra ocultos</span></li>
+      <li><svg class="i"><use href="#i-drive"/></svg><span><code>-h</code> tamanhos legíveis</span></li>
+    </ul>
+  </div>
+</section>
+
+<section class="slide" data-title="Navegando">
+  <h2>Navegando com <code>cd</code></h2>
+  <div class="two wide-left">
+<pre class="code" data-demo="cmds"><code>$ cd /etc
+$ pwd
+$ cd ..
+$ cd ~
+$ cd -
+$ cd</code></pre>
+    <p class="callout"><svg class="i"><use href="#i-keyboard"/></svg><span><b>TAB completa nomes!</b> Digite <code>cd Docu</code> e aperte <kbd>Tab</kbd>. Use e abuse.</span></p>
+  </div>
+</section>
+
+<section class="slide" data-title="Criando">
+  <h2>Criando diretórios e arquivos</h2>
+  <div class="two wide-left">
+<pre class="code" data-demo="cmds"><code>$ mkdir aula
+$ mkdir -p aula/projeto/{scripts,dados}
+$ touch aula/notas.txt
+$ echo "Minha primeira linha" > aula/notas.txt
+$ ls -R aula</code></pre>
+    <ul class="icon-list compact">
+      <li><svg class="i"><use href="#i-folder"/></svg><span><code>-p</code> cria os diretórios intermediários (e não reclama se já existir)</span></li>
+      <li><svg class="i"><use href="#i-blocks"/></svg><span><code>{a,b}</code> é <b>expansão de chaves</b>: vira <code>a</code> e <code>b</code></span></li>
+    </ul>
+  </div>
+</section>
+
+<section class="slide" data-title="Copiar, mover, remover">
+  <h2>Copiar, mover, renomear e remover</h2>
+  <div class="two wide-left">
+<pre class="code" data-demo="cmds"><code>$ cp aula/notas.txt aula/copia.txt
+$ mv aula/copia.txt aula/backup.txt
+$ ls aula
+$ cp -r aula aula_bkp
+$ rm aula/backup.txt
+$ rm aula_bkp
+$ rm -r aula_bkp</code></pre>
+    <p class="callout warn"><svg class="i"><use href="#i-alert"/></svg><span><b>Não existe lixeira!</b> O <code>rm</code> apaga de verdade. Nunca rode comandos da internet sem entender o que fazem (principalmente <code>rm -rf</code> e <code>sudo</code>).</span></p>
+  </div>
+</section>
+
+<section class="slide" data-title="Lendo arquivos">
+  <h2>Lendo arquivos</h2>
+  <div class="two wide-left">
+<pre class="code" data-demo="cmds"><code>$ cat /etc/hostname
+$ head -n 3 /etc/passwd
+$ tail -n 2 /etc/passwd
+$ wc -l /etc/passwd</code></pre>
+    <table class="tbl">
+      <tr><td><code>cat</code></td><td>mostra tudo</td></tr>
+      <tr><td><code>head</code> / <code>tail</code></td><td>início / fim</td></tr>
+      <tr><td><code>less</code></td><td>rolar com as setas (<kbd>q</kbd> sai)</td></tr>
+      <tr><td><code>wc -l</code></td><td>conta linhas</td></tr>
+    </table>
+  </div>
+</section>
+
+<section class="slide" data-title="Ajuda e atalhos">
+  <h2>Pedindo ajuda e atalhos essenciais</h2>
+  <div class="two wide-left">
+<pre class="code" data-demo="cmds"><code>$ man ls
+$ wc --help
+$ history | tail -n 4</code></pre>
+    <table class="tbl">
+      <tr><td><kbd>Tab</kbd></td><td>completa comandos e nomes</td></tr>
+      <tr><td><kbd>↑</kbd> <kbd>↓</kbd></td><td>navega no histórico</td></tr>
+      <tr><td><kbd>Ctrl</kbd>+<kbd>C</kbd></td><td>interrompe o comando</td></tr>
+      <tr><td><kbd>Ctrl</kbd>+<kbd>L</kbd></td><td>limpa a tela</td></tr>
+      <tr><td><kbd>q</kbd></td><td>sai do <code>man</code> e do <code>less</code></td></tr>
+    </table>
+  </div>
+</section>
+
+<section class="slide exercise" data-title="Exercício 1">
+  <h2 class="with-icon"><span class="badge-ico"><svg class="i"><use href="#i-pencil"/></svg></span>Exercício 1 · Montando o projeto</h2>
+  <div class="two">
+    <ol class="steps">
+      <li>Vá para a sua home.</li>
+      <li>Crie, <b>com um único comando</b>: <code>projeto/docs</code>, <code>projeto/src</code> e <code>projeto/testes</code></li>
+      <li>Em <code>docs</code>, crie <code>leia-me.txt</code> com a frase <i>Projeto da aula de Linux</i></li>
+      <li>Acrescente uma 2ª linha com seu nome (sem apagar a 1ª)</li>
+      <li>Copie <code>leia-me.txt</code> para <code>src/copia.txt</code></li>
+      <li>Renomeie <code>testes</code> para <code>tests</code></li>
+      <li>Mostre a árvore: <code>find projeto</code></li>
+    </ol>
+    <div>
+      <div class="timer" data-seconds="300"></div>
+      <p class="small">Bônus: quantas linhas tem <code>/etc/passwd</code>? Quantas contêm <code>bash</code>?</p>
+      <p class="small">Terminou? Cole a saída do último comando no chat.</p>
+    </div>
+  </div>
+  <aside class="notes">Aperte T para iniciar o cronômetro. Gabarito no próximo slide.</aside>
+</section>
+
+<section class="slide" data-title="Gabarito 1">
+  <h2>Gabarito do Exercício 1</h2>
+<pre class="code" data-demo="cmds"><code>$ cd ~
+$ mkdir -p projeto/{docs,src,testes}
+$ echo "Projeto da aula de Linux" > projeto/docs/leia-me.txt
+$ echo "Seu Nome" >> projeto/docs/leia-me.txt
+$ cp projeto/docs/leia-me.txt projeto/src/copia.txt
+$ mv projeto/testes projeto/tests
+$ find projeto
+$ wc -l /etc/passwd
+$ grep -c bash /etc/passwd</code></pre>
+</section>
+
+<!-- ===================== SUPERPODERES ===================== -->
+<section class="slide divider" data-title="Superpoderes">
+  <div class="divider-grid">
+    <div>
+      <p class="kicker">Parte 3</p>
+      <h2>Superpoderes</h2>
+      <p class="big muted">redirecionamento · pipes · busca · permissões</p>
+    </div>
+    <div data-art="pipes"></div>
+  </div>
+</section>
+
+<section class="slide" data-title="Redirecionamento">
+  <h2>Redirecionamento: mandando a saída para um arquivo</h2>
+  <div class="two">
+    <div class="redir">
+      <div class="rd-row"><span class="rd-cmd">echo</span><span class="rd-arrow"><code>&gt;</code></span><span class="rd-file">sobrescreve</span></div>
+      <div class="rd-row"><span class="rd-cmd">echo</span><span class="rd-arrow"><code>&gt;&gt;</code></span><span class="rd-file">acrescenta</span></div>
+      <div class="rd-row err"><span class="rd-cmd">ls</span><span class="rd-arrow"><code>2&gt;</code></span><span class="rd-file">só os erros</span></div>
+      <div class="rd-row in"><span class="rd-file">arquivo</span><span class="rd-arrow"><code>&lt;</code></span><span class="rd-cmd">wc</span></div>
+    </div>
+<pre class="code" data-demo="cmds"><code>$ cd ~
+$ echo "linha 1" > teste.txt
+$ echo "linha 2" >> teste.txt
+$ cat teste.txt
+$ ls /nao_existe 2> erros.txt
+$ cat erros.txt
+$ wc -l < teste.txt</code></pre>
+  </div>
+</section>
+
+<section class="slide" data-title="Pipes">
+  <h2>Pipe <code>|</code>: a saída de um vira a entrada do outro</h2>
+  <div class="pipeline">
+    <div class="pl-node"><code>cat /etc/passwd</code><small>11 linhas</small></div>
+    <div class="pl-pipe"><span></span><span></span><span></span></div>
+    <div class="pl-node"><code>grep bash</code><small>4 linhas</small></div>
+    <div class="pl-pipe"><span></span><span></span><span></span></div>
+    <div class="pl-node"><code>wc -l</code><small>conta</small></div>
+    <div class="pl-pipe"><span></span><span></span><span></span></div>
+    <div class="pl-node pl-result"><code>4</code><small>resultado</small></div>
+  </div>
+<pre class="code" data-demo="cmds"><code>$ cat /etc/passwd | grep bash | wc -l
+$ ls -l /etc | grep conf
+$ cut -d: -f1 /etc/passwd | sort | head -n 5</code></pre>
+  <p class="callout"><svg class="i"><use href="#i-blocks"/></svg><span><b>Filosofia Unix</b>: ferramentas pequenas, que fazem uma coisa bem feita e se combinam.</span></p>
+</section>
+
+<section class="slide" data-title="Busca">
+  <h2 class="with-icon"><span class="badge-ico"><svg class="i"><use href="#i-search"/></svg></span>Buscando: <code>grep</code> (conteúdo) e <code>find</code> (arquivos)</h2>
+  <div class="two">
+<pre class="code compact" data-demo="cmds"><code>$ grep "root" /etc/passwd
+$ grep -i "erro" /var/log/syslog | head -n 3
+$ grep -c bash /etc/passwd
+$ grep -rn "Total" ~</code></pre>
+<pre class="code compact" data-demo="cmds"><code>$ find ~ -name "*.txt"
+$ find /etc -name "*.conf"
+$ find ~ -maxdepth 1 -type d</code></pre>
+  </div>
+  <p class="small">grep: <code>-i</code> ignora maiúsculas/minúsculas · <code>-r</code> recursivo · <code>-n</code> número da linha · <code>-v</code> inverte · <code>-c</code> conta</p>
+</section>
+
+<section class="slide" data-title="Permissões">
+  <h2 class="with-icon"><span class="badge-ico"><svg class="i"><use href="#i-lock"/></svg></span>Permissões: quem pode o quê</h2>
+  <div class="perm-anatomy">
+    <div class="pa-str"><span class="pt">-</span><span class="p0">rwx</span><span class="p1">r-x</span><span class="p2">r--</span><span class="rest">1 ana alunos 512 out 16 notas.sh</span></div>
+    <div class="pa-cards">
+      <div class="pt"><b>tipo</b><span>- arquivo · d diretório</span></div>
+      <div class="p0"><b>dono</b><span>rwx: lê, escreve, executa</span></div>
+      <div class="p1"><b>grupo</b><span>r-x: lê e executa</span></div>
+      <div class="p2"><b>outros</b><span>r--: só lê</span></div>
+    </div>
+  </div>
+  <p class="small"><b>r</b> = read (ler) · <b>w</b> = write (escrever) · <b>x</b> = execute (executar; num diretório, permite entrar)</p>
+</section>
+
+<section class="slide" data-title="chmod">
+  <h2>Mudando permissões com <code>chmod</code></h2>
+  <div class="two">
+    <div>
+      <p class="small">Clique nos bits e veja o número mudar (<code>r=4</code> <code>w=2</code> <code>x=1</code>):</p>
+      <div class="perm-builder" data-initial="754"></div>
+    </div>
+<pre class="code compact" data-demo="cmds"><code>$ cd ~
+$ touch script.sh
+$ ls -l script.sh
+$ chmod 755 script.sh
+$ ls -l script.sh
+$ chmod go-rx script.sh
+$ ls -l script.sh</code></pre>
+  </div>
+  <p class="callout"><svg class="i"><use href="#i-key"/></svg><span>Para um script rodar, ele precisa da permissão <b>x</b>!</span></p>
+</section>
+
+<!-- ===================== SHELL SCRIPT ===================== -->
+<section class="slide divider" data-title="Shell Script">
+  <div class="divider-grid">
+    <div>
+      <p class="kicker">Parte 4</p>
+      <h2>Shell Script</h2>
+      <p class="big muted">automatizando o que você faria à mão</p>
+    </div>
+    <div data-art="script"></div>
+  </div>
+</section>
+
+<section class="slide" data-title="Primeiro script">
+  <h2>O primeiro script, em 3 passos</h2>
+  <div class="two">
+    <div>
+<pre class="code" data-demo="file" data-name="ola.sh"><code>#!/bin/bash
+# Meu primeiro script
+echo "Olá, $USER! Hoje é $(date +%d/%m/%Y)."</code></pre>
+      <ul class="icon-list compact">
+        <li><svg class="i"><use href="#i-pencil"/></svg><span><b>1.</b> escrever (<code>nano ola.sh</code>: <kbd>Ctrl</kbd>+<kbd>O</kbd> salva, <kbd>Ctrl</kbd>+<kbd>X</kbd> sai)</span></li>
+        <li><svg class="i"><use href="#i-key"/></svg><span><b>2.</b> dar permissão de execução</span></li>
+        <li><svg class="i"><use href="#i-play"/></svg><span><b>3.</b> executar com <code>./</code>: o diretório atual não está no <code>PATH</code></span></li>
+      </ul>
+    </div>
+<pre class="code" data-demo="cmds"><code>$ ./ola.sh
+$ chmod +x ola.sh
+$ ./ola.sh
+$ bash ola.sh</code></pre>
+  </div>
+  <aside class="notes">O primeiro ./ola.sh falha de propósito (sem permissão x). #!/bin/bash é o shebang: diz qual interpretador usar.</aside>
+</section>
+
+<section class="slide" data-title="Variáveis">
+  <h2>Variáveis e aspas</h2>
+  <div class="two">
+<pre class="code" data-demo="script" data-name="variaveis.sh"><code>nome="Ana"          # SEM espaços no =
+echo "Olá, $nome"
+hoje=$(date +%A)    # substituição de comando
+echo "Hoje é $hoje"
+echo 'Aspas simples: $nome'
+echo "Soma: $((2 + 3))"</code></pre>
+    <ul class="icon-list compact">
+      <li><svg class="i"><use href="#i-alert"/></svg><span><code>nome = "Ana"</code> dá erro: o shell acha que <code>nome</code> é um comando</span></li>
+      <li><svg class="i"><use href="#i-quote"/></svg><span><b>Aspas duplas</b> expandem variáveis; <b>aspas simples</b> não</span></li>
+      <li><svg class="i"><use href="#i-terminal"/></svg><span><code>$(comando)</code> guarda a saída de um comando</span></li>
+      <li><svg class="i"><use href="#i-gear"/></svg><span><code>$(( ))</code> faz contas com números inteiros</span></li>
+    </ul>
+  </div>
+</section>
+
+<section class="slide" data-title="Entrada e argumentos">
+  <h2>Entrada do usuário e argumentos</h2>
+  <div class="two">
+<pre class="code" data-demo="script" data-name="idade.sh" data-input="20"><code>read -p "Qual sua idade? " idade
+echo "Você tem $idade anos"
+echo "Daqui a 10 anos: $((idade + 10))"</code></pre>
+    <table class="tbl">
+      <tr><td><code>$1</code>, <code>$2</code>...</td><td>argumentos (<code>./script.sh a b</code>)</td></tr>
+      <tr><td><code>$#</code></td><td>quantidade de argumentos</td></tr>
+      <tr><td><code>$@</code></td><td>todos os argumentos</td></tr>
+      <tr><td><code>$0</code></td><td>nome do script</td></tr>
+      <tr><td><code>$?</code></td><td>código de saída do último comando</td></tr>
+    </table>
+  </div>
+</section>
+
+<section class="slide" data-title="Condicional">
+  <h2>Condicional: <code>if</code></h2>
+  <div class="two">
+<pre class="code" data-demo="script" data-name="maioridade.sh"><code>idade=20
+if [ "$idade" -ge 18 ]; then
+  echo "Maior de idade"
+else
+  echo "Menor de idade"
+fi</code></pre>
+    <table class="tbl small">
+      <tr><th>Números</th><th>Textos</th><th>Arquivos</th></tr>
+      <tr><td><code>-eq</code> igual</td><td><code>=</code> igual</td><td><code>-f</code> é arquivo</td></tr>
+      <tr><td><code>-ne</code> diferente</td><td><code>!=</code> diferente</td><td><code>-d</code> é diretório</td></tr>
+      <tr><td><code>-lt</code> <code>-le</code> menor</td><td><code>-z</code> vazio</td><td><code>-e</code> existe</td></tr>
+      <tr><td><code>-gt</code> <code>-ge</code> maior</td><td><code>-n</code> não vazio</td><td><code>-x</code> executável</td></tr>
+    </table>
+  </div>
+  <p class="callout warn"><svg class="i"><use href="#i-alert"/></svg><span>Os <b>espaços</b> dentro de <code>[ ]</code> são obrigatórios: <code>[ "$a" -eq 1 ]</code></span></p>
+</section>
+
+<section class="slide" data-title="Laços">
+  <h2 class="with-icon"><span class="badge-ico"><svg class="i"><use href="#i-loop"/></svg></span>Laços: <code>for</code> e <code>while</code></h2>
+  <div class="two">
+<pre class="code" data-demo="script" data-name="for.sh"><code>for i in 1 2 3; do
+  echo "Número $i"
+done
+for arq in *.txt; do
+  echo "Encontrei: $arq"
+done</code></pre>
+<pre class="code" data-demo="script" data-name="while.sh"><code>contador=1
+while [ $contador -le 3 ]; do
+  echo "Volta $contador"
+  contador=$((contador + 1))
+done</code></pre>
+  </div>
+</section>
+
+<section class="slide" data-title="Código de saída">
+  <h2>Código de saída: deu certo?</h2>
+  <div class="two wide-left">
+<pre class="code" data-demo="cmds"><code>$ ls /etc > /dev/null
+$ echo $?
+$ ls /nao_existe 2> /dev/null
+$ echo $?
+$ mkdir -p ~/backup && echo "criado!"
+$ ls /nao_existe 2> /dev/null || echo "falhou!"</code></pre>
+    <ul class="icon-list compact">
+      <li><svg class="i"><use href="#i-target"/></svg><span><code>0</code> = sucesso · qualquer outro número = erro</span></li>
+      <li><svg class="i"><use href="#i-alert"/></svg><span><code>exit 1</code> num script sinaliza falha</span></li>
+      <li><svg class="i"><use href="#i-arrow-out"/></svg><span><code>a &amp;&amp; b</code>: roda <code>b</code> só se <code>a</code> deu certo</span></li>
+      <li><svg class="i"><use href="#i-arrow-out"/></svg><span><code>a || b</code>: roda <code>b</code> só se <code>a</code> falhou</span></li>
+    </ul>
+  </div>
+</section>
+
+<section class="slide" data-title="Demo backup.sh">
+  <h2>Demo: <code>backup.sh</code> junta tudo</h2>
+  <div class="two">
+<pre class="code tall" data-demo="file" data-name="backup.sh"><code>#!/bin/bash
+# Uso: ./backup.sh DIRETORIO
+origem="$1"
+if [ -z "$origem" ]; then
+  echo "Uso: $0 DIRETORIO"; exit 1
+fi
+if [ ! -d "$origem" ]; then
+  echo "Erro: '$origem' não é um diretório."; exit 2
+fi
+destino="backup_$(date +%H%M%S)"
+mkdir -p "$destino"
+total=0
+for arq in "$origem"/*.txt; do
+  [ -f "$arq" ] || continue
+  cp "$arq" "$destino/"
+  echo "Copiado: $arq"
+  total=$((total + 1))
+done
+echo "Backup: $total arquivo(s) em $destino"</code></pre>
+<pre class="code" data-demo="cmds"><code>$ chmod +x backup.sh
+$ ./backup.sh
+$ echo $?
+$ ./backup.sh nao_existe
+$ ./backup.sh aula</code></pre>
+  </div>
+</section>
+
+<section class="slide exercise" data-title="Exercício 2">
+  <h2 class="with-icon"><span class="badge-ico"><svg class="i"><use href="#i-pencil"/></svg></span>Exercício 2 · <code>saudacao.sh</code></h2>
+  <div class="two">
+    <ol class="steps">
+      <li>Receba um <b>nome como argumento</b>: <code>./saudacao.sh Maria</code></li>
+      <li>Se nenhum nome for passado, pergunte com <code>read</code></li>
+      <li>Imprima: <code>Olá, &lt;nome&gt;! Agora são HH:MM.</code></li>
+      <li><b>Bônus</b>: "Bom dia" (antes das 12h), "Boa tarde" (até as 18h) ou "Boa noite"</li>
+    </ol>
+    <div>
+      <div class="timer" data-seconds="180"></div>
+      <p class="small">Dica: <code>date +%H:%M</code> mostra a hora e <code>[ -z "$1" ]</code> testa se o argumento está vazio.</p>
+    </div>
+  </div>
+</section>
+
+<section class="slide" data-title="Gabarito 2">
+  <h2>Gabarito do Exercício 2</h2>
+<pre class="code tall" data-demo="script" data-name="saudacao.sh" data-input="Ana"><code>nome="$1"
+if [ -z "$nome" ]; then
+  read -p "Qual o seu nome? " nome
+fi
+hora=$(date +%H)
+if [ "$hora" -lt 12 ]; then
+  saudacao="Bom dia"
+elif [ "$hora" -lt 18 ]; then
+  saudacao="Boa tarde"
+else
+  saudacao="Boa noite"
+fi
+echo "$saudacao, $nome! Agora são $(date +%H:%M)."</code></pre>
+</section>
+
+<!-- ===================== CTF ===================== -->
+<section class="slide ctf-slide" data-title="CTF">
+  <div class="divider-grid">
+    <div>
+      <p class="kicker">Parte 5 · hora de praticar</p>
+      <h2>Capture The Flag: Missão Servidor Pinguim</h2>
+      <ul class="icon-list compact">
+        <li><svg class="i"><use href="#i-flag"/></svg><span><b>8 níveis</b>: ocultos, nomes traiçoeiros, <code>find</code>, <code>grep</code>, <code>chmod</code>, pipes e um <b>script com laço</b></span></li>
+        <li><svg class="i"><use href="#i-terminal"/></svg><span>Envie as flags com <code>enviar FLAG{...}</code> · comece com <code>cat ~/ctf/LEIA-ME.txt</code></span></li>
+        <li><svg class="i"><use href="#i-bulb"/></svg><span>Travou? <code>dica N</code> (custa 25% dos pontos do nível)</span></li>
+        <li><svg class="i"><use href="#i-user"/></svg><span>Cada codinome tem <b>flags próprias</b></span></li>
+      </ul>
+      <a class="btn-big" href="../ctf/" target="_blank" rel="noopener">Abrir o CTF ↗</a>
+    </div>
+    <div class="center">
+      <div data-art="flag"></div>
+      <div class="timer" data-seconds="540"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== ENCERRAMENTO ===================== -->
+<section class="slide" data-title="Resumo">
+  <h2>O que vimos hoje</h2>
+  <div class="flow">
+    <div><svg class="i"><use href="#i-compass"/></svg><b>Navegar</b><code>pwd cd ls</code></div>
+    <div><svg class="i"><use href="#i-folder"/></svg><b>Manipular</b><code>mkdir cp mv rm</code></div>
+    <div><svg class="i"><use href="#i-file"/></svg><b>Ler</b><code>cat head tail</code></div>
+    <div><svg class="i"><use href="#i-search"/></svg><b>Buscar</b><code>grep find</code></div>
+    <div><svg class="i"><use href="#i-blocks"/></svg><b>Combinar</b><code>| &gt; &gt;&gt;</code></div>
+    <div><svg class="i"><use href="#i-loop"/></svg><b>Automatizar</b><code>if for while</code></div>
+  </div>
+  <p class="center"><a class="link-chip" href="../cola/" target="_blank" rel="noopener"><svg class="i"><use href="#i-notes"/></svg>Cola de comandos (para imprimir) ↗</a></p>
+</section>
+
+<section class="slide" data-title="Desafio para casa">
+  <h2 class="with-icon"><span class="badge-ico"><svg class="i"><use href="#i-home"/></svg></span>Desafio para casa · <code>organizador.sh</code></h2>
+  <div class="two">
+    <div>
+      <div data-art="folders"></div>
+      <p>Um script que organiza uma pasta bagunçada, separando os arquivos por tipo.</p>
+    </div>
+    <table class="tbl small">
+      <tr><td><span class="lvl l1">Básico</span></td><td>valida o argumento; move por extensão (imagens, documentos, audio, outros)</td></tr>
+      <tr><td><span class="lvl l2">Intermediário</span></td><td>relatório final; log com data/hora; não sobrescreve arquivos</td></tr>
+      <tr><td><span class="lvl l3">Avançado</span></td><td><code>-n</code> (simulação), <code>-h</code> (ajuda), <code>case</code>, funções, nomes com espaço</td></tr>
+    </table>
+  </div>
+  <p class="small">Entrega: repositório no GitHub com o script e um README de exemplo.</p>
+</section>
+
+<section class="slide" data-title="Continue estudando">
+  <h2>Para continuar estudando</h2>
+  <ul class="icon-list">
+    <li><svg class="i"><use href="#i-flag"/></svg><span><b>OverTheWire · Bandit</b>: CTF clássico de Linux via SSH. Meta: chegar ao nível 10</span></li>
+    <li><svg class="i"><use href="#i-book"/></svg><span><b>The Linux Command Line</b>, de William Shotts (gratuito em linuxcommand.org)</span></li>
+    <li><svg class="i"><use href="#i-compass"/></svg><span><code>man</code> é seu melhor amigo: leia o manual dos comandos que você já usa</span></li>
+    <li><svg class="i"><use href="#i-route"/></svg><span>Próximos temas: <code>ps</code>, <code>kill</code>, <code>apt</code>, <code>ssh</code>, <code>crontab</code>, <code>case</code>, funções, <code>awk</code>, <code>sed</code></span></li>
+  </ul>
+</section>
+
+<section class="slide cover" data-title="Obrigado">
+  <div data-art="penguin" class="cover-penguin waving"></div>
+  <h1>Obrigado!</h1>
+  <p class="subtitle">Dúvidas?</p>
+  <p class="terminal-line"><span class="p">aluno@aula:~$</span> exit<span class="caret"></span></p>
+</section>
+
+</div>
+
+<div class="bg-motion" aria-hidden="true"><span></span><span></span><span></span></div>
+
+<div class="hud">
+  <div class="progress"><div id="bar"></div></div>
+  <span id="step-hint" class="step-hint" hidden></span>
+  <button type="button" id="prev" aria-label="Voltar"><svg class="i"><use href="#i-chev-left"/></svg></button>
+  <span id="counter" aria-live="polite"></span>
+  <button type="button" id="next" aria-label="Avançar"><svg class="i"><use href="#i-chev-right"/></svg></button>
+  <button type="button" id="toggle-notes" aria-label="Mostrar notas do professor" title="Notas (N)"><svg class="i"><use href="#i-notes"/></svg></button>
+  <button type="button" id="fullscreen" aria-label="Tela cheia" title="Tela cheia (F)"><svg class="i"><use href="#i-expand"/></svg></button>
+</div>
+<div id="notes-panel" class="notes-panel" hidden></div>
+
+<!-- slides.bundle.js é gerado a partir de slides.js por "node tools/build.js" (funciona também abrindo o arquivo direto, sem servidor) -->
+<script src="slides.bundle.js" defer></script>
+</body>
+</html>

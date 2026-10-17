@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Aula de Linux &amp; Shell Script</title>
+  <meta name="description" content="Material da aula: slides, CTF com terminal simulado no navegador e cola de comandos.">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🐧</text></svg>">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    :root { --bg: #0b1020; --card: #151f38; --line: #24304f; --text: #e6ebf5; --muted: #9aa6c2; --accent: #ffcc33; --accent2: #4fd1c5; color-scheme: dark; }
+    * { box-sizing: border-box; }
+    body { margin: 0; min-height: 100vh; background: radial-gradient(1200px 600px at 80% -10%, #1b2a55 0%, transparent 60%), var(--bg); color: var(--text); font: 16px/1.5 'Inter', system-ui, sans-serif; }
+    main { max-width: 960px; margin: 0 auto; padding: 56px 16px; }
+    .hero { font-size: 3rem; }
+    h1 { font-size: clamp(2rem, 5vw, 3rem); margin: .1em 0; font-weight: 800; }
+    .lead { color: var(--muted); font-size: 1.15rem; max-width: 640px; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; margin-top: 32px; }
+    a.card { display: block; text-decoration: none; color: inherit; background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 20px; transition: transform .15s, border-color .15s; }
+    a.card:hover, a.card:focus-visible { transform: translateY(-3px); border-color: var(--accent); }
+    .card .ico { font-size: 2rem; }
+    .card h2 { margin: .3em 0 .2em; font-size: 1.25rem; }
+    .card p { margin: 0; color: var(--muted); font-size: .95rem; }
+    .card .go { color: var(--accent2); font-weight: 600; margin-top: 12px; display: block; }
+    footer { margin-top: 48px; color: var(--muted); font-size: .85rem; }
+    code { font-family: 'JetBrains Mono', monospace; color: var(--accent2); }
+  </style>
+</head>
+<body>
+<main>
+  <div class="hero" aria-hidden="true">🐧</div>
+  <h1>Linux &amp; Shell Script</h1>
+  <p class="lead">Material da aula: do terminal ao primeiro script, com prática num CTF que roda inteiro no navegador. Não precisa instalar nada.</p>
+  <div class="grid">
+    <a class="card" href="slides/">
+      <div class="ico">🎞️</div>
+      <h2>Slides da aula</h2>
+      <p>Teoria, exemplos práticos e exercícios com cronômetro. Use as setas para navegar.</p>
+      <span class="go">Abrir slides →</span>
+    </a>
+    <a class="card" href="ctf/">
+      <div class="ico">🚩</div>
+      <h2>CTF: Missão Servidor Pinguim</h2>
+      <p>8 níveis num terminal Linux simulado: <code>ls -a</code>, <code>find</code>, <code>grep</code>, <code>chmod</code>, pipes e scripts.</p>
+      <span class="go">Começar o CTF →</span>
+    </a>
+    <a class="card" href="cola/">
+      <div class="ico">📄</div>
+      <h2>Cola de comandos</h2>
+      <p>Resumo de uma página com tudo o que vimos, pronta para imprimir.</p>
+      <span class="go">Ver a cola →</span>
+    </a>
+  </div>
+  <footer>O terminal do CTF é um simulador educacional: os comandos funcionam como no bash, mas tudo acontece no seu navegador.</footer>
+</main>
+</body>
+</html>

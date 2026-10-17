@@ -1,0 +1,12 @@
+{
+  "name": "aula-linux-shellscript",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Material da aula de Linux e Shell Script: slides e CTF com terminal simulado (GitHub Pages).",
+  "type": "module",
+  "scripts": {
+    "build": "node tools/build.js",
+    "test": "node tests/run.js",
+    "serve": "python -m http.server 8080 --directory docs"
+  }
+}

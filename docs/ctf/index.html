@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>CTF · Missão Servidor Pinguim</title>
+  <meta name="description" content="Capture The Flag de Linux e Shell Script com terminal simulado no navegador.">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🐧</text></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <!-- Tela inicial -->
+  <main id="start" class="start">
+    <div class="start-card">
+      <div class="start-logo" aria-hidden="true">🐧🚩</div>
+      <h1>Missão Servidor Pinguim</h1>
+      <p class="lead">Um CTF (<em>Capture The Flag</em>) para praticar Linux e Shell Script num terminal que roda inteiro no seu navegador.</p>
+      <ul class="start-list">
+        <li><b>8 níveis</b>, do <code>cat</code> ao primeiro <b>script com laço</b></li>
+        <li>Encontre as <code>FLAG{...}</code> e envie com <code>enviar</code></li>
+        <li>Travou? Use as dicas (custam um pouco de pontos)</li>
+      </ul>
+      <form id="start-form" class="start-form">
+        <label for="nick-input">Escolha um codinome</label>
+        <div class="row">
+          <input id="nick-input" maxlength="24" autocomplete="off" placeholder="ex.: tux_veloz" required>
+          <button type="submit">Começar ▸</button>
+        </div>
+        <p class="small">Cada codinome gera flags diferentes (copiar a flag do colega não funciona 😉). Use um apelido, não seu nome completo. O progresso fica salvo só neste navegador.</p>
+      </form>
+      <p class="small"><a href="../">← Voltar ao material da aula</a></p>
+    </div>
+  </main>
+
+  <!-- Aplicação -->
+  <div id="app" class="app" hidden>
+    <header class="topbar">
+      <div class="brand"><span aria-hidden="true">🐧</span> Missão Servidor Pinguim</div>
+      <div class="stats">
+        <span>Agente <b id="nick"></b></span>
+        <span>Pontos <b id="score"></b></span>
+        <span>Níveis <b id="solved"></b></span>
+      </div>
+      <div class="progress" aria-hidden="true"><div id="progress-bar"></div></div>
+    </header>
+
+    <div class="layout">
+      <section class="term-wrap" aria-label="Terminal">
+        <div class="term-chrome" aria-hidden="true">
+          <span class="dot r"></span><span class="dot y"></span><span class="dot g"></span>
+          <span class="term-title">aluno@pinguimcorp: ~</span>
+        </div>
+        <div class="term-holder">
+          <div id="terminal"></div>
+        </div>
+        <div id="keybar" class="keybar" aria-label="Teclas de atalho">
+          <button type="button" data-key="tab">Tab</button>
+          <button type="button" data-key="up">↑</button>
+          <button type="button" data-key="down">↓</button>
+          <button type="button" data-key="ctrl-c">Ctrl+C</button>
+          <button type="button" data-key="|">|</button>
+          <button type="button" data-key="~">~</button>
+          <button type="button" data-key="/">/</button>
+          <button type="button" data-key="-">-</button>
+          <button type="button" data-key="&quot;">"</button>
+          <button type="button" data-key="$">$</button>
+        </div>
+      </section>
+
+      <aside class="panel">
+        <section class="card">
+          <h2>Enviar flag</h2>
+          <form id="submit-form" class="submit-form">
+            <input id="flag-input" autocomplete="off" spellcheck="false" placeholder="FLAG{...}" aria-label="Flag">
+            <button type="submit">Enviar</button>
+          </form>
+          <p id="submit-feedback" class="feedback" role="status"></p>
+          <p class="small">Também dá para enviar pelo terminal: <code>enviar FLAG{...}</code></p>
+        </section>
+
+        <section id="done" class="card done" hidden>
+          <h2>🏆 Missão cumprida!</h2>
+          <p>Código de conclusão:</p>
+          <p class="code" id="done-code"></p>
+          <p class="small">Mostre ao professor. Agora tente o desafio para casa!</p>
+        </section>
+
+        <section id="hint-box" class="card hint" hidden>
+          <div class="hint-head"><b class="hint-title"></b><button id="hint-close" type="button" aria-label="Fechar dica">✕</button></div>
+          <p class="hint-text"></p>
+        </section>
+
+        <section class="card">
+          <h2>Níveis</h2>
+          <ol id="levels" class="levels"></ol>
+        </section>
+
+        <section class="card">
+          <h2>Cola rápida</h2>
+          <dl class="cheat">
+            <dt>ls -la</dt><dd>lista tudo, com detalhes</dd>
+            <dt>cd dir</dt><dd>entra no diretório (<code>cd ..</code> sobe)</dd>
+            <dt>cat arq</dt><dd>mostra o conteúdo</dd>
+            <dt>find . -name "x"</dt><dd>procura arquivos</dd>
+            <dt>grep txt arq</dt><dd>procura texto</dd>
+            <dt>chmod u+r arq</dt><dd>muda permissões</dd>
+            <dt>cmd1 | cmd2</dt><dd>pipe: saída vira entrada</dd>
+            <dt>nano · vi arq</dt><dd>edita (no vi: <code>i</code> escreve, <code>Esc</code> <code>:wq</code> salva e sai)</dd>
+            <dt>man cmd</dt><dd>manual do comando</dd>
+          </dl>
+          <p class="small">Atalhos: <kbd>Tab</kbd> completa · <kbd>↑</kbd> histórico · <kbd>Ctrl</kbd>+<kbd>C</kbd> interrompe · <kbd>Ctrl</kbd>+<kbd>L</kbd> limpa</p>
+        </section>
+
+        <section class="card actions">
+          <button id="btn-reset" type="button" class="ghost">Reiniciar CTF</button>
+          <button id="btn-nick" type="button" class="ghost">Trocar codinome</button>
+          <a class="ghost" href="../">Material da aula</a>
+        </section>
+      </aside>
+    </div>
+  </div>
+
+  <noscript><p class="noscript">Este CTF precisa de JavaScript habilitado.</p></noscript>
+  <!-- ctf.bundle.js é gerado a partir de js/main.js por "node tools/build.js" (funciona também abrindo o arquivo direto, sem servidor) -->
+  <script src="js/ctf.bundle.js" defer></script>
+</body>
+</html>

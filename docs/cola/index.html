@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Cola de Comandos Linux</title>
+  <meta name="description" content="Resumo dos comandos de Linux e Shell Script vistos em aula, pronto para imprimir.">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🐧</text></svg>">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #ffffff; --text: #1a2033; --muted: #5b6478; --line: #dde2ec; --head: #0b1020; --accent: #b7791f; --code: #0f766e; --box: #f6f8fc;
+      --mono: 'JetBrains Mono', Consolas, monospace; --sans: 'Inter', system-ui, sans-serif;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme="light"]) { --bg: #0b1020; --text: #e6ebf5; --muted: #9aa6c2; --line: #24304f; --head: #e6ebf5; --accent: #ffcc33; --code: #4fd1c5; --box: #151f38; }
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; background: var(--bg); color: var(--text); font: 14px/1.45 var(--sans); }
+    main { max-width: 1100px; margin: 0 auto; padding: 24px 16px 48px; }
+    header { display: flex; justify-content: space-between; align-items: end; gap: 16px; flex-wrap: wrap; border-bottom: 3px solid var(--accent); padding-bottom: 8px; margin-bottom: 16px; }
+    h1 { margin: 0; font-size: 1.8rem; color: var(--head); }
+    header p { margin: 0; color: var(--muted); }
+    .cols { columns: 3 300px; column-gap: 18px; }
+    section { break-inside: avoid; background: var(--box); border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; margin: 0 0 14px; }
+    h2 { margin: 0 0 6px; font-size: .95rem; color: var(--accent); text-transform: uppercase; letter-spacing: .05em; }
+    table { width: 100%; border-collapse: collapse; }
+    td { padding: 3px 4px; vertical-align: top; border-bottom: 1px dashed var(--line); }
+    tr:last-child td { border-bottom: 0; }
+    td:first-child { font-family: var(--mono); color: var(--code); white-space: nowrap; font-size: .85rem; padding-right: 10px; }
+    pre { font-family: var(--mono); font-size: .8rem; margin: 4px 0 0; white-space: pre-wrap; color: var(--text); }
+    .actions { display: flex; gap: 8px; }
+    .actions a, .actions button { font: inherit; background: none; color: var(--code); border: 1px solid var(--line); border-radius: 8px; padding: 6px 10px; text-decoration: none; cursor: pointer; }
+    @media print {
+      :root { --bg: #fff; --text: #000; --muted: #444; --line: #ccc; --head: #000; --accent: #7a4d00; --code: #00524c; --box: #fff; }
+      body { font-size: 10.5px; }
+      main { padding: 0; max-width: none; }
+      .actions { display: none; }
+      .cols { columns: 3; }
+      section { padding: 6px 8px; margin-bottom: 8px; }
+      @page { margin: 10mm; }
+    }
+  </style>
+</head>
+<body>
+<main>
+  <header>
+    <div>
+      <h1>🐧 Cola de Comandos: Linux &amp; Shell Script</h1>
+      <p>Tudo o que vimos na aula, em uma página. Na dúvida: <b>man comando</b>.</p>
+    </div>
+    <div class="actions"><button type="button" onclick="print()">🖨️ Imprimir</button><a href="../">Material da aula</a></div>
+  </header>
+  <div class="cols">
+    <section><h2>Navegação</h2><table>
+      <tr><td>pwd</td><td>diretório atual</td></tr>
+      <tr><td>ls -la</td><td>lista tudo, com detalhes e ocultos</td></tr>
+      <tr><td>ls -lh</td><td>tamanhos legíveis</td></tr>
+      <tr><td>cd dir</td><td>entra no diretório</td></tr>
+      <tr><td>cd ..</td><td>sobe um nível</td></tr>
+      <tr><td>cd ~ · cd</td><td>vai para a home</td></tr>
+      <tr><td>cd -</td><td>volta ao anterior</td></tr>
+      <tr><td>tree</td><td>árvore de diretórios</td></tr>
+    </table></section>
+
+    <section><h2>Arquivos e diretórios</h2><table>
+      <tr><td>mkdir -p a/b</td><td>cria diretórios (e os intermediários)</td></tr>
+      <tr><td>touch arq</td><td>cria arquivo vazio</td></tr>
+      <tr><td>cp a b</td><td>copia (<b>-r</b> para diretórios)</td></tr>
+      <tr><td>mv a b</td><td>move ou renomeia</td></tr>
+      <tr><td>rm arq</td><td>remove (<b>-r</b> diretórios). Sem lixeira!</td></tr>
+      <tr><td>rmdir dir</td><td>remove diretório vazio</td></tr>
+      <tr><td>nano arq</td><td>editor (^O salva, ^X sai)</td></tr>
+    </table></section>
+
+    <section><h2>Leitura</h2><table>
+      <tr><td>cat arq</td><td>mostra o conteúdo</td></tr>
+      <tr><td>less arq</td><td>rolar com as setas (q sai)</td></tr>
+      <tr><td>head -n 5 arq</td><td>5 primeiras linhas</td></tr>
+      <tr><td>tail -n 5 arq</td><td>5 últimas linhas</td></tr>
+      <tr><td>wc -l arq</td><td>conta linhas</td></tr>
+    </table></section>
+
+    <section><h2>Busca</h2><table>
+      <tr><td>grep txt arq</td><td>linhas que contêm "txt"</td></tr>
+      <tr><td>grep -i</td><td>ignora maiúsc./minúsc.</td></tr>
+      <tr><td>grep -r txt dir</td><td>busca recursiva</td></tr>
+      <tr><td>grep -v · -c · -n</td><td>inverte · conta · nº da linha</td></tr>
+      <tr><td>find . -name "*.txt"</td><td>procura pelo nome</td></tr>
+      <tr><td>find . -type d</td><td>só diretórios (f = arquivos)</td></tr>
+      <tr><td>find . -size +1M</td><td>maiores que 1 MB</td></tr>
+    </table></section>
+
+    <section><h2>Redirecionamento e pipes</h2><table>
+      <tr><td>cmd &gt; arq</td><td>saída para arquivo (sobrescreve)</td></tr>
+      <tr><td>cmd &gt;&gt; arq</td><td>acrescenta ao final</td></tr>
+      <tr><td>cmd 2&gt; arq</td><td>erros para arquivo</td></tr>
+      <tr><td>cmd &lt; arq</td><td>entrada a partir do arquivo</td></tr>
+      <tr><td>a | b</td><td>saída de a vira entrada de b</td></tr>
+      <tr><td>sort | uniq -c</td><td>conta as repetições</td></tr>
+      <tr><td>cut -d: -f1</td><td>extrai colunas</td></tr>
+    </table></section>
+
+    <section><h2>Permissões</h2><table>
+      <tr><td>ls -l</td><td>-rwxr-xr-- = tipo · dono · grupo · outros</td></tr>
+      <tr><td>r=4 w=2 x=1</td><td>some para cada grupo</td></tr>
+      <tr><td>chmod 755 arq</td><td>rwxr-xr-x (scripts)</td></tr>
+      <tr><td>chmod 644 arq</td><td>rw-r--r-- (arquivos comuns)</td></tr>
+      <tr><td>chmod +x arq</td><td>dá permissão de execução</td></tr>
+      <tr><td>chmod u+r,go-w</td><td>forma simbólica</td></tr>
+      <tr><td>sudo cmd</td><td>executa como root (cuidado!)</td></tr>
+    </table></section>
+
+    <section><h2>Atalhos</h2><table>
+      <tr><td>Tab</td><td>completa comandos e nomes</td></tr>
+      <tr><td>↑ ↓</td><td>histórico de comandos</td></tr>
+      <tr><td>Ctrl+C</td><td>interrompe o comando</td></tr>
+      <tr><td>Ctrl+L</td><td>limpa a tela</td></tr>
+      <tr><td>man cmd</td><td>manual (q sai)</td></tr>
+      <tr><td>history</td><td>comandos já digitados</td></tr>
+    </table></section>
+
+    <section><h2>Shell Script: básico</h2>
+<pre>#!/bin/bash          # shebang
+nome="Ana"           # sem espaços no =
+echo "Olá, $nome"    # "" expande, '' não
+hoje=$(date +%d/%m)  # saída de comando
+soma=$((2 + 3))      # aritmética
+read -p "Idade? " idade
+echo "$1 $# $@ $?"   # args, qtd, todos, status</pre>
+<pre>chmod +x script.sh && ./script.sh arg1</pre>
+    </section>
+
+    <section><h2>Shell Script: controle</h2>
+<pre>if [ "$x" -ge 18 ]; then
+  echo "maior"
+elif [ -z "$x" ]; then
+  echo "vazio"
+else
+  echo "menor"
+fi
+
+for arq in *.txt; do echo "$arq"; done
+for i in $(seq 1 10); do echo $i; done
+
+while [ $c -le 3 ]; do c=$((c+1)); done</pre>
+      <table>
+        <tr><td>-eq -ne -lt -le -gt -ge</td><td>números</td></tr>
+        <tr><td>= != -z -n</td><td>textos</td></tr>
+        <tr><td>-f -d -e -x</td><td>arquivos</td></tr>
+        <tr><td>a &amp;&amp; b · a || b</td><td>se deu certo · se falhou</td></tr>
+      </table>
+    </section>
+  </div>
+</main>
+</body>
+</html>
