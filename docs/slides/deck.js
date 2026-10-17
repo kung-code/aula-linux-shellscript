@@ -32,6 +32,42 @@ export function splitCommands(text) {
   return cmds;
 }
 
+// ---------- sumário ----------
+// items: [{ title, group?, tags? }] na ordem dos slides. Um item com "group" abre uma nova seção.
+export function buildToc(items, firstGroup = 'Abertura') {
+  const groups = [];
+  items.forEach((it, index) => {
+    if (it.group || !groups.length) groups.push({ name: it.group || firstGroup, slides: [] });
+    groups[groups.length - 1].slides.push({ index, title: it.title, tags: it.tags || [] });
+  });
+  return groups;
+}
+
+function norm(s) {
+  return String(s).toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
+}
+
+// Filtra o sumário por texto (sem acentos) ou número do slide. Remove seções vazias.
+export function filterToc(groups, query) {
+  const q = norm(query).trim();
+  if (!q) return groups;
+  const num = /^\d+$/.test(q) ? parseInt(q, 10) : null;
+  return groups
+    .map((g) => ({
+      name: g.name,
+      slides: g.slides.filter((s) => (num !== null ? String(s.index + 1).startsWith(q) : norm(s.title).includes(q) || norm(g.name).includes(q) || s.tags.some((t) => norm(t).includes(q)))),
+    }))
+    .filter((g) => g.slides.length);
+}
+
+// Número digitado no campo de busca → índice do slide (ou -1)
+export function tocJump(query, total) {
+  const q = String(query).trim();
+  if (!/^\d+$/.test(q)) return -1;
+  const n = parseInt(q, 10);
+  return n >= 1 && n <= total ? n - 1 : -1;
+}
+
 // ---------- navegação por passos ----------
 // states: [{ step, total }] dos componentes do slide, na ordem do documento.
 // Retorna o índice do componente que deve avançar, ou -1 (ir para o próximo slide).

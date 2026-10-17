@@ -441,6 +441,7 @@ class Terminal {
     }
     if (!this.resolveInput) return;
     if (name === 'tab') this.tab();
+    else if (name === 'enter') { this.onKey({ key: 'Enter', preventDefault() {}, ctrlKey: false }); return; }
     else if (name === 'up' || name === 'down') this.onKey({ key: name === 'up' ? 'ArrowUp' : 'ArrowDown', preventDefault() {}, ctrlKey: false });
     else {
       const pos = this.input.selectionStart;
@@ -4429,6 +4430,15 @@ class CtfGame {
 
   hintsUsed(id) { return this.state.hints[id] || 0; }
 
+  // Dicas já liberadas do nível (para navegar entre elas sem gastar pontos)
+  unlockedHints(id) {
+    const l = this.level(id);
+    return l ? l.hints.slice(0, Math.min(this.hintsUsed(id), l.hints.length)) : [];
+  }
+
+  // A próxima dica custa pontos? (dicas liberadas depois de resolver o nível são grátis)
+  nextHintFree(id) { return this.isSolved(id); }
+
   levelScore(id) {
     if (!this.isSolved(id)) return 0;
     const l = this.level(id);
@@ -4505,11 +4515,17 @@ class CtfGame {
       if (!id) { ctx.err('Uso: dica NÍVEL   (exemplo: dica 2)\n'); return 1; }
       const h = game.hint(id);
       if (h.error) { ctx.err(h.error + '\n'); return 1; }
-      const cost = h.free || h.repeat ? '' : C.gray + ' (custa ' + HINT_COST * 100 + '% dos pontos do nível)' + C.reset;
-      ctx.out(C.byellow + '💡 Dica ' + h.index + '/' + h.total + ' do nível ' + id + ':' + C.reset + cost + '\n' + h.text + '\n');
+      // mostra todas as dicas já liberadas, marcando a nova
+      game.unlockedHints(id).forEach((text, i) => {
+        const isNew = !h.repeat && i === h.index - 1;
+        const tag = isNew ? (h.free ? C.gray + ' (nova, grátis: nível resolvido)' : C.gray + ' (nova: custa ' + HINT_COST * 100 + '% dos pontos do nível)') + C.reset : '';
+        ctx.out((isNew ? C.byellow : C.yellow) + 'Dica ' + (i + 1) + '/' + h.total + ' do nível ' + id + ':' + C.reset + tag + '\n  ' + text + '\n');
+      });
+      if (h.repeat) ctx.out(C.gray + 'Você já liberou todas as dicas deste nível.' + C.reset + '\n');
+      else if (h.index < h.total) ctx.out(C.gray + 'Rode "dica ' + id + '" de novo para a próxima.' + C.reset + '\n');
       return 0;
     };
-    dica.help = 'dica - mostra a próxima dica de um nível\nUSO: dica NÍVEL';
+    dica.help = 'dica - libera a próxima dica de um nível e mostra as já liberadas\nUSO: dica NÍVEL';
     shell.commands.dica = dica;
 
     const progresso = (ctx) => {
@@ -4713,6 +4729,46 @@ function fmtTime(rng) {
 return { buildCtf };
 })();
 
+// ---- docs/ctf/js/ui.js ----
+__m["docs/ctf/js/ui.js"] = (function () {
+// Regras puras da interface do CTF (sem DOM) — testadas em tests/ui.test.js.
+
+const FONT_MIN = 11;
+const FONT_MAX = 22;
+
+// Modo celular: respeita a escolha salva; sem escolha, liga em telas estreitas ou de toque.
+function shouldUseMobile({ saved, width, coarse }) {
+  if (saved === true || saved === false) return saved;
+  return width <= 760 || (!!coarse && width <= 1024);
+}
+
+function clampFont(px) {
+  const n = Math.round(Number(px) || 14);
+  return Math.max(FONT_MIN, Math.min(FONT_MAX, n));
+}
+
+// Navegação no visualizador de dicas: índice (0-based) entre as dicas liberadas.
+function hintIndex(current, delta, unlocked) {
+  if (unlocked <= 0) return 0;
+  return Math.max(0, Math.min(unlocked - 1, current + delta));
+}
+
+// Estado exibido pelo visualizador de dicas.
+function hintView({ index, unlocked, total, solved }) {
+  const i = hintIndex(index, 0, unlocked);
+  return {
+    index: i,
+    canPrev: i > 0,
+    canNext: i < unlocked - 1,
+    canReveal: unlocked < total,
+    revealFree: !!solved,
+    dots: Array.from({ length: total }, (_, k) => (k === i && unlocked ? 'current' : k < unlocked ? 'unlocked' : 'locked')),
+  };
+}
+
+return { FONT_MIN, FONT_MAX, shouldUseMobile, clampFont, hintIndex, hintView };
+})();
+
 // ---- docs/ctf/js/main.js ----
 __m["docs/ctf/js/main.js"] = (function () {
 // Liga o terminal (DOM) ao shell simulado e ao jogo.
@@ -4725,8 +4781,10 @@ const { VFS } = __m["docs/ctf/js/shell/vfs.js"];
 const { C } = __m["docs/ctf/js/shell/util.js"];
 const { CtfGame, LEVELS } = __m["docs/ctf/js/ctf/game.js"];
 const { buildCtf } = __m["docs/ctf/js/ctf/world.js"];
+const { shouldUseMobile, clampFont, hintIndex, hintView } = __m["docs/ctf/js/ui.js"];
 
 const STORAGE_KEY = 'pinguim-ctf-v1';
+const UI_KEY = 'pinguim-ctf-ui'; // preferências de visualização (não são apagadas ao reiniciar o CTF)
 const $ = (sel) => document.querySelector(sel);
 
 function load() {
@@ -4795,7 +4853,9 @@ function start(nick, saved) {
 
   renderPanel(app);
   setupPanel(app);
+  setupHints(app);
   setupKeybar(term);
+  setupView(app);
 
   term.write(C.bcyan + 'PinguimOS 24.04 LTS · terminal simulado no navegador' + C.reset + '\n');
   term.write(C.gray + 'Os comandos funcionam como no bash de verdade. Digite "help" para ver a lista.' + C.reset + '\n');
@@ -4852,14 +4912,99 @@ function renderPanel(app) {
   const done = $('#done');
   done.hidden = !g.allSolved();
   if (g.allSolved()) $('#done-code').textContent = g.completionCode();
+  $('#mt-solved').textContent = g.solvedCount() + '/' + LEVELS.length;
+  if (app.hintView && !$('#hint-box').hidden) renderHint(app);
 }
 
+// ---------- visualizador de dicas (navegável) ----------
+// Clicar em "Dica" abre o visualizador. Se nenhuma dica foi liberada, libera a primeira.
+// As já liberadas podem ser revistas à vontade; liberar a próxima é uma ação explícita.
 function showHint(app, id) {
-  const h = app.game.hint(id);
+  const g = app.game;
+  if (!g.unlockedHints(id).length) g.hint(id);
+  app.hintView = { level: id, index: g.unlockedHints(id).length - 1 };
+  renderHint(app);
   const box = $('#hint-box');
   box.hidden = false;
-  box.querySelector('.hint-title').textContent = '💡 Nível ' + id + ' · dica ' + h.index + '/' + h.total + (h.free || h.repeat ? '' : ' (−25% dos pontos do nível)');
-  box.querySelector('.hint-text').textContent = h.text;
+  if (box.scrollIntoView) box.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+}
+
+function renderHint(app) {
+  const hv = app.hintView;
+  if (!hv) return;
+  const g = app.game;
+  const level = LEVELS.find((l) => l.id === hv.level);
+  const unlocked = g.unlockedHints(hv.level);
+  const v = hintView({ index: hv.index, unlocked: unlocked.length, total: level.hints.length, solved: g.nextHintFree(hv.level) });
+  hv.index = v.index;
+  const box = $('#hint-box');
+  box.querySelector('.hint-title').textContent = 'Nível ' + level.id + ' · ' + level.title;
+  const textEl = box.querySelector('.hint-text');
+  if (textEl.textContent !== (unlocked[v.index] || '')) {
+    textEl.textContent = unlocked[v.index] || '';
+    textEl.classList.remove('anim');
+    void textEl.offsetWidth; // reinicia a animação a cada troca de dica
+    textEl.classList.add('anim');
+  }
+  box.querySelector('.hint-count').textContent = 'Dica ' + (v.index + 1) + ' de ' + level.hints.length;
+  box.querySelector('.hint-dots').innerHTML = v.dots.map((d, i) => '<span class="hd hd-' + d + '" title="Dica ' + (i + 1) + '"></span>').join('');
+  $('#hint-prev').disabled = !v.canPrev;
+  $('#hint-next').disabled = !v.canNext;
+  const reveal = $('#hint-reveal');
+  reveal.hidden = !v.canReveal;
+  reveal.textContent = 'Liberar dica ' + (unlocked.length + 1) + (v.revealFree ? ' (grátis: nível resolvido)' : ' (−25% dos pontos do nível)');
+}
+
+function setupHints(app) {
+  $('#hint-prev').addEventListener('click', () => { app.hintView.index = hintIndex(app.hintView.index, -1, app.game.unlockedHints(app.hintView.level).length); renderHint(app); });
+  $('#hint-next').addEventListener('click', () => { app.hintView.index = hintIndex(app.hintView.index, 1, app.game.unlockedHints(app.hintView.level).length); renderHint(app); });
+  $('#hint-reveal').addEventListener('click', () => {
+    const id = app.hintView.level;
+    app.game.hint(id);
+    app.hintView.index = app.game.unlockedHints(id).length - 1;
+    renderHint(app);
+  });
+}
+
+// ---------- modo celular ----------
+function loadUi() {
+  try { return JSON.parse(localStorage.getItem(UI_KEY) || '{}') || {}; } catch (e) { return {}; }
+}
+function saveUi(ui) {
+  try { localStorage.setItem(UI_KEY, JSON.stringify(ui)); } catch (e) { /* navegação privada */ }
+}
+
+function setupView(app) {
+  const ui = loadUi();
+  const coarse = typeof matchMedia === 'function' && matchMedia('(pointer: coarse)').matches;
+  const applyFont = () => {
+    document.documentElement.style.setProperty('--term-font', clampFont(ui.font || (app.mobile ? 13 : 14.5)) + 'px');
+  };
+  const setMobile = (on) => {
+    app.mobile = on;
+    document.body.classList.toggle('mobile-mode', on);
+    $('#btn-mobile').setAttribute('aria-pressed', String(on));
+    $('#btn-mobile span').textContent = on ? 'Modo computador' : 'Modo celular';
+    setTab(on ? 'terminal' : null);
+    applyFont();
+  };
+  const setTab = (tab) => {
+    document.body.dataset.tab = tab || '';
+    for (const b of document.querySelectorAll('#mtabs button')) b.classList.toggle('active', b.dataset.tab === tab);
+    if (tab === 'terminal' || !tab) setTimeout(() => { app.term.scrollToEnd(); app.term.focus(); }, 0);
+  };
+  app.setTab = setTab;
+  $('#btn-mobile').addEventListener('click', () => { ui.mobile = !app.mobile; saveUi(ui); setMobile(ui.mobile); });
+  $('#font-down').addEventListener('click', () => { ui.font = clampFont((ui.font || (app.mobile ? 13 : 14.5)) - 1); saveUi(ui); applyFont(); });
+  $('#font-up').addEventListener('click', () => { ui.font = clampFont((ui.font || (app.mobile ? 13 : 14.5)) + 1); saveUi(ui); applyFont(); });
+  for (const b of document.querySelectorAll('#mtabs button')) b.addEventListener('click', () => setTab(b.dataset.tab));
+  // no celular, o teclado virtual encolhe a tela: o terminal acompanha a área visível
+  if (window.visualViewport) {
+    const fit = () => document.documentElement.style.setProperty('--vvh', window.visualViewport.height + 'px');
+    window.visualViewport.addEventListener('resize', fit);
+    fit();
+  }
+  setMobile(shouldUseMobile({ saved: ui.mobile, width: window.innerWidth, coarse }));
 }
 
 function setupPanel(app) {
@@ -4874,7 +5019,7 @@ function setupPanel(app) {
     if (r.ok) input.value = '';
     app.term.focus();
   });
-  $('#hint-close').addEventListener('click', () => { $('#hint-box').hidden = true; app.term.focus(); });
+  $('#hint-close').addEventListener('click', () => { $('#hint-box').hidden = true; app.hintView = null; if (!app.mobile) app.term.focus(); });
   $('#btn-reset').addEventListener('click', () => {
     if (!confirm('Reiniciar o CTF? Seu progresso e os arquivos que você criou serão apagados.')) return;
     try { localStorage.removeItem(STORAGE_KEY); } catch (e) { /* ignora */ }

@@ -133,6 +133,15 @@ export class CtfGame {
 
   hintsUsed(id) { return this.state.hints[id] || 0; }
 
+  // Dicas já liberadas do nível (para navegar entre elas sem gastar pontos)
+  unlockedHints(id) {
+    const l = this.level(id);
+    return l ? l.hints.slice(0, Math.min(this.hintsUsed(id), l.hints.length)) : [];
+  }
+
+  // A próxima dica custa pontos? (dicas liberadas depois de resolver o nível são grátis)
+  nextHintFree(id) { return this.isSolved(id); }
+
   levelScore(id) {
     if (!this.isSolved(id)) return 0;
     const l = this.level(id);
@@ -209,11 +218,17 @@ export class CtfGame {
       if (!id) { ctx.err('Uso: dica NÍVEL   (exemplo: dica 2)\n'); return 1; }
       const h = game.hint(id);
       if (h.error) { ctx.err(h.error + '\n'); return 1; }
-      const cost = h.free || h.repeat ? '' : C.gray + ' (custa ' + HINT_COST * 100 + '% dos pontos do nível)' + C.reset;
-      ctx.out(C.byellow + '💡 Dica ' + h.index + '/' + h.total + ' do nível ' + id + ':' + C.reset + cost + '\n' + h.text + '\n');
+      // mostra todas as dicas já liberadas, marcando a nova
+      game.unlockedHints(id).forEach((text, i) => {
+        const isNew = !h.repeat && i === h.index - 1;
+        const tag = isNew ? (h.free ? C.gray + ' (nova, grátis: nível resolvido)' : C.gray + ' (nova: custa ' + HINT_COST * 100 + '% dos pontos do nível)') + C.reset : '';
+        ctx.out((isNew ? C.byellow : C.yellow) + 'Dica ' + (i + 1) + '/' + h.total + ' do nível ' + id + ':' + C.reset + tag + '\n  ' + text + '\n');
+      });
+      if (h.repeat) ctx.out(C.gray + 'Você já liberou todas as dicas deste nível.' + C.reset + '\n');
+      else if (h.index < h.total) ctx.out(C.gray + 'Rode "dica ' + id + '" de novo para a próxima.' + C.reset + '\n');
       return 0;
     };
-    dica.help = 'dica - mostra a próxima dica de um nível\nUSO: dica NÍVEL';
+    dica.help = 'dica - libera a próxima dica de um nível e mostra as já liberadas\nUSO: dica NÍVEL';
     shell.commands.dica = dica;
 
     const progresso = (ctx) => {

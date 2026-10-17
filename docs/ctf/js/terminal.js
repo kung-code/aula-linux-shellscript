@@ -210,6 +210,7 @@ export class Terminal {
     }
     if (!this.resolveInput) return;
     if (name === 'tab') this.tab();
+    else if (name === 'enter') { this.onKey({ key: 'Enter', preventDefault() {}, ctrlKey: false }); return; }
     else if (name === 'up' || name === 'down') this.onKey({ key: name === 'up' ? 'ArrowUp' : 'ArrowDown', preventDefault() {}, ctrlKey: false });
     else {
       const pos = this.input.selectionStart;

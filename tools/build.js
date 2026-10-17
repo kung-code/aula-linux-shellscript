@@ -71,9 +71,10 @@ export function buildAll({ write = true } = {}) {
   for (const b of BUNDLES) {
     const code = bundle(b.entry);
     const outFile = path.resolve(ROOT, b.out);
-    const current = fs.existsSync(outFile) ? fs.readFileSync(outFile, 'utf8') : null;
-    if (write && current !== code) fs.writeFileSync(outFile, code);
-    results.push({ out: b.out, upToDate: current === code, size: code.length });
+    const current = fs.existsSync(outFile) ? fs.readFileSync(outFile, 'utf8').replace(/\r\n/g, '\n') : null;
+    const upToDate = current === code.replace(/\r\n/g, '\n');
+    if (write && !upToDate) fs.writeFileSync(outFile, code);
+    results.push({ out: b.out, upToDate, size: code.length });
   }
   return results;
 }

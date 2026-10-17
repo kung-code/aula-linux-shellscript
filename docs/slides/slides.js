@@ -1,4 +1,4 @@
-import { clampIndex, parseHash, formatTime, copyText, highlightBash, navNext, navPrev, escapeHtml } from './deck.js';
+import { clampIndex, parseHash, formatTime, copyText, highlightBash, navNext, navPrev, escapeHtml, buildToc, filterToc, tocJump } from './deck.js';
 import { TerminalPlayer, ScriptPlayer, LayersDiagram, PermBuilder, icon } from './players.js';
 import { runDemos, makeDemoIo } from './demo-runner.js';
 import { buildSystem } from '../ctf/js/shell/system.js';
@@ -154,7 +154,90 @@ function renderNotes() {
   notesPanel.append(h, p, nx);
 }
 
+// ---------- sumário ----------
+const tocEl = document.getElementById('toc');
+const tocInput = document.getElementById('toc-input');
+const tocList = document.getElementById('toc-list');
+const TAG_ICON = { terminal: 'i-terminal', exercício: 'i-pencil', interativo: 'i-target' };
+const tocGroups = buildToc(slides.map((s) => {
+  let group = s.dataset.tocGroup;
+  if (!group && (s.classList.contains('divider') || s.classList.contains('ctf-slide'))) {
+    const k = s.querySelector('.kicker');
+    const h = s.querySelector('h2');
+    group = (k ? k.textContent.split('·')[0].trim() + ' · ' : '') + (s.classList.contains('ctf-slide') ? 'CTF' : h ? h.textContent.trim() : s.dataset.title);
+  }
+  const tags = [];
+  if (s.querySelector('.tplayer, .splayer')) tags.push('terminal');
+  if (s.classList.contains('exercise')) tags.push('exercício');
+  if (s.querySelector('.layers, .perm')) tags.push('interativo');
+  return { title: s.dataset.title || ('Slide ' + (slides.indexOf(s) + 1)), group, tags };
+}));
+let tocSel = 0;
+let tocFlat = [];
+
+function renderToc() {
+  const groups = filterToc(tocGroups, tocInput.value);
+  tocFlat = [];
+  let html = '';
+  for (const g of groups) {
+    html += '<div class="toc-group"><div class="toc-gname">' + escapeHtml(g.name) + '</div>';
+    for (const s of g.slides) {
+      const i = tocFlat.length;
+      tocFlat.push(s.index);
+      html += '<button type="button" role="option" class="toc-item' + (s.index === current ? ' is-current' : '') + (i === tocSel ? ' is-sel' : '') + '" data-i="' + s.index + '" aria-selected="' + (i === tocSel) + '">' +
+        '<span class="toc-num">' + (s.index + 1) + '</span><span class="toc-name">' + escapeHtml(s.title) + '</span>' +
+        s.tags.map((t) => '<span class="toc-tag" title="' + t + '">' + icon(TAG_ICON[t]) + '</span>').join('') +
+        (s.index === current ? '<span class="toc-here">você está aqui</span>' : '') + '</button>';
+    }
+    html += '</div>';
+  }
+  tocList.innerHTML = html || '<p class="toc-empty">Nenhum slide encontrado.</p>';
+  const sel = tocList.querySelector('.is-sel');
+  if (sel) sel.scrollIntoView({ block: 'nearest' });
+}
+
+function openToc() {
+  tocEl.hidden = false;
+  tocInput.value = '';
+  tocSel = 0;
+  renderToc();
+  // começa selecionando o slide atual
+  tocSel = Math.max(0, tocFlat.indexOf(current));
+  renderToc();
+  requestAnimationFrame(() => { tocEl.classList.add('open'); tocInput.focus(); });
+}
+function closeToc() {
+  tocEl.classList.remove('open');
+  tocEl.hidden = true;
+  document.getElementById('toggle-toc').focus({ preventScroll: true });
+}
+function tocGo(i) {
+  closeToc();
+  if (i !== current) go(i, { dir: i > current ? 1 : -1 });
+}
+
+document.getElementById('toggle-toc').addEventListener('click', () => (tocEl.hidden ? openToc() : closeToc()));
+tocEl.addEventListener('click', (e) => {
+  if (e.target.closest('[data-close]')) { closeToc(); return; }
+  const item = e.target.closest('.toc-item');
+  if (item) tocGo(Number(item.dataset.i));
+});
+tocInput.addEventListener('input', () => { tocSel = 0; renderToc(); });
+tocEl.addEventListener('keydown', (e) => {
+  e.stopPropagation();
+  if (e.key === 'Escape') { e.preventDefault(); closeToc(); }
+  else if (e.key === 'ArrowDown') { e.preventDefault(); tocSel = Math.min(tocFlat.length - 1, tocSel + 1); renderToc(); }
+  else if (e.key === 'ArrowUp') { e.preventDefault(); tocSel = Math.max(0, tocSel - 1); renderToc(); }
+  else if (e.key === 'Enter') {
+    e.preventDefault();
+    const jump = tocJump(tocInput.value, total);
+    if (jump >= 0) tocGo(jump);
+    else if (tocFlat.length) tocGo(tocFlat[tocSel]);
+  }
+});
+
 document.addEventListener('keydown', (e) => {
+  if (!tocEl.hidden) return;
   if (e.target.closest && e.target.closest('input, textarea')) return;
   if (e.altKey || e.ctrlKey || e.metaKey) return;
   switch (e.key) {
@@ -169,6 +252,7 @@ document.addEventListener('keydown', (e) => {
     case 'Home': go(0, { dir: -1 }); break;
     case 'End': go(total - 1, { dir: 1 }); break;
     case 'n': case 'N': showNotes = !showNotes; renderNotes(); break;
+    case 's': case 'S': e.preventDefault(); openToc(); break;
     case 'f': case 'F': toggleFullscreen(); break;
     case 'p': case 'P': {
       const c = steppables[current].find((x) => x.toggleAuto);

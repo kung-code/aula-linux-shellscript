@@ -3,7 +3,7 @@ import fs from 'fs';
 import { test } from './harness.js';
 import {
   clampIndex, parseHash, formatTime, copyText, highlightBash, splitCommands, navNext, navPrev,
-  permString, permOctal, octalToBits, ansiToHtml,
+  permString, permOctal, octalToBits, ansiToHtml, buildToc, filterToc, tocJump,
 } from '../docs/slides/deck.js';
 import { runDemos, makeDemoIo } from '../docs/slides/demo-runner.js';
 import { LAYERS, JOURNEY } from '../docs/slides/layers.js';
@@ -45,6 +45,33 @@ test('navegação por passos: navNext/navPrev', () => {
   assert.strictEqual(navPrev([{ step: 1, total: 2 }, { step: 0, total: 3 }]), 0);
   assert.strictEqual(navPrev([{ step: 0, total: 2 }]), -1);
   assert.strictEqual(navPrev([{ step: 2, total: 2 }, { step: 3, total: 3 }]), 1);
+});
+
+test('sumário: agrupa por seção, filtra sem acento e salta por número', () => {
+  const groups = buildToc([
+    { title: 'Capa' }, { title: 'Agenda' },
+    { title: 'Teoria', group: 'Parte 1 · O que é Linux?' }, { title: 'Peças', tags: ['interativo'] },
+    { title: 'Exercício 1', group: 'Parte 2', tags: ['exercício'] },
+  ]);
+  assert.deepStrictEqual(groups.map((g) => g.name), ['Abertura', 'Parte 1 · O que é Linux?', 'Parte 2']);
+  assert.deepStrictEqual(groups[1].slides.map((s) => s.index), [2, 3]);
+  assert.deepStrictEqual(filterToc(groups, 'exercicio').map((g) => g.slides[0].title), ['Exercício 1']);
+  assert.deepStrictEqual(filterToc(groups, 'linux').map((g) => g.name), ['Parte 1 · O que é Linux?']);
+  assert.deepStrictEqual(filterToc(groups, '2').flatMap((g) => g.slides.map((s) => s.index)), [1]);
+  assert.strictEqual(filterToc(groups, 'xyz').length, 0);
+  assert.strictEqual(filterToc(groups, '  ').length, 3);
+  assert.strictEqual(tocJump('4', 5), 3);
+  assert.strictEqual(tocJump('9', 5), -1);
+  assert.strictEqual(tocJump('abc', 5), -1);
+});
+
+test('sumário dos slides: todas as seções da aula viram grupos', () => {
+  const sections = (HTML.match(/class="slide (?:divider|ctf-slide)[^"]*"|data-toc-group="[^"]+"/g) || []).length;
+  assert.ok(sections >= 6, 'seções encontradas: ' + sections);
+  assert.ok(/id="toggle-toc"/.test(HTML) && /id="toc-input"/.test(HTML));
+  const titles = (HTML.match(/<section class="slide[^"]*" data-title="/g) || []).length;
+  const sectionsTotal = (HTML.match(/<section class="slide/g) || []).length;
+  assert.strictEqual(titles, sectionsTotal, 'todo slide precisa de data-title (vira o nome no sumário)');
 });
 
 test('timer: formatTime', () => {

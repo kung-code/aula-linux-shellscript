@@ -65,6 +65,8 @@
     <symbol id="i-expand" viewBox="0 0 24 24"><path d="M4 9V4h5M15 4h5v5M20 15v5h-5M9 20H4v-5"/></symbol>
     <symbol id="i-chev-left" viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></symbol>
     <symbol id="i-chev-right" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></symbol>
+    <symbol id="i-list" viewBox="0 0 24 24"><path d="M9 6h11M9 12h11M9 18h11"/><path d="M4 6h.01M4 12h.01M4 18h.01"/></symbol>
+    <symbol id="i-x" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></symbol>
   </defs>
 </svg>
 
@@ -171,7 +173,7 @@
   </div>
   <h1>Linux &amp; Shell Script</h1>
   <p class="subtitle">do zero ao primeiro script, em 1 hora</p>
-  <p class="hint-keys"><kbd>→</kbd> avança (comando a comando nos terminais) · <kbd>Shift</kbd>+<kbd>→</kbd> pula slide · <kbd>N</kbd> notas · <kbd>F</kbd> tela cheia</p>
+  <p class="hint-keys"><kbd>→</kbd> avança (comando a comando nos terminais) · <kbd>Shift</kbd>+<kbd>→</kbd> pula slide · <kbd>S</kbd> sumário · <kbd>N</kbd> notas · <kbd>F</kbd> tela cheia</p>
   <aside class="notes">Abrir com energia. Pedir para todos deixarem o terminal aberto (ou o simulador: link no chat). Nos slides com terminal, cada → digita o próximo comando.</aside>
 </section>
 
@@ -766,7 +768,7 @@ echo "$saudacao, $nome! Agora são $(date +%H:%M)."</code></pre>
 </section>
 
 <!-- ===================== ENCERRAMENTO ===================== -->
-<section class="slide" data-title="Resumo">
+<section class="slide" data-title="Resumo" data-toc-group="Encerramento">
   <h2>O que vimos hoje</h2>
   <div class="flow">
     <div><svg class="i"><use href="#i-compass"/></svg><b>Navegar</b><code>pwd cd ls</code></div>
@@ -822,10 +824,27 @@ echo "$saudacao, $nome! Agora são $(date +%H:%M)."</code></pre>
   <button type="button" id="prev" aria-label="Voltar"><svg class="i"><use href="#i-chev-left"/></svg></button>
   <span id="counter" aria-live="polite"></span>
   <button type="button" id="next" aria-label="Avançar"><svg class="i"><use href="#i-chev-right"/></svg></button>
+  <button type="button" id="toggle-toc" class="hud-toc" aria-label="Abrir sumário" title="Sumário (S)" aria-haspopup="dialog"><svg class="i"><use href="#i-list"/></svg><span>Sumário</span></button>
   <button type="button" id="toggle-notes" aria-label="Mostrar notas do professor" title="Notas (N)"><svg class="i"><use href="#i-notes"/></svg></button>
   <button type="button" id="fullscreen" aria-label="Tela cheia" title="Tela cheia (F)"><svg class="i"><use href="#i-expand"/></svg></button>
 </div>
 <div id="notes-panel" class="notes-panel" hidden></div>
+
+<div id="toc" class="toc" role="dialog" aria-modal="true" aria-labelledby="toc-title" hidden>
+  <div class="toc-backdrop" data-close></div>
+  <div class="toc-panel">
+    <div class="toc-head">
+      <h2 id="toc-title"><svg class="i"><use href="#i-list"/></svg>Sumário</h2>
+      <button type="button" class="toc-close" data-close aria-label="Fechar sumário"><svg class="i"><use href="#i-x"/></svg></button>
+    </div>
+    <label class="toc-search">
+      <svg class="i"><use href="#i-search"/></svg>
+      <input id="toc-input" type="search" autocomplete="off" spellcheck="false" placeholder="Buscar por tema ou digitar o número do slide…" aria-label="Buscar slide">
+    </label>
+    <div id="toc-list" class="toc-list" role="listbox" aria-label="Slides"></div>
+    <p class="toc-foot"><kbd>↑</kbd> <kbd>↓</kbd> escolher · <kbd>Enter</kbd> ir · <kbd>Esc</kbd> fechar · <kbd>S</kbd> abre o sumário</p>
+  </div>
+</div>
 
 <!-- slides.bundle.js é gerado a partir de slides.js por "node tools/build.js" (funciona também abrindo o arquivo direto, sem servidor) -->
 <script src="slides.bundle.js" defer></script>

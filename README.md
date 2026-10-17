@@ -22,6 +22,7 @@ tests/                testes automatizados (node tests/run.js)
 | `→` / `Espaço` | próximo passo: digita o próximo comando no terminal animado ou avança o diagrama. Sem passos pendentes, vai para o próximo slide |
 | `←` | desfaz o último passo (ou volta ao slide anterior, já completo) |
 | `Shift` + `→` / `←` | pula o slide inteiro |
+| `S` | abre o **sumário**: busca por tema ou número e vai direto ao slide (também pelo botão "Sumário" no rodapé) |
 | `P` | reproduz automaticamente os comandos do slide |
 | `T` | inicia/pausa o cronômetro do exercício |
 | `N` | notas do professor · `F` tela cheia |
@@ -66,5 +67,7 @@ Os testes cobrem o shell simulado (parser, expansões, scripts, permissões, com
 
 - **Flags por codinome:** cada aluno escolhe um codinome, e as flags são derivadas dele. Copiar a flag do colega não funciona.
 - **Progresso no navegador:** o progresso e os arquivos criados ficam salvos no `localStorage` do navegador do aluno. Não há placar compartilhado.
+- **Modo celular:** liga sozinho em telas pequenas, e o botão no topo alterna entre os modos. Nele, o terminal ocupa a tela inteira e as outras áreas (Níveis, Enviar, Ajuda) viram abas na parte de baixo. Há teclas extras, como `Enter`, `*`, `.`, `>`, `{` e `}`, e os botões `A−`/`A+` ajustam a fonte.
+- **Dicas:** o botão "Dica" abre um visualizador em que dá para voltar e avançar entre as dicas já liberadas sem gastar pontos. Liberar a próxima dica é um botão separado. No terminal, `dica N` mostra todas as dicas já liberadas do nível.
 - **Código de conclusão:** quem termina os 8 níveis recebe um código (`PINGUIM-XXXXXXXX`) para mostrar ao professor.
 - **Limite do modelo:** como tudo roda no navegador, um aluno curioso pode achar as respostas lendo o JavaScript. Para o objetivo da aula (praticar), isso é aceitável.

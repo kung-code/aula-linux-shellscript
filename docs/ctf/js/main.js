@@ -8,8 +8,10 @@ import { VFS } from './shell/vfs.js';
 import { C } from './shell/util.js';
 import { CtfGame, LEVELS } from './ctf/game.js';
 import { buildCtf } from './ctf/world.js';
+import { shouldUseMobile, clampFont, hintIndex, hintView } from './ui.js';
 
 const STORAGE_KEY = 'pinguim-ctf-v1';
+const UI_KEY = 'pinguim-ctf-ui'; // preferências de visualização (não são apagadas ao reiniciar o CTF)
 const $ = (sel) => document.querySelector(sel);
 
 function load() {
@@ -78,7 +80,9 @@ function start(nick, saved) {
 
   renderPanel(app);
   setupPanel(app);
+  setupHints(app);
   setupKeybar(term);
+  setupView(app);
 
   term.write(C.bcyan + 'PinguimOS 24.04 LTS · terminal simulado no navegador' + C.reset + '\n');
   term.write(C.gray + 'Os comandos funcionam como no bash de verdade. Digite "help" para ver a lista.' + C.reset + '\n');
@@ -135,14 +139,99 @@ function renderPanel(app) {
   const done = $('#done');
   done.hidden = !g.allSolved();
   if (g.allSolved()) $('#done-code').textContent = g.completionCode();
+  $('#mt-solved').textContent = g.solvedCount() + '/' + LEVELS.length;
+  if (app.hintView && !$('#hint-box').hidden) renderHint(app);
 }
 
+// ---------- visualizador de dicas (navegável) ----------
+// Clicar em "Dica" abre o visualizador. Se nenhuma dica foi liberada, libera a primeira.
+// As já liberadas podem ser revistas à vontade; liberar a próxima é uma ação explícita.
 function showHint(app, id) {
-  const h = app.game.hint(id);
+  const g = app.game;
+  if (!g.unlockedHints(id).length) g.hint(id);
+  app.hintView = { level: id, index: g.unlockedHints(id).length - 1 };
+  renderHint(app);
   const box = $('#hint-box');
   box.hidden = false;
-  box.querySelector('.hint-title').textContent = '💡 Nível ' + id + ' · dica ' + h.index + '/' + h.total + (h.free || h.repeat ? '' : ' (−25% dos pontos do nível)');
-  box.querySelector('.hint-text').textContent = h.text;
+  if (box.scrollIntoView) box.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+}
+
+function renderHint(app) {
+  const hv = app.hintView;
+  if (!hv) return;
+  const g = app.game;
+  const level = LEVELS.find((l) => l.id === hv.level);
+  const unlocked = g.unlockedHints(hv.level);
+  const v = hintView({ index: hv.index, unlocked: unlocked.length, total: level.hints.length, solved: g.nextHintFree(hv.level) });
+  hv.index = v.index;
+  const box = $('#hint-box');
+  box.querySelector('.hint-title').textContent = 'Nível ' + level.id + ' · ' + level.title;
+  const textEl = box.querySelector('.hint-text');
+  if (textEl.textContent !== (unlocked[v.index] || '')) {
+    textEl.textContent = unlocked[v.index] || '';
+    textEl.classList.remove('anim');
+    void textEl.offsetWidth; // reinicia a animação a cada troca de dica
+    textEl.classList.add('anim');
+  }
+  box.querySelector('.hint-count').textContent = 'Dica ' + (v.index + 1) + ' de ' + level.hints.length;
+  box.querySelector('.hint-dots').innerHTML = v.dots.map((d, i) => '<span class="hd hd-' + d + '" title="Dica ' + (i + 1) + '"></span>').join('');
+  $('#hint-prev').disabled = !v.canPrev;
+  $('#hint-next').disabled = !v.canNext;
+  const reveal = $('#hint-reveal');
+  reveal.hidden = !v.canReveal;
+  reveal.textContent = 'Liberar dica ' + (unlocked.length + 1) + (v.revealFree ? ' (grátis: nível resolvido)' : ' (−25% dos pontos do nível)');
+}
+
+function setupHints(app) {
+  $('#hint-prev').addEventListener('click', () => { app.hintView.index = hintIndex(app.hintView.index, -1, app.game.unlockedHints(app.hintView.level).length); renderHint(app); });
+  $('#hint-next').addEventListener('click', () => { app.hintView.index = hintIndex(app.hintView.index, 1, app.game.unlockedHints(app.hintView.level).length); renderHint(app); });
+  $('#hint-reveal').addEventListener('click', () => {
+    const id = app.hintView.level;
+    app.game.hint(id);
+    app.hintView.index = app.game.unlockedHints(id).length - 1;
+    renderHint(app);
+  });
+}
+
+// ---------- modo celular ----------
+function loadUi() {
+  try { return JSON.parse(localStorage.getItem(UI_KEY) || '{}') || {}; } catch (e) { return {}; }
+}
+function saveUi(ui) {
+  try { localStorage.setItem(UI_KEY, JSON.stringify(ui)); } catch (e) { /* navegação privada */ }
+}
+
+function setupView(app) {
+  const ui = loadUi();
+  const coarse = typeof matchMedia === 'function' && matchMedia('(pointer: coarse)').matches;
+  const applyFont = () => {
+    document.documentElement.style.setProperty('--term-font', clampFont(ui.font || (app.mobile ? 13 : 14.5)) + 'px');
+  };
+  const setMobile = (on) => {
+    app.mobile = on;
+    document.body.classList.toggle('mobile-mode', on);
+    $('#btn-mobile').setAttribute('aria-pressed', String(on));
+    $('#btn-mobile span').textContent = on ? 'Modo computador' : 'Modo celular';
+    setTab(on ? 'terminal' : null);
+    applyFont();
+  };
+  const setTab = (tab) => {
+    document.body.dataset.tab = tab || '';
+    for (const b of document.querySelectorAll('#mtabs button')) b.classList.toggle('active', b.dataset.tab === tab);
+    if (tab === 'terminal' || !tab) setTimeout(() => { app.term.scrollToEnd(); app.term.focus(); }, 0);
+  };
+  app.setTab = setTab;
+  $('#btn-mobile').addEventListener('click', () => { ui.mobile = !app.mobile; saveUi(ui); setMobile(ui.mobile); });
+  $('#font-down').addEventListener('click', () => { ui.font = clampFont((ui.font || (app.mobile ? 13 : 14.5)) - 1); saveUi(ui); applyFont(); });
+  $('#font-up').addEventListener('click', () => { ui.font = clampFont((ui.font || (app.mobile ? 13 : 14.5)) + 1); saveUi(ui); applyFont(); });
+  for (const b of document.querySelectorAll('#mtabs button')) b.addEventListener('click', () => setTab(b.dataset.tab));
+  // no celular, o teclado virtual encolhe a tela: o terminal acompanha a área visível
+  if (window.visualViewport) {
+    const fit = () => document.documentElement.style.setProperty('--vvh', window.visualViewport.height + 'px');
+    window.visualViewport.addEventListener('resize', fit);
+    fit();
+  }
+  setMobile(shouldUseMobile({ saved: ui.mobile, width: window.innerWidth, coarse }));
 }
 
 function setupPanel(app) {
@@ -157,7 +246,7 @@ function setupPanel(app) {
     if (r.ok) input.value = '';
     app.term.focus();
   });
-  $('#hint-close').addEventListener('click', () => { $('#hint-box').hidden = true; app.term.focus(); });
+  $('#hint-close').addEventListener('click', () => { $('#hint-box').hidden = true; app.hintView = null; if (!app.mobile) app.term.focus(); });
   $('#btn-reset').addEventListener('click', () => {
     if (!confirm('Reiniciar o CTF? Seu progresso e os arquivos que você criou serão apagados.')) return;
     try { localStorage.removeItem(STORAGE_KEY); } catch (e) { /* ignora */ }

@@ -44,6 +44,14 @@
         <span>Pontos <b id="score"></b></span>
         <span>Níveis <b id="solved"></b></span>
       </div>
+      <div class="view-tools" role="group" aria-label="Visualização">
+        <button type="button" id="font-down" class="tool" aria-label="Diminuir fonte do terminal" title="Diminuir fonte">A−</button>
+        <button type="button" id="font-up" class="tool" aria-label="Aumentar fonte do terminal" title="Aumentar fonte">A+</button>
+        <button type="button" id="btn-mobile" class="tool tool-mobile" aria-pressed="false" title="Modo celular: uma tela por vez, teclas extras e fonte ajustável">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="6.5" y="2.5" width="11" height="19" rx="2.5"/><path d="M10.5 18.5h3"/></svg>
+          <span>Modo celular</span>
+        </button>
+      </div>
       <div class="progress" aria-hidden="true"><div id="progress-bar"></div></div>
     </header>
 
@@ -67,11 +75,17 @@
           <button type="button" data-key="-">-</button>
           <button type="button" data-key="&quot;">"</button>
           <button type="button" data-key="$">$</button>
+          <button type="button" data-key="*" class="m-only">*</button>
+          <button type="button" data-key="." class="m-only">.</button>
+          <button type="button" data-key="&gt;" class="m-only">&gt;</button>
+          <button type="button" data-key="{" class="m-only">{</button>
+          <button type="button" data-key="}" class="m-only">}</button>
+          <button type="button" data-key="enter" class="m-only key-enter">Enter ⏎</button>
         </div>
       </section>
 
       <aside class="panel">
-        <section class="card">
+        <section class="card" data-mpanel="enviar">
           <h2>Enviar flag</h2>
           <form id="submit-form" class="submit-form">
             <input id="flag-input" autocomplete="off" spellcheck="false" placeholder="FLAG{...}" aria-label="Flag">
@@ -81,24 +95,34 @@
           <p class="small">Também dá para enviar pelo terminal: <code>enviar FLAG{...}</code></p>
         </section>
 
-        <section id="done" class="card done" hidden>
+        <section id="done" class="card done" data-mpanel="enviar niveis" hidden>
           <h2>🏆 Missão cumprida!</h2>
           <p>Código de conclusão:</p>
           <p class="code" id="done-code"></p>
           <p class="small">Mostre ao professor. Agora tente o desafio para casa!</p>
         </section>
 
-        <section id="hint-box" class="card hint" hidden>
-          <div class="hint-head"><b class="hint-title"></b><button id="hint-close" type="button" aria-label="Fechar dica">✕</button></div>
+        <section id="hint-box" class="card hint" data-mpanel="niveis" hidden aria-live="polite">
+          <div class="hint-head">
+            <b class="hint-title"></b>
+            <button id="hint-close" type="button" aria-label="Fechar dica">✕</button>
+          </div>
+          <div class="hint-dots" aria-hidden="true"></div>
           <p class="hint-text"></p>
+          <div class="hint-nav">
+            <button type="button" id="hint-prev" aria-label="Dica anterior">‹ Anterior</button>
+            <span class="hint-count"></span>
+            <button type="button" id="hint-next" aria-label="Próxima dica liberada">Próxima ›</button>
+          </div>
+          <button type="button" id="hint-reveal" class="hint-reveal"></button>
         </section>
 
-        <section class="card">
+        <section class="card" data-mpanel="niveis">
           <h2>Níveis</h2>
           <ol id="levels" class="levels"></ol>
         </section>
 
-        <section class="card">
+        <section class="card" data-mpanel="ajuda">
           <h2>Cola rápida</h2>
           <dl class="cheat">
             <dt>ls -la</dt><dd>lista tudo, com detalhes</dd>
@@ -114,13 +138,29 @@
           <p class="small">Atalhos: <kbd>Tab</kbd> completa · <kbd>↑</kbd> histórico · <kbd>Ctrl</kbd>+<kbd>C</kbd> interrompe · <kbd>Ctrl</kbd>+<kbd>L</kbd> limpa</p>
         </section>
 
-        <section class="card actions">
+        <section class="card actions" data-mpanel="ajuda">
           <button id="btn-reset" type="button" class="ghost">Reiniciar CTF</button>
           <button id="btn-nick" type="button" class="ghost">Trocar codinome</button>
           <a class="ghost" href="../">Material da aula</a>
         </section>
       </aside>
     </div>
+
+    <!-- abas do modo celular: uma área por vez, para o terminal ocupar a tela toda -->
+    <nav id="mtabs" class="mtabs" aria-label="Seções do CTF">
+      <button type="button" data-tab="terminal" class="active">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2.5" y="4" width="19" height="16" rx="2.5"/><path d="M7 9.5l3 2.5-3 2.5M12.5 15h4.5"/></svg><span>Terminal</span>
+      </button>
+      <button type="button" data-tab="niveis">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 21V3.5"/><path d="M5 4h12l-2.5 4.5L17 13H5"/></svg><span>Níveis</span><b class="mt-badge" id="mt-solved"></b>
+      </button>
+      <button type="button" data-tab="enviar">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 11.5l18-8-8 18-2-8-8-2z"/></svg><span>Enviar</span>
+      </button>
+      <button type="button" data-tab="ajuda">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.6.3-1 .9-1 1.6v.6M12 17h.01"/></svg><span>Ajuda</span>
+      </button>
+    </nav>
   </div>
 
   <noscript><p class="noscript">Este CTF precisa de JavaScript habilitado.</p></noscript>
