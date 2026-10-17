@@ -18,7 +18,7 @@ test('bundles estão atualizados (rode: node tools/build.js)', () => {
   for (const b of BUNDLES) {
     // compara ignorando CRLF/LF (o Git no Windows pode converter as quebras de linha)
     const current = fs.readFileSync(new URL('../' + b.out, import.meta.url), 'utf8').replace(/\r\n/g, '\n');
-    assert.ok(current === bundle(b.entry).replace(/\r\n/g, '\n'), b.out + ' está desatualizado: rode "node tools/build.js"');
+    assert.ok(current === bundle(b.entry, { anonymous: !!b.anonymous }).replace(/\r\n/g, '\n'), b.out + ' está desatualizado: rode "node tools/build.js"');
     assert.ok(!/^(export\s+(\{|\*|default|function|class|const|let|var|async)|import\s.+\sfrom\s|import\s+')/m.test(current), b.out + ' contém import/export');
   }
 });

@@ -9,6 +9,7 @@ import './vi.test.js';
 import './ui.test.js';
 import './gate.test.js';
 import './lab.test.js';
+import './preparacao.test.js';
 import './bundle.test.js';
 
 runAll().then((failed) => { process.exitCode = failed ? 1 : 0; });

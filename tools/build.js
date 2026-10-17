@@ -11,6 +11,8 @@ export const BUNDLES = [
   { entry: 'docs/ctf/js/main.js', out: 'docs/ctf/js/ctf.bundle.js' },
   { entry: 'docs/slides/slides.js', out: 'docs/slides/slides.bundle.js' },
   { entry: 'docs/terminal/js/lab.js', out: 'docs/terminal/js/lab.bundle.js' },
+  // página de preparação: publicada num site separado, sem referências ao curso
+  { entry: 'src/preparacao/prep.js', out: 'preparacao/prep.bundle.js', anonymous: true },
 ];
 
 const IMPORT_RE = /^import\s+(?:\{([^}]*)\}\s+from\s+)?'([^']+)';?[ \t]*$/gm;
@@ -43,7 +45,9 @@ function transform(code, file, idOf) {
   return { code: out, exportsList };
 }
 
-export function bundle(entry) {
+// anonymous: troca os caminhos dos módulos por ids neutros (m1, m2...).
+// Usado na página de preparação, publicada separada do site do curso.
+export function bundle(entry, { anonymous = false } = {}) {
   const order = [];
   const seen = new Set();
   const visit = (file) => {
@@ -58,19 +62,21 @@ export function bundle(entry) {
     order.push({ file, code });
   };
   visit(path.resolve(ROOT, entry));
+  const ids = new Map(order.map((o, i) => [rel(o.file), anonymous ? 'm' + (i + 1) : rel(o.file)]));
+  const idOf = (file) => ids.get(rel(file)) || rel(file);
   const parts = order.map(({ file, code }) => {
-    const id = rel(file);
-    const t = transform(code, file, rel);
-    return '// ---- ' + id + ' ----\n__m[' + JSON.stringify(id) + '] = (function () {\n' + t.code + '\nreturn { ' + t.exportsList.join(', ') + ' };\n})();\n';
+    const id = idOf(file);
+    const t = transform(code, file, idOf);
+    return (anonymous ? '' : '// ---- ' + id + ' ----\n') + '__m[' + JSON.stringify(id) + '] = (function () {\n' + t.code + '\nreturn { ' + t.exportsList.join(', ') + ' };\n})();\n';
   });
-  return '// Arquivo gerado por tools/build.js a partir de ' + entry + ' — NÃO edite à mão.\n' +
+  return '// Arquivo gerado por tools/build.js' + (anonymous ? '' : ' a partir de ' + entry) + ' — NÃO edite à mão.\n' +
     '(function () {\n\'use strict\';\nconst __m = {};\n' + parts.join('\n') + '})();\n';
 }
 
 export function buildAll({ write = true } = {}) {
   const results = [];
   for (const b of BUNDLES) {
-    const code = bundle(b.entry);
+    const code = bundle(b.entry, { anonymous: !!b.anonymous });
     const outFile = path.resolve(ROOT, b.out);
     const current = fs.existsSync(outFile) ? fs.readFileSync(outFile, 'utf8').replace(/\r\n/g, '\n') : null;
     const upToDate = current === code.replace(/\r\n/g, '\n');

@@ -12,6 +12,8 @@ docs/                 ← site publicado (GitHub Pages)
     js/vi.js          editor vi/vim (modos normal, inserção e :comandos)
     js/ctf/           níveis, flags, dicas e pontuação
   cola/               cola de comandos para imprimir
+preparacao/           página pré-aula (publicada num site SEPARADO; ver abaixo)
+src/preparacao/       código-fonte da página pré-aula
 planejamento/         plano de aula, exercícios, CTF e desafio para casa (rascunho validado)
 tests/                testes automatizados (node tests/run.js)
 ```
@@ -74,3 +76,18 @@ Os testes cobrem o shell simulado (parser, expansões, scripts, permissões, com
 - **Dicas:** o botão "Dica" abre um visualizador em que dá para voltar e avançar entre as dicas já liberadas sem gastar pontos. Liberar a próxima dica é um botão separado. No terminal, `dica N` mostra todas as dicas já liberadas do nível.
 - **Código de conclusão:** quem termina os 8 níveis recebe um código (`PINGUIM-XXXXXXXX`) para mostrar ao professor.
 - **Limite do modelo:** como tudo roda no navegador, um aluno curioso pode achar as respostas lendo o JavaScript. Para o objetivo da aula (praticar), isso é aceitável.
+
+## Página de preparação (pré-aula)
+
+`preparacao/` é uma página de cerca de 15 minutos para os alunos lerem **antes** da aula. Ela traz três temas (como o Linux se organiza, o que o shell faz com um comando e para onde vai a saída), cada um com um terminal simulado embutido. Não tem notas, cadastro nem progresso salvo.
+
+Ela é **independente do site do curso**: não tem links para os slides, o CTF ou o terminal de prática, e o script (`prep.bundle.js`) não revela os caminhos do curso. Um teste garante isso. Para os alunos não chegarem ao curso pelo endereço, publique-a num **repositório separado**:
+
+1. No GitHub, crie um repositório **público** novo, por exemplo `linux-preparacao`.
+2. Envie para ele **apenas o conteúdo** da pasta `preparacao/` (`index.html`, `prep.css` e `prep.bundle.js`), com o `index.html` na raiz.
+3. Em **Settings → Pages**, escolha **Deploy from a branch**, branch `main`, pasta **`/ (root)`**.
+4. O endereço para enviar aos alunos fica `https://SEU-USUARIO.github.io/linux-preparacao/`.
+
+Para editar a página, altere `preparacao/index.html`, `preparacao/prep.css` ou `src/preparacao/*.js`. Depois rode `node tools/build.js` e copie de novo os três arquivos para o repositório da preparação.
+
+> O site do curso continua público no endereço dele. Se quiser escondê-lo até o dia da aula, desative o GitHub Pages deste repositório (Settings → Pages → Unpublish site) ou torne o repositório privado, e reative na véspera.

@@ -3504,7 +3504,7 @@ commands.chown = (ctx) => {
 commands.sudo = (ctx) => {
   ctx.err('[sudo] senha para ' + ctx.shell.user + ': \n');
   ctx.err(ctx.shell.user + ' não está no arquivo sudoers. Este incidente será reportado. 🚨\n');
-  ctx.err(C.gray + '(neste simulador você é um usuário comum — e nada no CTF exige sudo)' + C.reset + '\n');
+  ctx.err(C.gray + '(neste simulador você é um usuário comum — e nada aqui exige sudo)' + C.reset + '\n');
   return 1;
 };
 commands.su = commands.sudo;
