@@ -335,7 +335,7 @@
     <div>
       <p class="kicker">Parte 2 · digite junto!</p>
       <h2>Terminal essencial</h2>
-      <p class="big">Abra o seu terminal ou o <a href="../ctf/" target="_blank" rel="noopener">simulador no navegador ↗</a></p>
+      <p class="big">Abra o seu terminal ou o <a href="../terminal/" target="_blank" rel="noopener">terminal de prática no navegador ↗</a></p>
     </div>
     <div data-art="cover-term" class="art-term-big"></div>
   </div>
@@ -758,10 +758,14 @@ echo "$saudacao, $nome! Agora são $(date +%H:%M)."</code></pre>
         <li><svg class="i"><use href="#i-bulb"/></svg><span>Travou? <code>dica N</code> (custa 25% dos pontos do nível)</span></li>
         <li><svg class="i"><use href="#i-user"/></svg><span>Cada codinome tem <b>flags próprias</b></span></li>
       </ul>
-      <a class="btn-big" href="../ctf/" target="_blank" rel="noopener">Abrir o CTF ↗</a>
+      <div class="ctf-access">
+        <a class="btn-big" href="../ctf/" target="_blank" rel="noopener">Abrir o CTF ↗</a>
+        <!-- Única ocorrência da senha. Para trocar: node tools/senha.js NOVA_SENHA -->
+        <div class="pw-reveal" data-password="LIN1X"></div>
+      </div>
     </div>
     <div class="center">
-      <div data-art="flag"></div>
+      <div data-art="flag" class="ctf-flag"></div>
       <div class="timer" data-seconds="540"></div>
     </div>
   </div>

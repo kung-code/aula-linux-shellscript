@@ -6,6 +6,7 @@ Material de uma aula de ~1h para estudantes de TI: slides, um CTF com terminal L
 docs/                 ← site publicado (GitHub Pages)
   index.html          página inicial (links para tudo)
   slides/             apresentação (atalhos abaixo)
+  terminal/           terminal de prática para acompanhar a aula (sem jogo, com roteiro de comandos)
   ctf/                CTF "Missão Servidor Pinguim" + terminal simulado
     js/shell/         shell simulado: sistema de arquivos, parser bash, ~60 comandos
     js/vi.js          editor vi/vim (modos normal, inserção e :comandos)
@@ -64,6 +65,8 @@ node tests/run.js
 Os testes cobrem o shell simulado (parser, expansões, scripts, permissões, comandos), cada nível do CTF (incluindo as armadilhas, como o `cat` sem aspas falhar), a pontuação e as dicas. Também executam no simulador todos os exemplos dos slides marcados com `data-run`. Funciona a partir do Node 12, sem dependências.
 
 ## Sobre o CTF
+
+- **Senha de acesso:** o CTF só abre com a senha que você mostra no slide do CTF. Nesse slide, aperte `→` ou clique em "Revelar senha". O site guarda apenas um hash da senha, e o texto dela fica só no slide. Para trocar a senha, rode `node tools/senha.js NOVA_SENHA`: o comando atualiza o hash, o slide e os bundles. Quem já tinha entrado precisa digitar a senha nova. Como tudo roda no navegador, um aluno curioso pode descobrir a senha lendo o código-fonte dos slides; a senha serve para organizar a aula, não como segurança.
 
 - **Flags por codinome:** cada aluno escolhe um codinome, e as flags são derivadas dele. Copiar a flag do colega não funciona.
 - **Progresso no navegador:** o progresso e os arquivos criados ficam salvos no `localStorage` do navegador do aluno. Não há placar compartilhado.

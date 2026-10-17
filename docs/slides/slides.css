@@ -594,3 +594,19 @@ pre.code:hover .copy, .copy:focus { opacity: 1; }
   .art { max-height: 30vh; }
   .step-hint span { display: none; }
 }
+
+/* ---------- senha do CTF ---------- */
+.ctf-access { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 1em; margin-top: 1em; }
+.ctf-access .btn-big { margin-top: 0; }
+.pw { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: .6em .8em; min-width: 13em; }
+.pw.revealed { border-color: var(--accent); box-shadow: 0 0 0 4px #ffcc3322; }
+.pw-label { display: flex; gap: .4em; align-items: center; font-size: .62em; text-transform: uppercase; letter-spacing: .1em; font-weight: 700; color: var(--muted); }
+.pw-label .i { color: var(--accent); }
+.pw-value { display: flex; gap: .12em; font: 800 1.9em var(--mono); color: var(--accent); margin: .1em 0 .2em; min-height: 1.3em; }
+.pw-ch { display: inline-block; min-width: .7em; text-align: center; }
+.pw-ch:not(.on) { color: #4a5575; }
+.pw-ch.on { animation: pwIn .5s var(--spring) both; animation-delay: calc(var(--i) * 90ms); }
+@keyframes pwIn { from { opacity: 0; transform: translateY(-14px) rotateX(90deg); } }
+.pw .tp-ctrl { border: 0; background: none; padding: 0; font-size: .62em; }
+.pw.revealed .tp-next { display: none; }
+.ctf-flag .art-flag { max-height: 22vh; }

@@ -599,6 +599,41 @@ class LayersDiagram extends Steppable {
   }
 }
 
+// ---------- Senha do CTF: fica escondida até o professor revelar (→ ou clique) ----------
+class PasswordReveal extends Steppable {
+  constructor(host) {
+    super();
+    this.password = host.dataset.password || '';
+    this.total = 1;
+    this.step = 0;
+    host.classList.add('pw');
+    host.removeAttribute('data-password'); // não fica visível ao inspecionar o slide já carregado
+    host.innerHTML =
+      '<div class="pw-label">' + icon('i-lock') + '<span>Senha de acesso ao CTF</span></div>' +
+      '<div class="pw-value" aria-live="polite"></div>' +
+      '<div class="tp-ctrl"><button type="button" class="tp-btn tp-next" data-act="next">' + icon('i-key') + '<span>Revelar senha</span></button>' +
+      '<button type="button" class="tp-btn" data-act="reset" aria-label="Esconder senha" title="Esconder">' + icon('i-eye-off') + '</button></div>';
+    this.value = host.querySelector('.pw-value');
+    this.bind(host, () => this.password);
+    this.render();
+  }
+
+  render() {
+    const shown = this.step >= 1;
+    this.value.innerHTML = Array.from(this.password).map((ch, i) =>
+      '<span class="pw-ch' + (shown ? ' on' : '') + '" style="--i:' + i + '">' + (shown ? escapeHtml(ch) : '•') + '</span>').join('');
+    this.el.classList.toggle('revealed', shown);
+    this.updateCount();
+  }
+
+  async next() {
+    if (this.step >= this.total) return;
+    this.step = 1;
+    this.render();
+    await sleep(REDUCED ? 0 : 500);
+  }
+}
+
 // ---------- Montador de permissões (chmod) ----------
 class PermBuilder {
   constructor(host) {
@@ -640,7 +675,7 @@ class PermBuilder {
   }
 }
 
-return { icon, TerminalPlayer, ScriptPlayer, LayersDiagram, PermBuilder };
+return { icon, TerminalPlayer, ScriptPlayer, LayersDiagram, PasswordReveal, PermBuilder };
 })();
 
 // ---- docs/slides/demo-runner.js ----
@@ -4380,7 +4415,7 @@ return { buildSystem };
 // ---- docs/slides/slides.js ----
 __m["docs/slides/slides.js"] = (function () {
 const { clampIndex, parseHash, formatTime, copyText, highlightBash, navNext, navPrev, escapeHtml, buildToc, filterToc, tocJump } = __m["docs/slides/deck.js"];
-const { TerminalPlayer, ScriptPlayer, LayersDiagram, PermBuilder, icon } = __m["docs/slides/players.js"];
+const { TerminalPlayer, ScriptPlayer, LayersDiagram, PermBuilder, PasswordReveal, icon } = __m["docs/slides/players.js"];
 const { runDemos, makeDemoIo } = __m["docs/slides/demo-runner.js"];
 const { buildSystem } = __m["docs/ctf/js/shell/system.js"];
 const { Shell } = __m["docs/ctf/js/shell/interpreter.js"];
@@ -4422,6 +4457,7 @@ for (const pre of document.querySelectorAll('pre[data-demo]')) {
 
 for (const host of document.querySelectorAll('.layers-diagram')) register(new LayersDiagram(host));
 for (const host of document.querySelectorAll('.perm-builder')) new PermBuilder(host);
+for (const host of document.querySelectorAll('.pw-reveal')) register(new PasswordReveal(host));
 
 // Código estático: realce + copiar + nome do arquivo
 for (const pre of document.querySelectorAll('pre.code')) {

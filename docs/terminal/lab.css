@@ -1,0 +1,31 @@
+/* Ajustes do terminal de prática sobre o estilo do CTF (../ctf/css/style.css) */
+.brand { display: flex; align-items: center; gap: 8px; }
+.brand-ico { width: 20px; height: 20px; fill: none; stroke: var(--accent2); stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.lab .stats b { color: var(--accent2); }
+
+.roteiro { display: flex; flex-direction: column; gap: 6px; margin-top: 8px; }
+.rt-sec { border: 1px solid var(--line); border-radius: 10px; background: #0f172b; overflow: hidden; }
+.rt-sec summary {
+  display: flex; align-items: center; gap: 8px; padding: 7px 10px; cursor: pointer; list-style: none; font-size: .88rem; font-weight: 600;
+}
+.rt-sec summary::-webkit-details-marker { display: none; }
+.rt-sec summary::after { content: '▸'; margin-left: 4px; color: var(--muted); transition: transform .2s; }
+.rt-sec[open] summary::after { transform: rotate(90deg); }
+.rt-num { width: 22px; height: 22px; border-radius: 50%; display: grid; place-items: center; background: #232c42; font-size: .72rem; flex: none; }
+.rt-sec.done .rt-num { background: var(--ok); color: #04210f; }
+.rt-title { flex: 1; }
+.rt-prog { font-family: var(--mono); font-size: .72rem; color: var(--muted); }
+.rt-cmds { display: flex; flex-direction: column; gap: 4px; padding: 0 8px 8px; }
+.rt-cmd {
+  text-align: left; font-family: var(--mono); font-size: .78rem; color: var(--term-fg);
+  background: var(--term-bg); border: 1px solid #222a3d; border-radius: 7px; padding: 6px 8px; cursor: pointer;
+  white-space: pre-wrap; word-break: break-word;
+}
+.rt-cmd::before { content: '$ '; color: var(--ok); }
+.rt-cmd:hover { border-color: var(--accent2); }
+.rt-cmd.done { opacity: .6; }
+.rt-cmd.done::after { content: '  ✓'; color: var(--ok); }
+
+.mobile-mode[data-tab="roteiro"] .panel > [data-mpanel~="roteiro"] { display: block; }
+.mobile-mode .lab-tabs { grid-template-columns: repeat(3, 1fr); }
+.mobile-mode .rt-cmd { font-size: .85rem; padding: 9px 10px; }

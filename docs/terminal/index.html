@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Terminal de Prática · Linux</title>
+  <meta name="description" content="Terminal Linux simulado no navegador para praticar junto com a aula.">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%234fd1c5' stroke-width='2' stroke-linecap='round'><rect x='2' y='4' width='20' height='16' rx='3' fill='%230b1020'/><path d='M6 9l3 3-3 3M12 15h6'/></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../ctf/css/style.css">
+  <link rel="stylesheet" href="lab.css">
+</head>
+<body class="lab">
+  <div id="app" class="app">
+    <header class="topbar">
+      <div class="brand">
+        <svg class="brand-ico" viewBox="0 0 24 24" aria-hidden="true"><rect x="2.5" y="4" width="19" height="16" rx="2.5"/><path d="M7 9.5l3 2.5-3 2.5M12.5 15h4.5"/></svg>
+        Terminal de Prática
+      </div>
+      <div class="stats"><span>Roteiro da aula <b id="roteiro-count"></b></span></div>
+      <div class="view-tools" role="group" aria-label="Visualização">
+        <button type="button" id="font-down" class="tool" aria-label="Diminuir fonte do terminal" title="Diminuir fonte">A−</button>
+        <button type="button" id="font-up" class="tool" aria-label="Aumentar fonte do terminal" title="Aumentar fonte">A+</button>
+        <button type="button" id="btn-mobile" class="tool tool-mobile" aria-pressed="false" title="Modo celular: uma tela por vez, teclas extras e fonte ajustável">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="6.5" y="2.5" width="11" height="19" rx="2.5"/><path d="M10.5 18.5h3"/></svg>
+          <span>Modo celular</span>
+        </button>
+      </div>
+    </header>
+
+    <div class="layout">
+      <section class="term-wrap" aria-label="Terminal">
+        <div class="term-chrome" aria-hidden="true">
+          <span class="dot r"></span><span class="dot y"></span><span class="dot g"></span>
+          <span class="term-title">aluno@pinguimcorp: ~</span>
+        </div>
+        <div class="term-holder">
+          <div id="terminal"></div>
+        </div>
+        <div id="keybar" class="keybar" aria-label="Teclas de atalho">
+          <button type="button" data-key="tab">Tab</button>
+          <button type="button" data-key="up">↑</button>
+          <button type="button" data-key="down">↓</button>
+          <button type="button" data-key="ctrl-c">Ctrl+C</button>
+          <button type="button" data-key="|">|</button>
+          <button type="button" data-key="~">~</button>
+          <button type="button" data-key="/">/</button>
+          <button type="button" data-key="-">-</button>
+          <button type="button" data-key="&quot;">"</button>
+          <button type="button" data-key="$">$</button>
+          <button type="button" data-key="*" class="m-only">*</button>
+          <button type="button" data-key="." class="m-only">.</button>
+          <button type="button" data-key="&gt;" class="m-only">&gt;</button>
+          <button type="button" data-key="{" class="m-only">{</button>
+          <button type="button" data-key="}" class="m-only">}</button>
+          <button type="button" data-key="enter" class="m-only key-enter">Enter ⏎</button>
+        </div>
+      </section>
+
+      <aside class="panel">
+        <section class="card" data-mpanel="roteiro">
+          <h2>Roteiro da aula</h2>
+          <p class="small">Clique num comando para colocá-lo no terminal e aperte <kbd>Enter</kbd>. O que você já rodou fica marcado.</p>
+          <div id="roteiro" class="roteiro"></div>
+        </section>
+
+        <section class="card" data-mpanel="ajuda">
+          <h2>Cola rápida</h2>
+          <dl class="cheat">
+            <dt>pwd · ls -la</dt><dd>onde estou · o que tem aqui</dd>
+            <dt>cd dir · cd ..</dt><dd>entra · sobe um nível</dd>
+            <dt>mkdir · touch</dt><dd>cria diretório · arquivo</dd>
+            <dt>cp · mv · rm</dt><dd>copia · move · remove</dd>
+            <dt>cat · head · tail</dt><dd>lê arquivos</dd>
+            <dt>grep · find</dt><dd>procura texto · arquivos</dd>
+            <dt>cmd1 | cmd2</dt><dd>pipe: saída vira entrada</dd>
+            <dt>&gt; · &gt;&gt;</dt><dd>grava · acrescenta em arquivo</dd>
+            <dt>chmod +x arq</dt><dd>permite executar</dd>
+            <dt>nano · vi arq</dt><dd>edita (no vi: <code>i</code> escreve, <code>Esc</code> <code>:wq</code> salva e sai)</dd>
+            <dt>man cmd · help</dt><dd>manual · lista de comandos</dd>
+          </dl>
+          <p class="small">Atalhos: <kbd>Tab</kbd> completa · <kbd>↑</kbd> histórico · <kbd>Ctrl</kbd>+<kbd>C</kbd> interrompe · <kbd>Ctrl</kbd>+<kbd>L</kbd> limpa</p>
+        </section>
+
+        <section class="card actions" data-mpanel="ajuda">
+          <button id="btn-reset" type="button" class="ghost">Reiniciar terminal</button>
+          <a class="ghost" href="../slides/">Slides</a>
+          <a class="ghost" href="../cola/">Cola para imprimir</a>
+          <a class="ghost" href="../">Material da aula</a>
+        </section>
+      </aside>
+    </div>
+
+    <nav id="mtabs" class="mtabs lab-tabs" aria-label="Seções">
+      <button type="button" data-tab="terminal" class="active">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2.5" y="4" width="19" height="16" rx="2.5"/><path d="M7 9.5l3 2.5-3 2.5M12.5 15h4.5"/></svg><span>Terminal</span>
+      </button>
+      <button type="button" data-tab="roteiro">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6h11M9 12h11M9 18h11"/><path d="M4 6h.01M4 12h.01M4 18h.01"/></svg><span>Roteiro</span>
+      </button>
+      <button type="button" data-tab="ajuda">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.6.3-1 .9-1 1.6v.6M12 17h.01"/></svg><span>Ajuda</span>
+      </button>
+    </nav>
+  </div>
+
+  <noscript><p class="noscript">Este terminal precisa de JavaScript habilitado.</p></noscript>
+  <!-- lab.bundle.js é gerado a partir de js/lab.js por "node tools/build.js" -->
+  <script src="js/lab.bundle.js" defer></script>
+</body>
+</html>

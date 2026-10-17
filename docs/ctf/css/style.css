@@ -266,3 +266,14 @@ body.mobile-mode { overflow: hidden; }
 .mtabs button.active { color: var(--accent); }
 .mtabs button.active::before { content: ''; position: absolute; top: 0; left: 25%; right: 25%; height: 2px; background: var(--accent); border-radius: 2px; }
 .mt-badge { position: absolute; top: 4px; right: calc(50% - 26px); font-size: .6rem; background: #3ddc8433; color: var(--ok); border-radius: 999px; padding: 0 5px; }
+
+/* ---------- senha de acesso ---------- */
+.gate-lock {
+  width: 64px; height: 64px; border-radius: 18px; display: grid; place-items: center;
+  background: linear-gradient(135deg, #ffcc3333, #4fd1c522); color: var(--accent);
+}
+.gate-lock svg { width: 34px; height: 34px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; }
+#gate-input { letter-spacing: .25em; text-transform: uppercase; }
+.gate-error { color: var(--err); min-height: 1.3em; margin: .5em 0 0; font-size: .9rem; }
+.start-form.shake { animation: shake .4s; }
+@keyframes shake { 20%, 60% { transform: translateX(-6px); } 40%, 80% { transform: translateX(6px); } }

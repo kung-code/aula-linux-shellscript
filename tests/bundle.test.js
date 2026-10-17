@@ -7,7 +7,7 @@ import { bundle, BUNDLES } from '../tools/build.js';
 // Regressão: abrir o index.html direto do disco (file://) não carregava módulos ES.
 // As páginas agora usam um script clássico gerado; ele precisa existir e estar atualizado.
 test('páginas usam o script empacotado (funciona via file://), não type="module"', () => {
-  for (const page of ['docs/ctf/index.html', 'docs/slides/index.html']) {
+  for (const page of ['docs/ctf/index.html', 'docs/slides/index.html', 'docs/terminal/index.html']) {
     const html = fs.readFileSync(new URL('../' + page, import.meta.url), 'utf8');
     assert.ok(!/type="module"/.test(html), page + ' ainda usa type="module"');
     assert.ok(/\.bundle\.js/.test(html), page + ' não carrega o bundle');

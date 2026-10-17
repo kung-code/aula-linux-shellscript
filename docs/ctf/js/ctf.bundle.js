@@ -4769,6 +4769,98 @@ function hintView({ index, unlocked, total, solved }) {
 return { FONT_MIN, FONT_MAX, shouldUseMobile, clampFont, hintIndex, hintView };
 })();
 
+// ---- docs/ctf/js/view.js ----
+__m["docs/ctf/js/view.js"] = (function () {
+// Visualização compartilhada pelo CTF e pelo terminal de prática:
+// modo celular (abas), tamanho da fonte, teclado virtual e barra de teclas.
+
+const { shouldUseMobile, clampFont } = __m["docs/ctf/js/ui.js"];
+
+const $ = (sel) => document.querySelector(sel);
+
+function loadUi(key) {
+  try { return JSON.parse(localStorage.getItem(key) || '{}') || {}; } catch (e) { return {}; }
+}
+function saveUi(key, ui) {
+  try { localStorage.setItem(key, JSON.stringify(ui)); } catch (e) { /* navegação privada */ }
+}
+
+// app precisa de: term (Terminal). Define app.mobile e app.setTab.
+function setupView(app, { uiKey = 'pinguim-ctf-ui' } = {}) {
+  const ui = loadUi(uiKey);
+  const coarse = typeof matchMedia === 'function' && matchMedia('(pointer: coarse)').matches;
+  const applyFont = () => {
+    document.documentElement.style.setProperty('--term-font', clampFont(ui.font || (app.mobile ? 13 : 14.5)) + 'px');
+  };
+  const setTab = (tab) => {
+    document.body.dataset.tab = tab || '';
+    for (const b of document.querySelectorAll('#mtabs button')) b.classList.toggle('active', b.dataset.tab === tab);
+    if (tab === 'terminal' || !tab) setTimeout(() => { app.term.scrollToEnd(); app.term.focus(); }, 0);
+  };
+  const setMobile = (on) => {
+    app.mobile = on;
+    document.body.classList.toggle('mobile-mode', on);
+    $('#btn-mobile').setAttribute('aria-pressed', String(on));
+    $('#btn-mobile span').textContent = on ? 'Modo computador' : 'Modo celular';
+    setTab(on ? 'terminal' : null);
+    applyFont();
+  };
+  app.setTab = setTab;
+  $('#btn-mobile').addEventListener('click', () => { ui.mobile = !app.mobile; saveUi(uiKey, ui); setMobile(ui.mobile); });
+  $('#font-down').addEventListener('click', () => { ui.font = clampFont((ui.font || (app.mobile ? 13 : 14.5)) - 1); saveUi(uiKey, ui); applyFont(); });
+  $('#font-up').addEventListener('click', () => { ui.font = clampFont((ui.font || (app.mobile ? 13 : 14.5)) + 1); saveUi(uiKey, ui); applyFont(); });
+  for (const b of document.querySelectorAll('#mtabs button')) b.addEventListener('click', () => setTab(b.dataset.tab));
+  // no celular, o teclado virtual encolhe a tela: o terminal acompanha a área visível
+  if (window.visualViewport) {
+    const fit = () => document.documentElement.style.setProperty('--vvh', window.visualViewport.height + 'px');
+    window.visualViewport.addEventListener('resize', fit);
+    fit();
+  }
+  setMobile(shouldUseMobile({ saved: ui.mobile, width: window.innerWidth, coarse }));
+}
+
+function setupKeybar(term) {
+  for (const b of document.querySelectorAll('#keybar button')) {
+    b.addEventListener('mousedown', (e) => e.preventDefault());
+    b.addEventListener('click', () => term.virtualKey(b.dataset.key));
+  }
+}
+
+return { setupView, setupKeybar };
+})();
+
+// ---- docs/ctf/js/gate.js ----
+__m["docs/ctf/js/gate.js"] = (function () {
+// Senha de acesso ao CTF (divulgada pelo professor na aula).
+// Aqui fica só o hash SHA-256: a senha em si aparece apenas no slide do CTF.
+// Para trocar a senha: node tools/senha.js NOVA_SENHA  (atualiza este arquivo e o slide)
+
+const { sha256 } = __m["docs/ctf/js/shell/util.js"];
+
+const ACCESS_HASH = '311a8c385ab224950248b9e7ffb24d2620c72fdec2c943a5bd75bccd700c4092';
+const ACCESS_KEY = 'pinguim-ctf-acesso';
+
+// Aceita maiúsculas/minúsculas e espaços sobrando (facilita para quem digita no celular).
+function normalizeAccess(text) {
+  return String(text || '').replace(/\s+/g, '').toUpperCase();
+}
+
+function accessHash(text) {
+  return sha256('pinguimcorp-acesso:' + normalizeAccess(text));
+}
+
+function checkAccess(text, hash = ACCESS_HASH) {
+  return normalizeAccess(text) !== '' && accessHash(text) === hash;
+}
+
+// O desbloqueio salvo vale só para a senha atual: trocar a senha bloqueia todo mundo de novo.
+function isUnlocked(stored, hash = ACCESS_HASH) {
+  return stored === hash;
+}
+
+return { ACCESS_HASH, ACCESS_KEY, normalizeAccess, accessHash, checkAccess, isUnlocked };
+})();
+
 // ---- docs/ctf/js/main.js ----
 __m["docs/ctf/js/main.js"] = (function () {
 // Liga o terminal (DOM) ao shell simulado e ao jogo.
@@ -4781,10 +4873,11 @@ const { VFS } = __m["docs/ctf/js/shell/vfs.js"];
 const { C } = __m["docs/ctf/js/shell/util.js"];
 const { CtfGame, LEVELS } = __m["docs/ctf/js/ctf/game.js"];
 const { buildCtf } = __m["docs/ctf/js/ctf/world.js"];
-const { shouldUseMobile, clampFont, hintIndex, hintView } = __m["docs/ctf/js/ui.js"];
+const { hintIndex, hintView } = __m["docs/ctf/js/ui.js"];
+const { setupView, setupKeybar } = __m["docs/ctf/js/view.js"];
+const { ACCESS_HASH, ACCESS_KEY, checkAccess, isUnlocked } = __m["docs/ctf/js/gate.js"];
 
 const STORAGE_KEY = 'pinguim-ctf-v1';
-const UI_KEY = 'pinguim-ctf-ui'; // preferências de visualização (não são apagadas ao reiniciar o CTF)
 const $ = (sel) => document.querySelector(sel);
 
 function load() {
@@ -4966,46 +5059,6 @@ function setupHints(app) {
   });
 }
 
-// ---------- modo celular ----------
-function loadUi() {
-  try { return JSON.parse(localStorage.getItem(UI_KEY) || '{}') || {}; } catch (e) { return {}; }
-}
-function saveUi(ui) {
-  try { localStorage.setItem(UI_KEY, JSON.stringify(ui)); } catch (e) { /* navegação privada */ }
-}
-
-function setupView(app) {
-  const ui = loadUi();
-  const coarse = typeof matchMedia === 'function' && matchMedia('(pointer: coarse)').matches;
-  const applyFont = () => {
-    document.documentElement.style.setProperty('--term-font', clampFont(ui.font || (app.mobile ? 13 : 14.5)) + 'px');
-  };
-  const setMobile = (on) => {
-    app.mobile = on;
-    document.body.classList.toggle('mobile-mode', on);
-    $('#btn-mobile').setAttribute('aria-pressed', String(on));
-    $('#btn-mobile span').textContent = on ? 'Modo computador' : 'Modo celular';
-    setTab(on ? 'terminal' : null);
-    applyFont();
-  };
-  const setTab = (tab) => {
-    document.body.dataset.tab = tab || '';
-    for (const b of document.querySelectorAll('#mtabs button')) b.classList.toggle('active', b.dataset.tab === tab);
-    if (tab === 'terminal' || !tab) setTimeout(() => { app.term.scrollToEnd(); app.term.focus(); }, 0);
-  };
-  app.setTab = setTab;
-  $('#btn-mobile').addEventListener('click', () => { ui.mobile = !app.mobile; saveUi(ui); setMobile(ui.mobile); });
-  $('#font-down').addEventListener('click', () => { ui.font = clampFont((ui.font || (app.mobile ? 13 : 14.5)) - 1); saveUi(ui); applyFont(); });
-  $('#font-up').addEventListener('click', () => { ui.font = clampFont((ui.font || (app.mobile ? 13 : 14.5)) + 1); saveUi(ui); applyFont(); });
-  for (const b of document.querySelectorAll('#mtabs button')) b.addEventListener('click', () => setTab(b.dataset.tab));
-  // no celular, o teclado virtual encolhe a tela: o terminal acompanha a área visível
-  if (window.visualViewport) {
-    const fit = () => document.documentElement.style.setProperty('--vvh', window.visualViewport.height + 'px');
-    window.visualViewport.addEventListener('resize', fit);
-    fit();
-  }
-  setMobile(shouldUseMobile({ saved: ui.mobile, width: window.innerWidth, coarse }));
-}
 
 function setupPanel(app) {
   const form = $('#submit-form');
@@ -5033,17 +5086,40 @@ function setupPanel(app) {
   window.addEventListener('beforeunload', () => saveNow(app));
 }
 
-function setupKeybar(term) {
-  for (const b of document.querySelectorAll('#keybar button')) {
-    b.addEventListener('mousedown', (e) => e.preventDefault());
-    b.addEventListener('click', () => term.virtualKey(b.dataset.key));
-  }
-}
 
 // ---------- tela inicial ----------
+// ---------- senha de acesso ----------
+function gate(next) {
+  let stored = null;
+  try { stored = localStorage.getItem(ACCESS_KEY); } catch (e) { /* navegação privada */ }
+  if (isUnlocked(stored)) { next(); return; }
+  $('#gate').hidden = false;
+  const form = $('#gate-form');
+  const input = $('#gate-input');
+  const error = $('#gate-error');
+  input.focus();
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    if (!checkAccess(input.value)) {
+      error.textContent = 'Senha incorreta. Confira com o professor.';
+      form.classList.remove('shake'); void form.offsetWidth; form.classList.add('shake');
+      input.select();
+      return;
+    }
+    try { localStorage.setItem(ACCESS_KEY, ACCESS_HASH); } catch (err) { /* segue mesmo sem salvar */ }
+    $('#gate').hidden = true;
+    next();
+  });
+}
+
 function init() {
+  gate(welcome);
+}
+
+function welcome() {
   const saved = load();
   if (saved && saved.nick) { start(saved.nick, saved); return; }
+  $('#start').hidden = false;
   const form = $('#start-form');
   const input = $('#nick-input');
   input.focus();

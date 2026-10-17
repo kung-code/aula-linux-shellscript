@@ -13,7 +13,27 @@
 </head>
 <body>
   <!-- Tela inicial -->
-  <main id="start" class="start">
+  <!-- Tela de senha: a senha é divulgada pelo professor na aula -->
+  <main id="gate" class="start" hidden>
+    <div class="start-card gate-card">
+      <div class="gate-lock" aria-hidden="true">
+        <svg viewBox="0 0 24 24"><rect x="4.5" y="10.5" width="15" height="10.5" rx="2"/><path d="M8 10.5V7.5a4 4 0 0 1 8 0v3M12 14.5v2.5"/></svg>
+      </div>
+      <h1>Missão Servidor Pinguim</h1>
+      <p class="lead">O desafio é liberado durante a aula. Digite a <b>senha de acesso</b> que o professor vai mostrar.</p>
+      <form id="gate-form" class="start-form" autocomplete="off">
+        <label for="gate-input">Senha de acesso</label>
+        <div class="row">
+          <input id="gate-input" type="password" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="••••••" required aria-describedby="gate-error">
+          <button type="submit">Entrar ▸</button>
+        </div>
+        <p id="gate-error" class="gate-error" role="alert"></p>
+      </form>
+      <p class="small">Enquanto isso, pratique no <a href="../terminal/">terminal de prática</a>. · <a href="../">Material da aula</a></p>
+    </div>
+  </main>
+
+  <main id="start" class="start" hidden>
     <div class="start-card">
       <div class="start-logo" aria-hidden="true">🐧🚩</div>
       <h1>Missão Servidor Pinguim</h1>

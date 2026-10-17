@@ -10,6 +10,7 @@ const ROOT = path.resolve(path.dirname(new URL(import.meta.url).pathname.replace
 export const BUNDLES = [
   { entry: 'docs/ctf/js/main.js', out: 'docs/ctf/js/ctf.bundle.js' },
   { entry: 'docs/slides/slides.js', out: 'docs/slides/slides.bundle.js' },
+  { entry: 'docs/terminal/js/lab.js', out: 'docs/terminal/js/lab.bundle.js' },
 ];
 
 const IMPORT_RE = /^import\s+(?:\{([^}]*)\}\s+from\s+)?'([^']+)';?[ \t]*$/gm;

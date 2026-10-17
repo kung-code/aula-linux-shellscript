@@ -1,5 +1,5 @@
 import { clampIndex, parseHash, formatTime, copyText, highlightBash, navNext, navPrev, escapeHtml, buildToc, filterToc, tocJump } from './deck.js';
-import { TerminalPlayer, ScriptPlayer, LayersDiagram, PermBuilder, icon } from './players.js';
+import { TerminalPlayer, ScriptPlayer, LayersDiagram, PermBuilder, PasswordReveal, icon } from './players.js';
 import { runDemos, makeDemoIo } from './demo-runner.js';
 import { buildSystem } from '../ctf/js/shell/system.js';
 import { Shell } from '../ctf/js/shell/interpreter.js';
@@ -41,6 +41,7 @@ for (const pre of document.querySelectorAll('pre[data-demo]')) {
 
 for (const host of document.querySelectorAll('.layers-diagram')) register(new LayersDiagram(host));
 for (const host of document.querySelectorAll('.perm-builder')) new PermBuilder(host);
+for (const host of document.querySelectorAll('.pw-reveal')) register(new PasswordReveal(host));
 
 // Código estático: realce + copiar + nome do arquivo
 for (const pre of document.querySelectorAll('pre.code')) {

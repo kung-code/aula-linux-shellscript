@@ -8,10 +8,11 @@ import { VFS } from './shell/vfs.js';
 import { C } from './shell/util.js';
 import { CtfGame, LEVELS } from './ctf/game.js';
 import { buildCtf } from './ctf/world.js';
-import { shouldUseMobile, clampFont, hintIndex, hintView } from './ui.js';
+import { hintIndex, hintView } from './ui.js';
+import { setupView, setupKeybar } from './view.js';
+import { ACCESS_HASH, ACCESS_KEY, checkAccess, isUnlocked } from './gate.js';
 
 const STORAGE_KEY = 'pinguim-ctf-v1';
-const UI_KEY = 'pinguim-ctf-ui'; // preferências de visualização (não são apagadas ao reiniciar o CTF)
 const $ = (sel) => document.querySelector(sel);
 
 function load() {
@@ -193,46 +194,6 @@ function setupHints(app) {
   });
 }
 
-// ---------- modo celular ----------
-function loadUi() {
-  try { return JSON.parse(localStorage.getItem(UI_KEY) || '{}') || {}; } catch (e) { return {}; }
-}
-function saveUi(ui) {
-  try { localStorage.setItem(UI_KEY, JSON.stringify(ui)); } catch (e) { /* navegação privada */ }
-}
-
-function setupView(app) {
-  const ui = loadUi();
-  const coarse = typeof matchMedia === 'function' && matchMedia('(pointer: coarse)').matches;
-  const applyFont = () => {
-    document.documentElement.style.setProperty('--term-font', clampFont(ui.font || (app.mobile ? 13 : 14.5)) + 'px');
-  };
-  const setMobile = (on) => {
-    app.mobile = on;
-    document.body.classList.toggle('mobile-mode', on);
-    $('#btn-mobile').setAttribute('aria-pressed', String(on));
-    $('#btn-mobile span').textContent = on ? 'Modo computador' : 'Modo celular';
-    setTab(on ? 'terminal' : null);
-    applyFont();
-  };
-  const setTab = (tab) => {
-    document.body.dataset.tab = tab || '';
-    for (const b of document.querySelectorAll('#mtabs button')) b.classList.toggle('active', b.dataset.tab === tab);
-    if (tab === 'terminal' || !tab) setTimeout(() => { app.term.scrollToEnd(); app.term.focus(); }, 0);
-  };
-  app.setTab = setTab;
-  $('#btn-mobile').addEventListener('click', () => { ui.mobile = !app.mobile; saveUi(ui); setMobile(ui.mobile); });
-  $('#font-down').addEventListener('click', () => { ui.font = clampFont((ui.font || (app.mobile ? 13 : 14.5)) - 1); saveUi(ui); applyFont(); });
-  $('#font-up').addEventListener('click', () => { ui.font = clampFont((ui.font || (app.mobile ? 13 : 14.5)) + 1); saveUi(ui); applyFont(); });
-  for (const b of document.querySelectorAll('#mtabs button')) b.addEventListener('click', () => setTab(b.dataset.tab));
-  // no celular, o teclado virtual encolhe a tela: o terminal acompanha a área visível
-  if (window.visualViewport) {
-    const fit = () => document.documentElement.style.setProperty('--vvh', window.visualViewport.height + 'px');
-    window.visualViewport.addEventListener('resize', fit);
-    fit();
-  }
-  setMobile(shouldUseMobile({ saved: ui.mobile, width: window.innerWidth, coarse }));
-}
 
 function setupPanel(app) {
   const form = $('#submit-form');
@@ -260,17 +221,40 @@ function setupPanel(app) {
   window.addEventListener('beforeunload', () => saveNow(app));
 }
 
-function setupKeybar(term) {
-  for (const b of document.querySelectorAll('#keybar button')) {
-    b.addEventListener('mousedown', (e) => e.preventDefault());
-    b.addEventListener('click', () => term.virtualKey(b.dataset.key));
-  }
-}
 
 // ---------- tela inicial ----------
+// ---------- senha de acesso ----------
+function gate(next) {
+  let stored = null;
+  try { stored = localStorage.getItem(ACCESS_KEY); } catch (e) { /* navegação privada */ }
+  if (isUnlocked(stored)) { next(); return; }
+  $('#gate').hidden = false;
+  const form = $('#gate-form');
+  const input = $('#gate-input');
+  const error = $('#gate-error');
+  input.focus();
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    if (!checkAccess(input.value)) {
+      error.textContent = 'Senha incorreta. Confira com o professor.';
+      form.classList.remove('shake'); void form.offsetWidth; form.classList.add('shake');
+      input.select();
+      return;
+    }
+    try { localStorage.setItem(ACCESS_KEY, ACCESS_HASH); } catch (err) { /* segue mesmo sem salvar */ }
+    $('#gate').hidden = true;
+    next();
+  });
+}
+
 function init() {
+  gate(welcome);
+}
+
+function welcome() {
   const saved = load();
   if (saved && saved.nick) { start(saved.nick, saved); return; }
+  $('#start').hidden = false;
   const form = $('#start-form');
   const input = $('#nick-input');
   input.focus();
