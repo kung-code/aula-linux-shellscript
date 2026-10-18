@@ -4395,57 +4395,100 @@ return { setupView, setupKeybar };
 
 // ---- docs/terminal/js/roteiro.js ----
 __m["docs/terminal/js/roteiro.js"] = (function () {
-// Roteiro de prática: os comandos da aula, na ordem dos slides.
+// Roteiro de prática: os comandos de cada aula, na ordem dos slides (campo aula: 1 ou 2).
 // Clicar num comando coloca ele na linha do terminal (o aluno aperta Enter).
 
 const ROTEIRO = [
   {
-    title: 'Onde estou?',
+    aula: 1, title: 'Onde estou?',
     cmds: ['pwd', 'whoami', 'ls', 'ls -l', 'ls -a', 'ls -lh /etc'],
   },
   {
-    title: 'Navegando',
+    aula: 1, title: 'Navegando',
     cmds: ['cd /etc', 'pwd', 'cd ..', 'cd ~', 'cd -', 'cd'],
   },
   {
-    title: 'Criando',
+    aula: 1, title: 'Criando',
     cmds: ['mkdir aula', 'mkdir -p aula/projeto/{scripts,dados}', 'touch aula/notas.txt', 'echo "Minha primeira linha" > aula/notas.txt', 'ls -R aula'],
   },
   {
-    title: 'Copiar, mover, remover',
+    aula: 1, title: 'Copiar, mover, remover',
     cmds: ['cp aula/notas.txt aula/copia.txt', 'mv aula/copia.txt aula/backup.txt', 'cp -r aula aula_bkp', 'rm aula/backup.txt', 'rm -r aula_bkp'],
   },
   {
-    title: 'Lendo arquivos',
+    aula: 1, title: 'Lendo arquivos',
     cmds: ['cat /etc/hostname', 'head -n 3 /etc/passwd', 'tail -n 2 /etc/passwd', 'wc -l /etc/passwd', 'man ls'],
   },
   {
-    title: 'Redirecionamento',
+    aula: 2, title: 'Redirecionamento',
     cmds: ['echo "linha 1" > teste.txt', 'echo "linha 2" >> teste.txt', 'cat teste.txt', 'ls /nao_existe 2> erros.txt', 'cat erros.txt'],
   },
   {
-    title: 'Pipes',
+    aula: 2, title: 'Pipes',
     cmds: ['cat /etc/passwd | grep bash | wc -l', 'ls -l /etc | grep conf', 'cut -d: -f1 /etc/passwd | sort | head -n 5'],
   },
   {
-    title: 'Busca',
+    aula: 2, title: 'Busca',
     cmds: ['grep "root" /etc/passwd', 'grep -i "erro" /var/log/syslog', 'find ~ -name "*.txt"', 'find /etc -name "*.conf"'],
   },
   {
-    title: 'Permissões',
+    aula: 2, title: 'Permissões',
     cmds: ['touch script.sh', 'ls -l script.sh', 'chmod 755 script.sh', 'ls -l script.sh', 'chmod go-rx script.sh'],
   },
   {
-    title: 'Primeiro script',
+    aula: 2, title: 'Primeiro script',
     cmds: ['echo \'echo "Olá, $USER!"\' > ola.sh', 'cat ola.sh', './ola.sh', 'chmod +x ola.sh', './ola.sh', 'nano ola.sh', 'vi ola.sh'],
   },
   {
-    title: 'Variáveis, if e laços',
+    aula: 2, title: 'Variáveis, if e laços',
     cmds: ['nome="Ana"; echo "Olá, $nome"', 'echo "Soma: $((2 + 3))"', 'idade=20; if [ "$idade" -ge 18 ]; then echo "Maior"; else echo "Menor"; fi', 'for i in 1 2 3; do echo "Número $i"; done', 'for i in $(seq 1 5); do echo $i; done'],
   },
 ];
 
-return { ROTEIRO };
+// Desafio para casa de cada aula (feito no terminal de prática ou no Git Bash).
+const DESAFIOS = {
+  1: {
+    titulo: 'Meu primeiro projeto no terminal',
+    passos: [
+      'Na sua home, crie com um único comando: estudos/linux/anotacoes, estudos/linux/exercicios e estudos/linux/arquivo-morto',
+      'Em anotacoes, crie comandos.txt com 5 comandos que você aprendeu, um por linha (use echo com > e >>)',
+      'Copie comandos.txt para exercicios/ com o nome revisao.txt',
+      'Crie 3 arquivos vazios em arquivo-morto/ (touch) e depois apague só um deles',
+      'Mostre o resultado: ls -R estudos · wc -l estudos/linux/anotacoes/comandos.txt · head -n 2 estudos/linux/exercicios/revisao.txt',
+      'Bônus: descubra no man ls como listar ordenando por tamanho e use em /etc',
+    ],
+    entrega: 'Copie a saída dos comandos do passo 5 (ou tire um print) e envie no canal da turma.',
+  },
+  2: {
+    titulo: 'organizador.sh',
+    passos: [
+      'Crie um script que recebe uma pasta como argumento e valida se ela existe',
+      'Mova os arquivos para imagens/, documentos/, audio/ e outros/, de acordo com a extensão',
+      'Mostre um relatório no final (quantos arquivos foram para cada pasta)',
+      'Bônus: opção -n para só simular, sem mover nada',
+    ],
+    entrega: 'Repositório no GitHub com o script e um README com um exemplo de uso.',
+  },
+};
+
+return { ROTEIRO, DESAFIOS };
+})();
+
+// ---- docs/aula.js ----
+__m["docs/aula.js"] = (function () {
+// Qual aula este site apresenta. Cada branch define o seu número:
+//   aula-1 → 1 (terminal: navegação, arquivos, leitura)
+//   aula-2 → 2 (redirecionamento, pipes, busca, permissões e shell script)
+// O CTF, o roteiro do terminal de prática e os textos usam este valor.
+
+const AULA = 1;
+
+const AULAS = {
+  1: { numero: 1, titulo: 'O terminal Linux', resumo: 'navegação, arquivos e leitura' },
+  2: { numero: 2, titulo: 'Superpoderes e Shell Script', resumo: 'pipes, busca, permissões e scripts' },
+};
+
+return { AULA, AULAS };
 })();
 
 // ---- docs/terminal/js/lab.js ----
@@ -4459,7 +4502,11 @@ const { buildSystem } = __m["docs/ctf/js/shell/system.js"];
 const { VFS } = __m["docs/ctf/js/shell/vfs.js"];
 const { C } = __m["docs/ctf/js/shell/util.js"];
 const { setupView, setupKeybar } = __m["docs/ctf/js/view.js"];
-const { ROTEIRO } = __m["docs/terminal/js/roteiro.js"];
+const { ROTEIRO: TODO_ROTEIRO, DESAFIOS } = __m["docs/terminal/js/roteiro.js"];
+const { AULA, AULAS } = __m["docs/aula.js"];
+
+// só os comandos da aula atual
+const ROTEIRO = TODO_ROTEIRO.filter((s) => s.aula === AULA);
 
 const STORAGE_KEY = 'pinguim-terminal-v1';
 const $ = (sel) => document.querySelector(sel);
@@ -4508,6 +4555,7 @@ function start() {
   window.__lab = app;
 
   renderRoteiro(app);
+  renderDesafio();
   setupKeybar(term);
   setupView(app, { uiKey: 'pinguim-ctf-ui' });
   $('#btn-reset').addEventListener('click', () => {
@@ -4546,6 +4594,18 @@ function markDone(app, src) {
   let changed = false;
   for (const sec of ROTEIRO) for (const c of sec.cmds) if (c === src && !app.done[c]) { app.done[c] = true; changed = true; }
   if (changed) renderRoteiro(app);
+}
+
+function renderDesafio() {
+  const d = DESAFIOS[AULA];
+  const card = $('#desafio');
+  if (!d || !card) return;
+  card.hidden = false;
+  $('#desafio-titulo').textContent = d.titulo;
+  const ol = $('#desafio-passos');
+  ol.innerHTML = '';
+  for (const p of d.passos) { const li = document.createElement('li'); li.textContent = p; ol.append(li); }
+  $('#desafio-entrega').textContent = d.entrega;
 }
 
 function renderRoteiro(app) {

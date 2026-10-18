@@ -4293,91 +4293,168 @@ function buildSystem({ user = 'aluno', home = '/home/aluno', now = Date.now() } 
 return { buildSystem };
 })();
 
+// ---- docs/aula.js ----
+__m["docs/aula.js"] = (function () {
+// Qual aula este site apresenta. Cada branch define o seu número:
+//   aula-1 → 1 (terminal: navegação, arquivos, leitura)
+//   aula-2 → 2 (redirecionamento, pipes, busca, permissões e shell script)
+// O CTF, o roteiro do terminal de prática e os textos usam este valor.
+
+const AULA = 1;
+
+const AULAS = {
+  1: { numero: 1, titulo: 'O terminal Linux', resumo: 'navegação, arquivos e leitura' },
+  2: { numero: 2, titulo: 'Superpoderes e Shell Script', resumo: 'pipes, busca, permissões e scripts' },
+};
+
+return { AULA, AULAS };
+})();
+
 // ---- docs/ctf/js/ctf/game.js ----
 __m["docs/ctf/js/ctf/game.js"] = (function () {
 // CTF "Missão Servidor Pinguim": flags, dicas, pontuação e comandos do jogo.
+// Cada aula tem o seu conjunto de níveis (LEVEL_SETS), escolhido por docs/aula.js.
 
 const { sha256, C } = __m["docs/ctf/js/shell/util.js"];
+const { AULA } = __m["docs/aula.js"];
 
 // Textos-base das flags, invertidos para não aparecerem "de bandeja" no código-fonte.
 const rev = (s) => s.split('').reverse().join('');
 const BASES = {
-  1: rev('lanimret_oa_odniv_meb'),
-  2: rev('emos_ednocse_es_euq_odut_men'),
-  3: rev('sadiv_mavlas_sarrab_e_sapsa'),
-  4: rev('ahluga_eta_artnocne_dnif'),
-  5: rev('ogima_rohlem_uem_e_perg'),
-  6: rev('satrop_erba_domhc'),
-  7: rev('odut_matcenoc_sepip'),
-  8: rev('afaret_ariemirp_ahnim_ieziztamotua'),
+  boasvindas: rev('lanimret_oa_odniv_meb'),
+  oculto: rev('emos_ednocse_es_euq_odut_men'),
+  nomes: rev('sadiv_mavlas_sarrab_e_sapsa'),
+  tesouro: rev('oruoset_oa_mavel_sohnimac'),
+  inicio: rev('ocemoc_o_artsom_daeh'),
+  mudanca: rev('sodanimod_mr_e_pc_ridkm'),
+  labirinto: rev('ahluga_eta_artnocne_dnif'),
+  palheiro: rev('ogima_rohlem_uem_e_perg'),
+  canal: rev('oirporp_lanac_met_rredts'),
+  permissao: rev('satrop_erba_domhc'),
+  unico: rev('odut_matcenoc_sepip'),
+  fechadura: rev('aferat_ariemirp_ahnim_iezitamotua'),
 };
 
-const LEVELS = [
-  {
-    id: 1, title: 'Boas-vindas', points: 10, skill: 'cd · ls · cat',
+const L = {
+  boasvindas: {
+    title: 'Boas-vindas', points: 10, skill: 'cd · ls · cat',
     hints: [
       'O arquivo LEIA-ME.txt fica dentro do diretório ctf, na sua home.',
       'Para ver o conteúdo de um arquivo, use o comando cat.',
       'Digite: cat ~/ctf/LEIA-ME.txt',
     ],
   },
-  {
-    id: 2, title: 'O Invisível', points: 10, skill: 'ls -a (arquivos ocultos)',
+  oculto: {
+    title: 'O Invisível', points: 10, skill: 'ls -a (arquivos ocultos)',
     hints: [
       'No Linux, arquivos cujo nome começa com "." ficam escondidos do ls comum.',
       'Consulte o manual: man ls — procure a opção que mostra todos ("all").',
-      'Entre em nivel2 e use: ls -a   (depois, cat no arquivo que começa com ponto)',
+      'Entre no diretório do nível e use: ls -a   (depois, cat no arquivo que começa com ponto)',
     ],
   },
-  {
-    id: 3, title: 'Nome Traiçoeiro', points: 15, skill: 'aspas · ./ · --',
+  nomes: {
+    title: 'Nome Traiçoeiro', points: 15, skill: 'aspas · ./ · --',
     hints: [
       'O shell separa as palavras pelos espaços. Como dizer que "meia flag.txt" é UM nome só?',
       'Use aspas: cat "meia flag.txt". No outro arquivo, o nome começa com - e parece uma opção…',
       'Indique o caminho: cat ./-outra-metade   (ou cat -- -outra-metade). Depois, junte as duas partes.',
     ],
   },
-  {
-    id: 4, title: 'O Labirinto', points: 15, skill: 'find -name',
+  tesouro: {
+    title: 'Caça ao Tesouro', points: 15, skill: 'cd · .. · caminhos',
+    hints: [
+      'Em cada pasta existe um pista.txt: leia com cat e faça o que ele pede.',
+      'cd .. sobe um nível, cd ../.. sobe dois. Um caminho que começa com / é absoluto e funciona de qualquer lugar.',
+      'Perdido? pwd mostra onde você está. Recomece com: cd ~/ctf/nivel4/inicio e cat pista.txt',
+    ],
+  },
+  inicio: {
+    title: 'O Começo de Tudo', points: 15, skill: 'head · tail · less',
+    hints: [
+      'O arquivo é enorme: o cat mostra tudo, mas a tela só guarda o final. O que você precisa está no começo.',
+      'Existe um comando para mostrar só as primeiras linhas de um arquivo.',
+      'Rode: head -n 5 historico.log',
+    ],
+  },
+  contagem: {
+    title: 'Contagem', points: 20, skill: 'wc -l',
+    hints: [
+      'A resposta é um número: quantas linhas tem o arquivo registros.txt.',
+      'O comando wc conta linhas, palavras e bytes. A opção -l conta só as linhas.',
+      'Rode: wc -l registros.txt   e monte a flag como a missão explica.',
+    ],
+  },
+  mudanca: {
+    title: 'Organizando a Casa', points: 25, skill: 'mkdir · cp · rm',
+    hints: [
+      'Leia a missão com atenção: são três tarefas. Depois de cada uma, rode ./conferir para ver o que falta.',
+      'mkdir cria a pasta; cp ORIGEM DESTINO copia (e pode dar outro nome); rm apaga um arquivo.',
+      'mkdir entrega · cp rascunhos/relatorio_v3.txt entrega/relatorio_final.txt · rm rascunhos/lixo.tmp · ./conferir',
+    ],
+  },
+  labirinto: {
+    title: 'O Labirinto', points: 15, skill: 'find -name',
     hints: [
       'Abrir sala por sala levaria muito tempo. Existe um comando para PROCURAR arquivos.',
       'O find procura pelo nome: find CAMINHO -name "PADRÃO"',
-      'Dentro de nivel4, rode: find labirinto -name "chave.flag"  e depois cat no caminho encontrado.',
+      'Dentro do diretório do nível, rode: find labirinto -name "chave.flag"  e depois cat no caminho encontrado.',
     ],
   },
-  {
-    id: 5, title: 'Agulha no Palheiro', points: 15, skill: 'grep',
+  palheiro: {
+    title: 'Agulha no Palheiro', points: 15, skill: 'grep',
     hints: [
       'O arquivo tem 10.000 linhas (confira com wc -l palheiro.txt). Ler tudo com cat não ajuda.',
       'O grep mostra só as linhas que contêm um texto. Todas as flags começam com FLAG…',
       'Rode: grep "FLAG" palheiro.txt   (maiúsculas e minúsculas fazem diferença!)',
     ],
   },
-  {
-    id: 6, title: 'Porta Trancada', points: 20, skill: 'ls -l · chmod',
+  canal: {
+    title: 'Canal Errado', points: 20, skill: 'stderr · 2> · 2>&1',
+    hints: [
+      'O transmissor escreve milhares de linhas. Tente ./transmissor | grep FLAG e repare: muitas linhas passam direto pelo grep.',
+      'Essas linhas vêm do canal de erros (stderr), que não entra no pipe. A flag está nesse canal.',
+      'Mande os erros para o pipe: ./transmissor 2>&1 | grep FLAG   (ou: ./transmissor 2> erros.txt e depois grep FLAG erros.txt)',
+    ],
+  },
+  permissao: {
+    title: 'Porta Trancada', points: 20, skill: 'ls -l · chmod',
     hints: [
       '"Permissão negada"? Veja as permissões do arquivo com ls -l.',
       'O arquivo é SEU (veja a coluna do dono), e o dono pode mudar as permissões com chmod.',
       'Rode: chmod u+r cofre.txt   (ou chmod 644 cofre.txt) e depois cat cofre.txt',
     ],
   },
-  {
-    id: 7, title: 'O Único', points: 20, skill: 'sort | uniq -u',
+  unico: {
+    title: 'O Único', points: 20, skill: 'sort | uniq -u',
     hints: [
       'Quase todas as linhas se repetem. Você precisa da que aparece UMA vez só.',
       'O uniq trata só repetições VIZINHAS. Como deixar as linhas iguais lado a lado?',
       'Combine com um pipe: sort ecos.txt | uniq -u   e envie a resposta como FLAG{...}',
     ],
   },
-  {
-    id: 8, title: 'A Fechadura', points: 30, skill: 'shell script: for · seq · if',
+  fechadura: {
+    title: 'A Fechadura', points: 30, skill: 'shell script: for · seq · if',
     hints: [
       'Teste a fechadura: ./fechadura 123. São 1000 códigos possíveis (000 a 999). Automatize!',
       'seq -w 0 999 gera 000, 001, ..., 999. Use um laço: for c in $(seq -w 0 999); do ...; done',
       'Uma linha resolve: for c in $(seq -w 0 999); do ./fechadura $c; done | grep FLAG   (ou complete o modelo.sh)',
     ],
   },
-];
+};
+
+// Níveis de cada aula, na ordem. O diretório de cada um é ~/ctf/nivelN.
+const SETS = {
+  1: ['boasvindas', 'oculto', 'nomes', 'tesouro', 'inicio', 'contagem', 'mudanca'],
+  2: ['boasvindas', 'labirinto', 'palheiro', 'canal', 'permissao', 'unico', 'fechadura'],
+};
+
+function levelsFor(aula) {
+  const keys = SETS[aula];
+  if (!keys) throw new Error('aula sem CTF: ' + aula);
+  return keys.map((key, i) => Object.assign({ id: i + 1, key }, L[key]));
+}
+
+const LEVELS = levelsFor(AULA);
 
 const HINT_COST = 0.25; // cada dica usada antes de resolver reduz 25% dos pontos do nível
 
@@ -4385,26 +4462,34 @@ function normalizeNick(nick) {
   return String(nick || '').trim().toLowerCase();
 }
 
-function seedFor(nick) {
-  return sha256('pinguimcorp:' + normalizeNick(nick));
+function seedFor(nick, aula = AULA) {
+  return sha256('pinguimcorp:aula' + aula + ':' + normalizeNick(nick));
 }
 
-function tagFor(seed, level) {
-  return sha256(seed + ':' + level).slice(0, 4);
+function tagFor(seed, key) {
+  return sha256(seed + ':' + key).slice(0, 4);
 }
 
-function flagBody(nick, level) {
-  return BASES[level] + '_' + tagFor(seedFor(nick), level);
+// Quantas linhas tem o arquivo do nível "Contagem" (varia por codinome)
+function countFor(nick, aula = AULA) {
+  return 300 + (parseInt(sha256(seedFor(nick, aula) + ':contagem').slice(0, 6), 16) % 600);
 }
 
-function flagsFor(nick) {
+function flagBody(nick, key, aula = AULA) {
+  const seed = seedFor(nick, aula);
+  if (key === 'contagem') return 'contei_' + countFor(nick, aula) + '_linhas_' + tagFor(seed, key);
+  return BASES[key] + '_' + tagFor(seed, key);
+}
+
+// { idDoNível: 'FLAG{...}' }
+function flagsFor(nick, aula = AULA) {
   const flags = {};
-  for (const l of LEVELS) flags[l.id] = 'FLAG{' + flagBody(nick, l.id) + '}';
+  for (const l of levelsFor(aula)) flags[l.id] = 'FLAG{' + flagBody(nick, l.key, aula) + '}';
   return flags;
 }
 
-function codeFor(nick) {
-  const n = parseInt(sha256(seedFor(nick) + ':codigo').slice(0, 6), 16) % 1000;
+function codeFor(nick, aula = AULA) {
+  const n = parseInt(sha256(seedFor(nick, aula) + ':codigo').slice(0, 6), 16) % 1000;
   return String(n).padStart(3, '0');
 }
 
@@ -4417,14 +4502,18 @@ function normalizeFlag(text) {
 }
 
 class CtfGame {
-  constructor(nick, state, onChange) {
+  constructor(nick, state, onChange, aula = AULA) {
     this.nick = nick;
-    this.flags = flagsFor(nick);
+    this.aula = aula;
+    this.levels = levelsFor(aula);
+    this.flags = flagsFor(nick, aula);
     this.state = Object.assign({ solved: {}, hints: {} }, state || {});
     this.onChange = onChange || (() => {});
   }
 
-  level(id) { return LEVELS.find((l) => l.id === id); }
+  level(id) { return this.levels.find((l) => l.id === id); }
+
+  levelByKey(key) { return this.levels.find((l) => l.key === key); }
 
   isSolved(id) { return !!this.state.solved[id]; }
 
@@ -4446,46 +4535,51 @@ class CtfGame {
     return Math.round(l.points * Math.max(0.25, 1 - HINT_COST * used));
   }
 
-  score() { return LEVELS.reduce((acc, l) => acc + this.levelScore(l.id), 0); }
+  score() { return this.levels.reduce((acc, l) => acc + this.levelScore(l.id), 0); }
 
-  maxScore() { return LEVELS.reduce((acc, l) => acc + l.points, 0); }
+  maxScore() { return this.levels.reduce((acc, l) => acc + l.points, 0); }
 
-  solvedCount() { return LEVELS.filter((l) => this.isSolved(l.id)).length; }
+  solvedCount() { return this.levels.filter((l) => this.isSolved(l.id)).length; }
 
-  allSolved() { return this.solvedCount() === LEVELS.length; }
+  allSolved() { return this.solvedCount() === this.levels.length; }
 
   completionCode() {
-    return 'PINGUIM-' + sha256(seedFor(this.nick) + ':fim').slice(0, 8).toUpperCase();
+    return 'PINGUIM' + this.aula + '-' + sha256(seedFor(this.nick, this.aula) + ':fim').slice(0, 8).toUpperCase();
   }
 
   // Retorna { ok, level, already, message }
   submit(text) {
     if (!String(text || '').trim()) return { ok: false, message: 'Uso: enviar FLAG{...}' };
     const flag = normalizeFlag(text);
-    for (const l of LEVELS) {
+    for (const l of this.levels) {
       if (this.flags[l.id] === flag) {
-        if (this.isSolved(l.id)) return { ok: true, level: l.id, already: true, message: 'Você já tinha enviado a flag do nível ' + l.id + '. 😉' };
+        if (this.isSolved(l.id)) return { ok: true, level: l.id, already: true, message: 'Você já tinha enviado a flag do nível ' + l.id + '.' };
         this.state.solved[l.id] = { at: Date.now(), hints: this.hintsUsed(l.id) };
         this.onChange(this);
         return { ok: true, level: l.id, already: false, message: 'Flag do nível ' + l.id + ' (' + l.title + ') correta! +' + this.levelScore(l.id) + ' pontos' };
       }
     }
-    if (/^FLAG\{[a-z_]+_[0-9a-f]{4}\}$/.test(flag)) {
-      return { ok: false, message: 'Essa flag parece ser de outro codinome. Cada aluno tem flags próprias: procure as suas! 🙂' };
+    if (/^FLAG\{[a-z0-9_]+_[0-9a-f]{4}\}$/.test(flag)) {
+      return { ok: false, message: 'Essa flag parece ser de outro codinome (ou de outra aula). Cada aluno tem flags próprias: procure as suas!' };
     }
-    return { ok: false, message: 'Flag incorreta. Confira se copiou tudo (letras, _ e as chaves { }).' };
+    return { ok: false, message: 'Flag incorreta. Confira se copiou tudo (letras, números, _ e as chaves { }).' };
   }
 
   // Revela a próxima dica do nível. Retorna { text, index, total, free } ou { error }.
   hint(id) {
     const l = this.level(id);
-    if (!l) return { error: 'Nível inválido. Use: dica 1 a dica ' + LEVELS.length };
+    if (!l) return { error: 'Nível inválido. Use: dica 1 a dica ' + this.levels.length };
     const used = this.hintsUsed(id);
     const solved = this.isSolved(id);
     if (used >= l.hints.length) return { text: l.hints[l.hints.length - 1], index: l.hints.length, total: l.hints.length, repeat: true, free: solved };
     this.state.hints[id] = used + 1;
     this.onChange(this);
     return { text: l.hints[used], index: used + 1, total: l.hints.length, free: solved };
+  }
+
+  levelDir(shell, key) {
+    const l = this.levelByKey(key);
+    return l ? shell.home + '/ctf/nivel' + l.id : null;
   }
 
   // Registra os comandos do jogo no shell.
@@ -4495,9 +4589,9 @@ class CtfGame {
       const r = game.submit(ctx.args.join(' '));
       if (r.ok && !r.already) {
         ctx.out(C.bgreen + '✔ ' + r.message + C.reset + '\n');
-        ctx.out('Pontuação: ' + game.score() + '/' + game.maxScore() + ' · níveis: ' + game.solvedCount() + '/' + LEVELS.length + '\n');
+        ctx.out('Pontuação: ' + game.score() + '/' + game.maxScore() + ' · níveis: ' + game.solvedCount() + '/' + game.levels.length + '\n');
         if (game.allSolved()) {
-          ctx.out('\n' + C.byellow + '🏆 Parabéns! Você concluiu todos os níveis!' + C.reset + '\n');
+          ctx.out('\n' + C.byellow + 'Parabéns! Você concluiu todos os níveis!' + C.reset + '\n');
           ctx.out('Código de conclusão: ' + C.bold + game.completionCode() + C.reset + '  (mostre ao professor)\n');
         }
         return 0;
@@ -4529,8 +4623,8 @@ class CtfGame {
     shell.commands.dica = dica;
 
     const progresso = (ctx) => {
-      ctx.out(C.bold + 'Agente ' + game.nick + ' · ' + game.score() + '/' + game.maxScore() + ' pontos' + C.reset + '\n');
-      for (const l of LEVELS) {
+      ctx.out(C.bold + 'Agente ' + game.nick + ' · Aula ' + game.aula + ' · ' + game.score() + '/' + game.maxScore() + ' pontos' + C.reset + '\n');
+      for (const l of game.levels) {
         const mark = game.isSolved(l.id) ? C.bgreen + '✔' + C.reset : C.gray + '·' + C.reset;
         const pts = game.isSolved(l.id) ? game.levelScore(l.id) + '/' + l.points : '0/' + l.points;
         ctx.out(' ' + mark + ' Nível ' + l.id + ' — ' + l.title.padEnd(18) + ' ' + pts.padStart(5) + ' pts   ' + C.gray + l.skill + C.reset + '\n');
@@ -4541,16 +4635,55 @@ class CtfGame {
     progresso.help = 'progresso - mostra seus níveis concluídos e a pontuação';
     shell.commands.progresso = progresso;
 
-    // "Binário" da fechadura do nível 8
-    const code = codeFor(this.nick);
-    const flag8 = this.flags[8];
+    // ----- "binários" dos níveis -----
+    const code = codeFor(this.nick, this.aula);
+    const fechaduraLevel = this.levelByKey('fechadura');
     shell.binaries.fechadura = (ctx) => {
       const c = ctx.args[0];
       if (c === undefined) { ctx.err('Uso: ./fechadura CÓDIGO   (código de 3 dígitos, ex.: 042)\n'); return 2; }
       if (!/^\d{3}$/.test(c)) { ctx.err('O código deve ter exatamente 3 dígitos (ex.: 007).\n'); return 2; }
       if (c !== code) { ctx.out('🔒 Código ' + c + ' incorreto.\n'); return 1; }
-      ctx.out('🔓 Código ' + c + ' correto! A fechadura abriu.\n' + flag8 + '\n');
+      ctx.out('🔓 Código ' + c + ' correto! A fechadura abriu.\n' + (fechaduraLevel ? game.flags[fechaduraLevel.id] : '') + '\n');
       return 0;
+    };
+
+    // Nível "Canal Errado": a flag sai pelo stderr, no meio de milhares de linhas
+    const canalLevel = this.levelByKey('canal');
+    shell.binaries.transmissor = (ctx) => {
+      const N = 4000;
+      let out = '';
+      let err = '';
+      for (let i = 1; i <= N; i++) {
+        out += '[ok] pacote ' + i + ' recebido\n';
+        err += i === 37 && canalLevel ? '[erro] pacote 37 corrompido: ' + game.flags[canalLevel.id] + '\n' : '[erro] pacote ' + i + ' com ruído\n';
+      }
+      ctx.out(out);
+      ctx.err(err);
+      return 0;
+    };
+
+    // Nível "Organizando a Casa": confere se o aluno criou, copiou e apagou o que a missão pede
+    const mudancaLevel = this.levelByKey('mudanca');
+    shell.binaries.conferir = (ctx) => {
+      const dir = game.levelDir(ctx.shell, 'mudanca');
+      if (!dir) { ctx.err('conferir: nada para conferir nesta aula\n'); return 1; }
+      const vfs = ctx.vfs;
+      const node = (p) => vfs.tryLookup(dir + '/' + p);
+      const original = node('rascunhos/relatorio_v3.txt');
+      const final = node('entrega/relatorio_final.txt');
+      const checks = [
+        ['pasta entrega/ criada', !!node('entrega') && node('entrega').type === 'dir'],
+        ['entrega/relatorio_final.txt é uma cópia de rascunhos/relatorio_v3.txt', !!final && final.type === 'file' && !!original && final.content === original.content],
+        ['o original continua em rascunhos/ (copiar, não mover)', !!original],
+        ['rascunhos/lixo.tmp apagado', !node('rascunhos/lixo.tmp')],
+      ];
+      for (const [label, ok] of checks) ctx.out((ok ? C.bgreen + '  ✔ ' : C.red + '  ✘ ') + label + C.reset + '\n');
+      if (checks.every((c) => c[1])) {
+        ctx.out(C.byellow + 'Tudo certo! Fragmento liberado: ' + C.reset + game.flags[mudancaLevel.id] + '\n');
+        return 0;
+      }
+      ctx.out(C.gray + 'Ainda falta algo. Corrija os itens com ✘ e rode ./conferir de novo.' + C.reset + '\n');
+      return 1;
     };
 
     shell.extraHelp = (ctx) => {
@@ -4560,15 +4693,17 @@ class CtfGame {
   }
 }
 
-return { LEVELS, normalizeNick, seedFor, tagFor, flagBody, flagsFor, codeFor, normalizeFlag, CtfGame };
+return { levelsFor, LEVELS, normalizeNick, seedFor, tagFor, countFor, flagBody, flagsFor, codeFor, normalizeFlag, CtfGame };
 })();
 
 // ---- docs/ctf/js/ctf/world.js ----
 __m["docs/ctf/js/ctf/world.js"] = (function () {
 // Gera os diretórios e arquivos de cada nível do CTF dentro de ~/ctf.
+// Os níveis dependem da aula (docs/aula.js): cada um mora em ~/ctf/nivelN.
 
 const { makeRng } = __m["docs/ctf/js/shell/util.js"];
-const { LEVELS, seedFor, flagsFor, flagBody } = __m["docs/ctf/js/ctf/game.js"];
+const { AULA } = __m["docs/aula.js"];
+const { levelsFor, seedFor, flagsFor, flagBody, countFor } = __m["docs/ctf/js/ctf/game.js"];
 
 const PALAVRAS = ['abacaxi', 'azul', 'rato', 'veloz', 'nuvem', 'pedra', 'luz', 'trem', 'gato', 'sol', 'mar', 'vento',
   'folha', 'rio', 'lua', 'fogo', 'neve', 'barco', 'ponte', 'livro', 'porta', 'torre', 'sino', 'vidro',
@@ -4596,9 +4731,17 @@ for codigo in ____ ; do          # dica: $(seq -w 0 999)
 done
 `;
 
-function buildCtf(vfs, home, nick, { now = Date.now() } = {}) {
-  const rng = makeRng(seedFor(nick));
-  const flags = flagsFor(nick);
+const BIN = '\x7fELF\u0002\u0001\u0001\u0000 (binário simulado)\n';
+
+function fmtTime(rng) {
+  const p = (n) => String(n).padStart(2, '0');
+  return '2026-10-' + p(rng.int(1, 15)) + ' ' + p(rng.int(0, 23)) + ':' + p(rng.int(0, 59)) + ':' + p(rng.int(0, 59));
+}
+
+function buildCtf(vfs, home, nick, { now = Date.now(), aula = AULA } = {}) {
+  const rng = makeRng(seedFor(nick, aula));
+  const flags = flagsFor(nick, aula);
+  const levels = levelsFor(aula);
   const base = home + '/ctf';
   const dir = (p) => vfs.mkdir(p, { parents: true });
   const file = (p, content, mode = 0o644) => {
@@ -4606,124 +4749,212 @@ function buildCtf(vfs, home, nick, { now = Date.now() } = {}) {
     n.mtime = now;
     return n;
   };
+  const binary = (p, exec) => {
+    const n = vfs.writeFile(p, BIN, { mode: 0o755, exec });
+    n.mtime = now;
+  };
   if (vfs.exists(base)) vfs.remove(base, { recursive: true });
   dir(base);
 
-  // ----- Nível 1 -----
-  file(base + '/LEIA-ME.txt', [
-    '==========================================================',
-    '   🐧  PINGUIMCORP · MISSÃO SERVIDOR PINGUIM',
-    '==========================================================',
-    '',
-    'Olá, ' + nick + '! Você acaba de ser contratado(a) como',
-    'administrador(a) de sistemas da PinguimCorp.',
-    '',
-    'O administrador anterior deixou 8 fragmentos de configuração',
-    '(as flags) espalhados por este servidor. Recupere todos!',
-    '',
-    'Fragmento 1: ' + flags[1],
-    '',
-    'COMO JOGAR',
-    '  • Cada nível está em um diretório: nivel2, nivel3, ..., nivel8',
-    '  • Leia a missão de cada nível:   cat nivel2/missao.txt',
-    '  • Achou uma flag? Envie com:     enviar FLAG{...}',
-    '  • Travou? Peça uma dica:         dica 2',
-    '  • Veja seu progresso:            progresso',
-    '  • Lista de comandos:             help',
-    '',
-    'Comece enviando o fragmento 1 acima. Boa sorte! 🚩',
-    '',
-  ].join('\n'));
+  const builders = {
+    boasvindas(_d, l) {
+      // o próprio LEIA-ME, em ~/ctf
+      file(base + '/LEIA-ME.txt', [
+        '==========================================================',
+        '   🐧  PINGUIMCORP · MISSÃO SERVIDOR PINGUIM · AULA ' + aula,
+        '==========================================================',
+        '',
+        'Olá, ' + nick + '! Você acaba de ser contratado(a) como',
+        'administrador(a) de sistemas da PinguimCorp.',
+        '',
+        'O administrador anterior deixou ' + levels.length + ' fragmentos de configuração',
+        '(as flags) espalhados por este servidor. Recupere todos!',
+        '',
+        'Fragmento ' + l.id + ': ' + flags[l.id],
+        '',
+        'COMO JOGAR',
+        '  • Cada nível está em um diretório: nivel2, nivel3, ..., nivel' + levels.length,
+        '  • Leia a missão de cada nível:   cat nivel2/missao.txt',
+        '  • Achou uma flag? Envie com:     enviar FLAG{...}',
+        '  • Travou? Peça uma dica:         dica 2',
+        '  • Veja seu progresso:            progresso',
+        '  • Lista de comandos:             help',
+        '',
+        'Comece enviando o fragmento 1 acima. Boa sorte! 🚩',
+        '',
+      ].join('\n'));
+    },
 
-  // ----- Nível 2: arquivo oculto -----
-  dir(base + '/nivel2');
-  file(base + '/nivel2/missao.txt', 'NÍVEL 2 · O Invisível\n\nO fragmento 2 está neste diretório... mas o ls comum não mostra tudo.\n');
-  file(base + '/nivel2/nada_aqui.txt', 'Nada aqui... 👀\nTem certeza de que listou TODOS os arquivos?\n');
-  file(base + '/nivel2/.fragmento_secreto', 'Muito bem! Arquivos que começam com "." são ocultos.\nFragmento 2: ' + flags[2] + '\n');
+    oculto(d, l) {
+      file(d + '/missao.txt', 'NÍVEL ' + l.id + ' · O Invisível\n\nO fragmento está neste diretório... mas o ls comum não mostra tudo.\n');
+      file(d + '/nada_aqui.txt', 'Nada aqui... 👀\nTem certeza de que listou TODOS os arquivos?\n');
+      file(d + '/.fragmento_secreto', 'Muito bem! Arquivos que começam com "." são ocultos.\nFragmento ' + l.id + ': ' + flags[l.id] + '\n');
+    },
 
-  // ----- Nível 3: nomes com espaço e começando com "-" -----
-  dir(base + '/nivel3');
-  file(base + '/nivel3/missao.txt', 'NÍVEL 3 · Nome Traiçoeiro\n\nO fragmento 3 foi dividido em DOIS arquivos com nomes difíceis de abrir.\nLeia os dois e junte as metades (sem espaços) para formar a flag.\n');
-  const body3 = flagBody(nick, 3);
-  const cut = 'aspas_e_barras_'.length;
-  file(base + '/nivel3/meia flag.txt', 'Primeira metade: FLAG{' + body3.slice(0, cut) + '\n');
-  file(base + '/nivel3/-outra-metade', 'Segunda metade: ' + body3.slice(cut) + '}\n');
+    nomes(d, l) {
+      file(d + '/missao.txt', 'NÍVEL ' + l.id + ' · Nome Traiçoeiro\n\nO fragmento foi dividido em DOIS arquivos com nomes difíceis de abrir.\nLeia os dois e junte as metades (sem espaços) para formar a flag.\n');
+      const body = flagBody(nick, 'nomes', aula);
+      const cut = 'aspas_e_barras_'.length;
+      file(d + '/meia flag.txt', 'Primeira metade: FLAG{' + body.slice(0, cut) + '\n');
+      file(d + '/-outra-metade', 'Segunda metade: ' + body.slice(cut) + '}\n');
+    },
 
-  // ----- Nível 4: labirinto de diretórios -----
-  const lab = base + '/nivel4/labirinto';
-  dir(lab);
-  file(base + '/nivel4/missao.txt', 'NÍVEL 4 · O Labirinto\n\nEm algum lugar dentro de labirinto/ existe um arquivo chamado chave.flag.\nSão mais de 100 salas. Procurar uma por uma não é uma boa ideia...\n');
-  const alas = ['ala_norte', 'ala_sul', 'ala_leste', 'ala_oeste', 'ala_central'];
-  const salas = [];
-  for (const a of alas) {
-    for (let c = 1; c <= 5; c++) {
-      for (const s of ['sala_a', 'sala_b', 'sala_c', 'sala_d']) {
-        const p = lab + '/' + a + '/corredor_' + c + '/' + s;
-        dir(p);
-        salas.push(p);
-        const r = rng.next();
-        if (r < 0.35) file(p + '/pista.txt', 'Nada por aqui. Continue procurando...\n');
-        else if (r < 0.45) file(p + '/chave.txt', 'Quase! Esta é só uma cópia falsa. Procure o arquivo chave.flag.\n');
+    // Aula 1: caminhos relativos (..) e absolutos (/), seguindo pistas
+    tesouro(d, l) {
+      file(d + '/missao.txt', [
+        'NÍVEL ' + l.id + ' · Caça ao Tesouro', '',
+        'Um mapa foi dividido em pistas. Comece em inicio/ e, em cada pasta,',
+        'leia o pista.txt e faça o que ele pede (com cd).', '',
+        '  cd inicio', '  cat pista.txt', '',
+      ].join('\n'));
+      const esconderijo = '/tmp/pinguim_' + nick.toLowerCase().replace(/[^a-z0-9]/g, '').slice(0, 12) + '/cofre';
+      dir(d + '/inicio');
+      dir(d + '/predio/andar1/sala_a');
+      dir(d + '/predio/andar1/sala_b');
+      dir(d + '/predio/andar2/sala_c');
+      dir(d + '/predio/andar2/sala_d/armario');
+      dir(d + '/porao');
+      file(d + '/inicio/pista.txt', 'Pista 1: suba um nível (cd ..) e entre na pasta predio.\nDepois, entre em andar2.\nLá você encontra a próxima pista.\n');
+      file(d + '/predio/andar2/pista.txt', 'Pista 2: entre em sala_d e depois em armario.\nDica: dá para fazer de uma vez: cd sala_d/armario\n');
+      file(d + '/predio/andar2/sala_d/armario/pista.txt', 'Pista 3: o tesouro foi levado para fora daqui!\nUse um caminho ABSOLUTO (começa com /):\n\n  cd ' + esconderijo + '\n');
+      file(d + '/predio/andar1/sala_a/pista.txt', 'Esta sala está vazia. Volte (cd ..) e confira as pistas de novo.\n');
+      file(d + '/predio/andar1/sala_b/pista.txt', 'Caminho errado! Volte duas pastas (cd ../..) e recomece pelo andar2.\n');
+      file(d + '/predio/andar2/sala_c/pista.txt', 'Nada aqui. O armário fica na sala_d.\n');
+      file(d + '/porao/pista.txt', 'O porão está escuro e vazio. Comece pela pasta inicio.\n');
+      const top = esconderijo.split('/').slice(0, 3).join('/');
+      if (vfs.exists(top)) vfs.remove(top, { recursive: true });
+      dir(esconderijo);
+      file(esconderijo + '/tesouro.txt', 'Você achou o tesouro seguindo caminhos relativos e absolutos!\nFragmento ' + l.id + ': ' + flags[l.id] + '\n');
+    },
+
+    // Aula 1: a flag está no começo de um arquivo enorme (head)
+    inicio(d, l) {
+      file(d + '/missao.txt', 'NÍVEL ' + l.id + ' · O Começo de Tudo\n\nhistorico.log tem milhares de linhas. O fragmento foi anotado logo no começo.\n');
+      const lines = ['# Histórico do servidor PinguimCorp', '# fragmento ' + l.id + ': ' + flags[l.id], '# (não apague este cabeçalho)'];
+      for (let i = 0; i < 6000; i++) lines.push('[' + fmtTime(rng) + '] ' + rng.pick(SERVICOS) + ': ' + rng.pick(MENSAGENS));
+      file(d + '/historico.log', lines.join('\n') + '\n');
+    },
+
+    // Aula 1: a flag depende do número de linhas (wc -l)
+    contagem(d, l) {
+      const n = countFor(nick, aula);
+      const tag = flagBody(nick, 'contagem', aula).split('_').pop();
+      file(d + '/missao.txt', [
+        'NÍVEL ' + l.id + ' · Contagem', '',
+        'O auditor quer saber quantos registros existem em registros.txt.',
+        'A flag é montada com esse número N:', '',
+        '  FLAG{contei_N_linhas_' + tag + '}', '',
+        'Exemplo: se o arquivo tivesse 42 linhas, a flag seria FLAG{contei_42_linhas_' + tag + '}',
+        '',
+      ].join('\n'));
+      const regs = [];
+      for (let i = 1; i <= n; i++) regs.push('registro ' + String(i).padStart(4, '0') + ' · ' + rng.pick(PALAVRAS) + ' ' + rng.pick(PALAVRAS));
+      rng.shuffle(regs);
+      file(d + '/registros.txt', regs.join('\n') + '\n');
+    },
+
+    // Aula 1: criar pasta, copiar com outro nome e apagar arquivo (mkdir, cp, rm)
+    mudanca(d, l) {
+      file(d + '/missao.txt', [
+        'NÍVEL ' + l.id + ' · Organizando a Casa', '',
+        'O sistema de entregas só libera o fragmento quando tudo estiver organizado:', '',
+        '  1. Crie a pasta entrega (dentro deste nível).',
+        '  2. COPIE rascunhos/relatorio_v3.txt para entrega/, com o nome relatorio_final.txt.',
+        '     (o original deve continuar em rascunhos/)',
+        '  3. Apague o arquivo rascunhos/lixo.tmp.', '',
+        'Depois rode ./conferir para ver o que já está certo.', '',
+      ].join('\n'));
+      dir(d + '/rascunhos');
+      file(d + '/rascunhos/relatorio_v1.txt', 'Relatório (versão 1, desatualizada)\n');
+      file(d + '/rascunhos/relatorio_v2.txt', 'Relatório (versão 2, desatualizada)\n');
+      file(d + '/rascunhos/relatorio_v3.txt', 'Relatório final da PinguimCorp\nServidores: 12 · Incidentes: 0 · Pinguins felizes: muitos\n');
+      file(d + '/rascunhos/lixo.tmp', 'arquivo temporário (pode apagar)\n');
+      binary(d + '/conferir', 'conferir');
+    },
+
+    labirinto(d, l) {
+      const lab = d + '/labirinto';
+      dir(lab);
+      file(d + '/missao.txt', 'NÍVEL ' + l.id + ' · O Labirinto\n\nEm algum lugar dentro de labirinto/ existe um arquivo chamado chave.flag.\nSão mais de 100 salas. Procurar uma por uma não é uma boa ideia...\n');
+      const salas = [];
+      for (const a of ['ala_norte', 'ala_sul', 'ala_leste', 'ala_oeste', 'ala_central']) {
+        for (let c = 1; c <= 5; c++) {
+          for (const s of ['sala_a', 'sala_b', 'sala_c', 'sala_d']) {
+            const p = lab + '/' + a + '/corredor_' + c + '/' + s;
+            dir(p);
+            salas.push(p);
+            const r = rng.next();
+            if (r < 0.35) file(p + '/pista.txt', 'Nada por aqui. Continue procurando...\n');
+            else if (r < 0.45) file(p + '/chave.txt', 'Quase! Esta é só uma cópia falsa. Procure o arquivo chave.flag.\n');
+          }
+        }
       }
-    }
+      file(rng.pick(salas) + '/chave.flag', 'Você encontrou a chave!\nFragmento ' + l.id + ': ' + flags[l.id] + '\n');
+    },
+
+    palheiro(d, l) {
+      file(d + '/missao.txt', 'NÍVEL ' + l.id + ' · Agulha no Palheiro\n\npalheiro.txt é um log com 10.000 linhas. O fragmento está em UMA delas.\n');
+      const total = 10000;
+      const secretAt = rng.int(3000, 9000);
+      const lines = [];
+      for (let i = 0; i < total; i++) {
+        if (i === secretAt) lines.push('[' + fmtTime(rng) + '] cofre: fragmento ' + l.id + ' = ' + flags[l.id]);
+        else lines.push('[' + fmtTime(rng) + '] ' + rng.pick(SERVICOS) + ': ' + rng.pick(MENSAGENS));
+      }
+      file(d + '/palheiro.txt', lines.join('\n') + '\n');
+    },
+
+    // Aula 2: a flag sai pelo canal de erros (stderr)
+    canal(d, l) {
+      file(d + '/missao.txt', [
+        'NÍVEL ' + l.id + ' · Canal Errado', '',
+        'O ./transmissor despeja milhares de linhas: as normais na saída (stdout)',
+        'e as de erro no canal de erros (stderr). O fragmento veio num pacote com erro.', '',
+        'Teste: ./transmissor | grep FLAG   ...e repare no que passa direto pelo grep.', '',
+      ].join('\n'));
+      binary(d + '/transmissor', 'transmissor');
+    },
+
+    permissao(d, l) {
+      file(d + '/missao.txt', 'NÍVEL ' + l.id + ' · Porta Trancada\n\nO fragmento está em cofre.txt, mas ninguém consegue lê-lo.\nInvestigue as permissões do arquivo.\n');
+      file(d + '/cofre.txt', 'Destrancado! O dono de um arquivo pode alterar as permissões dele.\nFragmento ' + l.id + ': ' + flags[l.id] + '\n', 0o000);
+    },
+
+    unico(d, l) {
+      file(d + '/missao.txt', 'NÍVEL ' + l.id + ' · O Único\n\necos.txt é cheio de ecos: quase toda linha aparece várias vezes.\nA resposta é a ÚNICA linha que aparece uma só vez.\nEnvie-a dentro de FLAG{...}. Exemplo: se a linha for abc_123, envie FLAG{abc_123}\n');
+      const used = new Set();
+      const eco = [];
+      while (used.size < 120) {
+        const phrase = rng.pick(PALAVRAS) + '_' + rng.pick(PALAVRAS) + '_' + rng.pick(PALAVRAS) + '_' + rng.int(1000, 9999).toString(16);
+        if (used.has(phrase)) continue;
+        used.add(phrase);
+        const times = rng.int(2, 5);
+        for (let t = 0; t < times; t++) eco.push(phrase);
+      }
+      eco.push(flagBody(nick, 'unico', aula));
+      rng.shuffle(eco);
+      file(d + '/ecos.txt', eco.join('\n') + '\n');
+    },
+
+    fechadura(d, l) {
+      file(d + '/missao.txt', [
+        'NÍVEL ' + l.id + ' · A Fechadura', '',
+        'O último fragmento está protegido por uma fechadura com código de 3 dígitos (000 a 999).',
+        'Teste um código:   ./fechadura 123', '',
+        'Digitar 1000 códigos à mão? Nem pensar! Esse é o trabalho perfeito para um script.',
+        'Há um modelo pela metade em modelo.sh: complete as lacunas e rode  bash modelo.sh', '',
+      ].join('\n'));
+      binary(d + '/fechadura', 'fechadura');
+      file(d + '/modelo.sh', MODELO_SH);
+    },
+  };
+
+  for (const l of levels) {
+    const d = base + '/nivel' + l.id;
+    if (l.key !== 'boasvindas') dir(d);
+    builders[l.key](d, l);
   }
-  file(rng.pick(salas) + '/chave.flag', 'Você encontrou a chave!\nFragmento 4: ' + flags[4] + '\n');
-
-  // ----- Nível 5: 10.000 linhas -----
-  dir(base + '/nivel5');
-  file(base + '/nivel5/missao.txt', 'NÍVEL 5 · Agulha no Palheiro\n\npalheiro.txt é um log com 10.000 linhas. O fragmento 5 está em UMA delas.\n');
-  const total = 10000;
-  const secretAt = rng.int(3000, 9000);
-  const lines = [];
-  for (let i = 0; i < total; i++) {
-    if (i === secretAt) lines.push('[' + fmtTime(rng) + '] cofre: fragmento 5 = ' + flags[5]);
-    else lines.push('[' + fmtTime(rng) + '] ' + rng.pick(SERVICOS) + ': ' + rng.pick(MENSAGENS));
-  }
-  file(base + '/nivel5/palheiro.txt', lines.join('\n') + '\n');
-
-  // ----- Nível 6: permissão 000 -----
-  dir(base + '/nivel6');
-  file(base + '/nivel6/missao.txt', 'NÍVEL 6 · Porta Trancada\n\nO fragmento 6 está em cofre.txt, mas ninguém consegue lê-lo.\nInvestigue as permissões do arquivo.\n');
-  file(base + '/nivel6/cofre.txt', 'Destrancado! O dono de um arquivo pode alterar as permissões dele.\nFragmento 6: ' + flags[6] + '\n', 0o000);
-
-  // ----- Nível 7: a única linha sem repetição -----
-  dir(base + '/nivel7');
-  file(base + '/nivel7/missao.txt', 'NÍVEL 7 · O Único\n\necos.txt é cheio de ecos: quase toda linha aparece várias vezes.\nA resposta é a ÚNICA linha que aparece uma só vez.\nEnvie-a dentro de FLAG{...}. Exemplo: se a linha for abc_123, envie FLAG{abc_123}\n');
-  const used = new Set();
-  const eco = [];
-  while (used.size < 120) {
-    const phrase = rng.pick(PALAVRAS) + '_' + rng.pick(PALAVRAS) + '_' + rng.pick(PALAVRAS) + '_' + rng.int(1000, 9999).toString(16);
-    if (used.has(phrase)) continue;
-    used.add(phrase);
-    const times = rng.int(2, 5);
-    for (let t = 0; t < times; t++) eco.push(phrase);
-  }
-  eco.push(flagBody(nick, 7));
-  rng.shuffle(eco);
-  file(base + '/nivel7/ecos.txt', eco.join('\n') + '\n');
-
-  // ----- Nível 8: fechadura (automatização com laço) -----
-  dir(base + '/nivel8');
-  file(base + '/nivel8/missao.txt', [
-    'NÍVEL 8 · A Fechadura',
-    '',
-    'O último fragmento está protegido por uma fechadura com código de 3 dígitos (000 a 999).',
-    'Teste um código:   ./fechadura 123',
-    '',
-    'Digitar 1000 códigos à mão? Nem pensar! Esse é o trabalho perfeito para um script.',
-    'Há um modelo pela metade em modelo.sh: complete as lacunas e rode  bash modelo.sh',
-    '',
-  ].join('\n'));
-  const lock = vfs.writeFile(base + '/nivel8/fechadura', '\x7fELF\u0002\u0001\u0001\u0000 (binário simulado da fechadura)\n', { mode: 0o755, exec: 'fechadura' });
-  lock.mtime = now;
-  file(base + '/nivel8/modelo.sh', MODELO_SH);
-
-  return { levels: LEVELS.length };
-}
-
-function fmtTime(rng) {
-  const p = (n) => String(n).padStart(2, '0');
-  return '2026-10-' + p(rng.int(1, 15)) + ' ' + p(rng.int(0, 23)) + ':' + p(rng.int(0, 59)) + ':' + p(rng.int(0, 59));
+  return { levels: levels.length };
 }
 
 return { buildCtf };
@@ -4871,13 +5102,14 @@ const { commands } = __m["docs/ctf/js/shell/commands.js"];
 const { buildSystem } = __m["docs/ctf/js/shell/system.js"];
 const { VFS } = __m["docs/ctf/js/shell/vfs.js"];
 const { C } = __m["docs/ctf/js/shell/util.js"];
-const { CtfGame, LEVELS } = __m["docs/ctf/js/ctf/game.js"];
+const { CtfGame } = __m["docs/ctf/js/ctf/game.js"];
+const { AULA } = __m["docs/aula.js"];
 const { buildCtf } = __m["docs/ctf/js/ctf/world.js"];
 const { hintIndex, hintView } = __m["docs/ctf/js/ui.js"];
 const { setupView, setupKeybar } = __m["docs/ctf/js/view.js"];
 const { ACCESS_HASH, ACCESS_KEY, checkAccess, isUnlocked } = __m["docs/ctf/js/gate.js"];
 
-const STORAGE_KEY = 'pinguim-ctf-v1';
+const STORAGE_KEY = 'pinguim-ctf-aula' + AULA; // cada aula tem seu próprio jogo salvo
 const $ = (sel) => document.querySelector(sel);
 
 function load() {
@@ -4979,11 +5211,11 @@ function renderPanel(app) {
   const g = app.game;
   $('#nick').textContent = g.nick;
   $('#score').textContent = g.score() + ' / ' + g.maxScore();
-  $('#solved').textContent = g.solvedCount() + ' / ' + LEVELS.length;
-  $('#progress-bar').style.width = (100 * g.solvedCount() / LEVELS.length) + '%';
+  $('#solved').textContent = g.solvedCount() + ' / ' + g.levels.length;
+  $('#progress-bar').style.width = (100 * g.solvedCount() / g.levels.length) + '%';
   const list = $('#levels');
   list.innerHTML = '';
-  for (const l of LEVELS) {
+  for (const l of g.levels) {
     const li = document.createElement('li');
     li.className = 'level' + (g.isSolved(l.id) ? ' done' : '');
     const status = g.isSolved(l.id) ? '✔' : String(l.id);
@@ -5005,7 +5237,7 @@ function renderPanel(app) {
   const done = $('#done');
   done.hidden = !g.allSolved();
   if (g.allSolved()) $('#done-code').textContent = g.completionCode();
-  $('#mt-solved').textContent = g.solvedCount() + '/' + LEVELS.length;
+  $('#mt-solved').textContent = g.solvedCount() + '/' + g.levels.length;
   if (app.hintView && !$('#hint-box').hidden) renderHint(app);
 }
 
@@ -5026,7 +5258,7 @@ function renderHint(app) {
   const hv = app.hintView;
   if (!hv) return;
   const g = app.game;
-  const level = LEVELS.find((l) => l.id === hv.level);
+  const level = g.levels.find((l) => l.id === hv.level);
   const unlocked = g.unlockedHints(hv.level);
   const v = hintView({ index: hv.index, unlocked: unlocked.length, total: level.hints.length, solved: g.nextHintFree(hv.level) });
   hv.index = v.index;

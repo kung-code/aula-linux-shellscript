@@ -34,13 +34,13 @@ test('dicas: navegação só entre as dicas já liberadas', () => {
 
 // Regressão: depois de liberar todas as dicas, só a última aparecia.
 test('dicas anteriores continuam acessíveis depois de liberar a última', () => {
-  const g = new CtfGame('Ada');
-  g.hint(4); g.hint(4); g.hint(4); g.hint(4);
-  const hints = g.unlockedHints(4);
+  const g = new CtfGame('Ada', null, null, 2);
+  g.hint(2); g.hint(2); g.hint(2); g.hint(2);
+  const hints = g.unlockedHints(2);
   assert.strictEqual(hints.length, 3);
   assert.match(hints[0], /PROCURAR/);
   assert.strictEqual(g.unlockedHints(1).length, 0);
-  assert.strictEqual(g.hintsUsed(4), 3);
+  assert.strictEqual(g.hintsUsed(2), 3);
 });
 
 test('comando dica mostra todas as dicas já liberadas, marcando a nova', async () => {

@@ -7,7 +7,11 @@ import { buildSystem } from '../../ctf/js/shell/system.js';
 import { VFS } from '../../ctf/js/shell/vfs.js';
 import { C } from '../../ctf/js/shell/util.js';
 import { setupView, setupKeybar } from '../../ctf/js/view.js';
-import { ROTEIRO } from './roteiro.js';
+import { ROTEIRO as TODO_ROTEIRO, DESAFIOS } from './roteiro.js';
+import { AULA, AULAS } from '../../aula.js';
+
+// só os comandos da aula atual
+const ROTEIRO = TODO_ROTEIRO.filter((s) => s.aula === AULA);
 
 const STORAGE_KEY = 'pinguim-terminal-v1';
 const $ = (sel) => document.querySelector(sel);
@@ -56,6 +60,7 @@ function start() {
   window.__lab = app;
 
   renderRoteiro(app);
+  renderDesafio();
   setupKeybar(term);
   setupView(app, { uiKey: 'pinguim-ctf-ui' });
   $('#btn-reset').addEventListener('click', () => {
@@ -94,6 +99,18 @@ function markDone(app, src) {
   let changed = false;
   for (const sec of ROTEIRO) for (const c of sec.cmds) if (c === src && !app.done[c]) { app.done[c] = true; changed = true; }
   if (changed) renderRoteiro(app);
+}
+
+function renderDesafio() {
+  const d = DESAFIOS[AULA];
+  const card = $('#desafio');
+  if (!d || !card) return;
+  card.hidden = false;
+  $('#desafio-titulo').textContent = d.titulo;
+  const ol = $('#desafio-passos');
+  ol.innerHTML = '';
+  for (const p of d.passos) { const li = document.createElement('li'); li.textContent = p; ol.append(li); }
+  $('#desafio-entrega').textContent = d.entrega;
 }
 
 function renderRoteiro(app) {

@@ -6,13 +6,14 @@ import { commands } from './shell/commands.js';
 import { buildSystem } from './shell/system.js';
 import { VFS } from './shell/vfs.js';
 import { C } from './shell/util.js';
-import { CtfGame, LEVELS } from './ctf/game.js';
+import { CtfGame } from './ctf/game.js';
+import { AULA } from '../../aula.js';
 import { buildCtf } from './ctf/world.js';
 import { hintIndex, hintView } from './ui.js';
 import { setupView, setupKeybar } from './view.js';
 import { ACCESS_HASH, ACCESS_KEY, checkAccess, isUnlocked } from './gate.js';
 
-const STORAGE_KEY = 'pinguim-ctf-v1';
+const STORAGE_KEY = 'pinguim-ctf-aula' + AULA; // cada aula tem seu próprio jogo salvo
 const $ = (sel) => document.querySelector(sel);
 
 function load() {
@@ -114,11 +115,11 @@ function renderPanel(app) {
   const g = app.game;
   $('#nick').textContent = g.nick;
   $('#score').textContent = g.score() + ' / ' + g.maxScore();
-  $('#solved').textContent = g.solvedCount() + ' / ' + LEVELS.length;
-  $('#progress-bar').style.width = (100 * g.solvedCount() / LEVELS.length) + '%';
+  $('#solved').textContent = g.solvedCount() + ' / ' + g.levels.length;
+  $('#progress-bar').style.width = (100 * g.solvedCount() / g.levels.length) + '%';
   const list = $('#levels');
   list.innerHTML = '';
-  for (const l of LEVELS) {
+  for (const l of g.levels) {
     const li = document.createElement('li');
     li.className = 'level' + (g.isSolved(l.id) ? ' done' : '');
     const status = g.isSolved(l.id) ? '✔' : String(l.id);
@@ -140,7 +141,7 @@ function renderPanel(app) {
   const done = $('#done');
   done.hidden = !g.allSolved();
   if (g.allSolved()) $('#done-code').textContent = g.completionCode();
-  $('#mt-solved').textContent = g.solvedCount() + '/' + LEVELS.length;
+  $('#mt-solved').textContent = g.solvedCount() + '/' + g.levels.length;
   if (app.hintView && !$('#hint-box').hidden) renderHint(app);
 }
 
@@ -161,7 +162,7 @@ function renderHint(app) {
   const hv = app.hintView;
   if (!hv) return;
   const g = app.game;
-  const level = LEVELS.find((l) => l.id === hv.level);
+  const level = g.levels.find((l) => l.id === hv.level);
   const unlocked = g.unlockedHints(hv.level);
   const v = hintView({ index: hv.index, unlocked: unlocked.length, total: level.hints.length, solved: g.nextHintFree(hv.level) });
   hv.index = v.index;

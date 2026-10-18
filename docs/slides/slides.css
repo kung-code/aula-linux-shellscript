@@ -610,3 +610,17 @@ pre.code:hover .copy, .copy:focus { opacity: 1; }
 .pw .tp-ctrl { border: 0; background: none; padding: 0; font-size: .62em; }
 .pw.revealed .tp-next { display: none; }
 .ctf-flag .art-flag { max-height: 22vh; }
+
+/* ---------- assinatura Kung-Code (símbolo Ensō) ---------- */
+.kc-logo { width: 1.4em; height: 1.4em; flex: none; }
+.kc-cover, .kc-thanks { display: inline-flex; align-items: center; gap: .55em; margin: 0 0 .5em; font: 700 .72em 'Space Grotesk', var(--sans); letter-spacing: .22em; color: var(--accent); }
+.kc-cover .kc-logo { width: 2.6em; height: 2.6em; }
+.kc-thanks { margin-top: 1.4em; opacity: .9; }
+.kc-thanks .kc-logo { width: 2em; height: 2em; }
+.slide.revealed .kc-cover .kc-logo { animation: kcSpin 1.2s var(--ease) both; }
+@keyframes kcSpin { from { opacity: 0; transform: rotate(-120deg) scale(.6); } }
+.hud-brand { display: inline-flex; align-items: center; gap: 8px; margin-right: 12px; font: 700 12px 'Space Grotesk', var(--sans); letter-spacing: .2em; color: var(--accent); white-space: nowrap; }
+.hud-brand .kc-logo { width: 22px; height: 22px; }
+.hud-brand:has(+ .step-hint[hidden]) { margin-right: auto; }
+h1, h2, .kicker { font-family: 'Space Grotesk', var(--sans); }
+@media (max-width: 860px) { .hud-brand span { display: none; } }

@@ -1,7 +1,7 @@
 import assert from 'assert';
 import fs from 'fs';
 import { test, makeShell } from './harness.js';
-import { ROTEIRO } from '../docs/terminal/js/roteiro.js';
+import { ROTEIRO, DESAFIOS } from '../docs/terminal/js/roteiro.js';
 
 const read = (p) => fs.readFileSync(new URL('../' + p, import.meta.url), 'utf8');
 
@@ -21,6 +21,11 @@ test('terminal de prática: todos os comandos do roteiro rodam no simulador, na 
     }
   }
   assert.ok(total >= 40, 'roteiro curto: ' + total);
+  for (const aula of [1, 2]) {
+    assert.ok(ROTEIRO.filter((x) => x.aula === aula).length >= 5, 'aula ' + aula + ' sem roteiro');
+    assert.ok(DESAFIOS[aula] && DESAFIOS[aula].passos.length >= 4, 'aula ' + aula + ' sem desafio de casa');
+  }
+  assert.ok(ROTEIRO.every((x) => x.aula === 1 || x.aula === 2));
   assert.ok(s.vfs.exists('/home/aluno/aula/projeto/scripts'));
   assert.match((await s.run('./ola.sh')).out, /Olá, aluno!/);
 });

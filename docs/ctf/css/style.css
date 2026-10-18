@@ -277,3 +277,13 @@ body.mobile-mode { overflow: hidden; }
 .gate-error { color: var(--err); min-height: 1.3em; margin: .5em 0 0; font-size: .9rem; }
 .start-form.shake { animation: shake .4s; }
 @keyframes shake { 20%, 60% { transform: translateX(-6px); } 40%, 80% { transform: translateX(6px); } }
+
+/* ---------- assinatura Kung-Code (símbolo Ensō) ---------- */
+.kc-logo { width: 24px; height: 24px; flex: none; }
+.brand { display: inline-flex; align-items: center; gap: 9px; }
+.brand-kc { font: 700 .72rem 'Space Grotesk', var(--sans); letter-spacing: .2em; text-transform: uppercase; color: var(--accent); }
+.brand-sep { width: 1px; height: 18px; background: var(--line); }
+.brand-kicker { display: flex; align-items: center; gap: 10px; margin: 0 0 14px; font: 700 .75rem 'Space Grotesk', var(--sans); letter-spacing: .22em; text-transform: uppercase; color: var(--accent); }
+.brand-kicker .kc-logo { width: 34px; height: 34px; }
+.start h1 { font-family: 'Space Grotesk', var(--sans); letter-spacing: -.02em; }
+.mobile-mode .brand-kc, .mobile-mode .brand-sep { display: none; }

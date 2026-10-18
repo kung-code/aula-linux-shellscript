@@ -5,8 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Aula de Linux &amp; Shell Script</title>
   <meta name="description" content="Material da aula: slides, CTF com terminal simulado no navegador e cola de comandos.">
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🐧</text></svg>">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='46' fill='%23151f38'/><path d='M71 21A34 34 0 1 0 82 41' fill='none' stroke='%23ffcc33' stroke-width='11' stroke-linecap='round'/><path d='M36 41l11 9-11 9' fill='none' stroke='%23e6ebf5' stroke-width='8' stroke-linecap='round' stroke-linejoin='round'/><path d='M53 61h14' stroke='%23ffcc33' stroke-width='8' stroke-linecap='round'/></svg>">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=JetBrains+Mono:wght@400;700&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
   <style>
     :root { --bg: #0b1020; --card: #151f38; --line: #24304f; --text: #e6ebf5; --muted: #9aa6c2; --accent: #ffcc33; --accent2: #4fd1c5; color-scheme: dark; }
     * { box-sizing: border-box; }
@@ -24,11 +24,16 @@
     .card .go { color: var(--accent2); font-weight: 600; margin-top: 12px; display: block; }
     footer { margin-top: 48px; color: var(--muted); font-size: .85rem; }
     code { font-family: 'JetBrains Mono', monospace; color: var(--accent2); }
+    .kc { display: flex; align-items: center; gap: 12px; margin: 0 0 14px; font: 700 .8rem 'Space Grotesk', 'Inter', sans-serif; letter-spacing: .22em; text-transform: uppercase; color: var(--accent); }
+    .kc-logo { width: 44px; height: 44px; }
+    h1 { font-family: 'Space Grotesk', 'Inter', sans-serif; letter-spacing: -.02em; }
   </style>
 </head>
 <body>
+<!-- símbolo Kung-Code (Ensō) -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs><linearGradient id="kc-enso-g" x1="0" y1="1" x2="1" y2="0"><stop offset="0" stop-color="#4fd1c5"/><stop offset=".55" stop-color="#ffcc33"/><stop offset="1" stop-color="#ffe680"/></linearGradient><symbol id="kc-enso" viewBox="0 0 100 100"><circle cx="50" cy="50" r="46" fill="#151f38"/><path d="M71 21A34 34 0 1 0 82 41" fill="none" stroke="url(#kc-enso-g)" stroke-width="10" stroke-linecap="round"/><path d="M66 27A28 28 0 0 0 30 33" fill="none" stroke="#ffcc33" stroke-width="3" stroke-linecap="round" opacity=".55"/><path d="M36 41l11 9-11 9" fill="none" stroke="#e6ebf5" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/><path d="M53 61h14" stroke="#ffcc33" stroke-width="7" stroke-linecap="round"/></symbol></defs></svg>
 <main>
-  <div class="hero" aria-hidden="true">🐧</div>
+  <p class="kc"><svg class="kc-logo" aria-hidden="true"><use href="#kc-enso"/></svg><span>Kung-Code</span></p>
   <h1>Linux &amp; Shell Script</h1>
   <p class="lead">Material da aula: do terminal ao primeiro script, com prática num CTF que roda inteiro no navegador. Não precisa instalar nada.</p>
   <div class="grid">

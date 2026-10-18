@@ -5,17 +5,20 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>CTF · Missão Servidor Pinguim</title>
   <meta name="description" content="Capture The Flag de Linux e Shell Script com terminal simulado no navegador.">
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🐧</text></svg>">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='46' fill='%23151f38'/><path d='M71 21A34 34 0 1 0 82 41' fill='none' stroke='%23ffcc33' stroke-width='11' stroke-linecap='round'/><path d='M36 41l11 9-11 9' fill='none' stroke='%23e6ebf5' stroke-width='8' stroke-linecap='round' stroke-linejoin='round'/><path d='M53 61h14' stroke='%23ffcc33' stroke-width='8' stroke-linecap='round'/></svg>">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=JetBrains+Mono:wght@400;700&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
+<!-- símbolo Kung-Code (Ensō) -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs><linearGradient id="kc-enso-g" x1="0" y1="1" x2="1" y2="0"><stop offset="0" stop-color="#4fd1c5"/><stop offset=".55" stop-color="#ffcc33"/><stop offset="1" stop-color="#ffe680"/></linearGradient><symbol id="kc-enso" viewBox="0 0 100 100"><circle cx="50" cy="50" r="46" fill="#151f38"/><path d="M71 21A34 34 0 1 0 82 41" fill="none" stroke="url(#kc-enso-g)" stroke-width="10" stroke-linecap="round"/><path d="M66 27A28 28 0 0 0 30 33" fill="none" stroke="#ffcc33" stroke-width="3" stroke-linecap="round" opacity=".55"/><path d="M36 41l11 9-11 9" fill="none" stroke="#e6ebf5" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/><path d="M53 61h14" stroke="#ffcc33" stroke-width="7" stroke-linecap="round"/></symbol></defs></svg>
   <!-- Tela inicial -->
   <!-- Tela de senha: a senha é divulgada pelo professor na aula -->
   <main id="gate" class="start" hidden>
     <div class="start-card gate-card">
+      <p class="brand-kicker"><svg class="kc-logo" aria-hidden="true"><use href="#kc-enso"/></svg>Kung-Code</p>
       <div class="gate-lock" aria-hidden="true">
         <svg viewBox="0 0 24 24"><rect x="4.5" y="10.5" width="15" height="10.5" rx="2"/><path d="M8 10.5V7.5a4 4 0 0 1 8 0v3M12 14.5v2.5"/></svg>
       </div>
@@ -35,7 +38,7 @@
 
   <main id="start" class="start" hidden>
     <div class="start-card">
-      <div class="start-logo" aria-hidden="true">🐧🚩</div>
+      <p class="brand-kicker"><svg class="kc-logo" aria-hidden="true"><use href="#kc-enso"/></svg>Kung-Code</p>
       <h1>Missão Servidor Pinguim</h1>
       <p class="lead">Um CTF (<em>Capture The Flag</em>) para praticar Linux e Shell Script num terminal que roda inteiro no seu navegador.</p>
       <ul class="start-list">
@@ -49,7 +52,7 @@
           <input id="nick-input" maxlength="24" autocomplete="off" placeholder="ex.: tux_veloz" required>
           <button type="submit">Começar ▸</button>
         </div>
-        <p class="small">Cada codinome gera flags diferentes (copiar a flag do colega não funciona 😉). Use um apelido, não seu nome completo. O progresso fica salvo só neste navegador.</p>
+        <p class="small">Cada codinome gera flags diferentes (copiar a flag do colega não funciona). Use um apelido, não seu nome completo. O progresso fica salvo só neste navegador.</p>
       </form>
       <p class="small"><a href="../">← Voltar ao material da aula</a></p>
     </div>
@@ -58,7 +61,7 @@
   <!-- Aplicação -->
   <div id="app" class="app" hidden>
     <header class="topbar">
-      <div class="brand"><span aria-hidden="true">🐧</span> Missão Servidor Pinguim</div>
+      <div class="brand"><svg class="kc-logo" aria-hidden="true"><use href="#kc-enso"/></svg><span class="brand-kc">Kung-Code</span><span class="brand-sep" aria-hidden="true"></span>Missão Servidor Pinguim</div>
       <div class="stats">
         <span>Agente <b id="nick"></b></span>
         <span>Pontos <b id="score"></b></span>
@@ -116,7 +119,7 @@
         </section>
 
         <section id="done" class="card done" data-mpanel="enviar niveis" hidden>
-          <h2>🏆 Missão cumprida!</h2>
+          <h2>Missão cumprida!</h2>
           <p>Código de conclusão:</p>
           <p class="code" id="done-code"></p>
           <p class="small">Mostre ao professor. Agora tente o desafio para casa!</p>
