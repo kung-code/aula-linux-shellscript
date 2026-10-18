@@ -34,6 +34,19 @@ Clicar no terminal também avança. Durante a digitação, um novo `→` termina
 
 Os terminais mostram a **saída real**: ao abrir a página, todos os exemplos rodam, na ordem, no mesmo shell simulado do CTF. Para mudar um exemplo, edite o bloco `<pre data-demo="cmds">` (linhas começando com `$ `) ou `<pre data-demo="script" data-name="x.sh">`. A saída se atualiza sozinha.
 
+## Duas aulas, uma branch para cada
+
+O conteúdo foi dividido em duas aulas. Cada uma tem a sua branch com o site completo daquela aula:
+
+| Branch | Conteúdo | Senha do CTF |
+|---|---|---|
+| `aula-1` | teoria e terminal essencial (navegar, criar, copiar/mover/remover, ler), Exercício 1, CTF da aula 1 e desafio para casa | definida no slide do CTF da aula 1 |
+| `aula-2` | redirecionamento, pipes, busca, permissões e shell script, Exercício 2, CTF da aula 2 e desafio `organizador.sh` | definida no slide do CTF da aula 2 |
+
+Para publicar a aula do dia, em **Settings → Pages** escolha a branch (`aula-1` ou `aula-2`) e a pasta **`/docs`**. A troca leva de 1 a 2 minutos.
+
+O número da aula fica em `docs/aula.js`. O CTF, o roteiro do terminal de prática e o desafio para casa usam esse número. O progresso do CTF fica salvo separado por aula, então quem jogou a aula 1 começa a aula 2 do zero.
+
 ## Publicar no GitHub Pages
 
 1. Crie um repositório e envie esta pasta.
