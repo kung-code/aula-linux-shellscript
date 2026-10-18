@@ -4457,7 +4457,6 @@ const DESAFIOS = {
       'Mostre o resultado: ls -R estudos · wc -l estudos/linux/anotacoes/comandos.txt · head -n 2 estudos/linux/exercicios/revisao.txt',
       'Bônus: descubra no man ls como listar ordenando por tamanho e use em /etc',
     ],
-    entrega: 'Copie a saída dos comandos do passo 5 (ou tire um print) e envie no canal da turma.',
   },
   2: {
     titulo: 'organizador.sh',
@@ -4605,7 +4604,9 @@ function renderDesafio() {
   const ol = $('#desafio-passos');
   ol.innerHTML = '';
   for (const p of d.passos) { const li = document.createElement('li'); li.textContent = p; ol.append(li); }
-  $('#desafio-entrega').textContent = d.entrega;
+  const entrega = $('#desafio-entrega');
+  entrega.textContent = d.entrega || '';
+  entrega.hidden = !d.entrega; // a entrega é opcional
 }
 
 function renderRoteiro(app) {

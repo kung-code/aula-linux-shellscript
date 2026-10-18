@@ -110,7 +110,9 @@ function renderDesafio() {
   const ol = $('#desafio-passos');
   ol.innerHTML = '';
   for (const p of d.passos) { const li = document.createElement('li'); li.textContent = p; ol.append(li); }
-  $('#desafio-entrega').textContent = d.entrega;
+  const entrega = $('#desafio-entrega');
+  entrega.textContent = d.entrega || '';
+  entrega.hidden = !d.entrega; // a entrega é opcional
 }
 
 function renderRoteiro(app) {

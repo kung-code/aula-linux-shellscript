@@ -60,7 +60,6 @@ export const DESAFIOS = {
       'Mostre o resultado: ls -R estudos · wc -l estudos/linux/anotacoes/comandos.txt · head -n 2 estudos/linux/exercicios/revisao.txt',
       'Bônus: descubra no man ls como listar ordenando por tamanho e use em /etc',
     ],
-    entrega: 'Copie a saída dos comandos do passo 5 (ou tire um print) e envie no canal da turma.',
   },
   2: {
     titulo: 'organizador.sh',

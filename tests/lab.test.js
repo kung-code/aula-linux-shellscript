@@ -26,6 +26,8 @@ test('terminal de prática: todos os comandos do roteiro rodam no simulador, na 
     assert.ok(DESAFIOS[aula] && DESAFIOS[aula].passos.length >= 4, 'aula ' + aula + ' sem desafio de casa');
   }
   assert.ok(ROTEIRO.every((x) => x.aula === 1 || x.aula === 2));
+  assert.ok(!DESAFIOS[1].entrega, 'o desafio da aula 1 não pede entrega');
+  assert.ok(read('docs/terminal/js/lab.js').includes('entrega.hidden = !d.entrega'), 'sem entrega, o texto fica escondido');
   assert.ok(s.vfs.exists('/home/aluno/aula/projeto/scripts'));
   assert.match((await s.run('./ola.sh')).out, /Olá, aluno!/);
 });
