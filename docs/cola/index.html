@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Cola de Comandos Linux</title>
+  <title>Cola de Comandos · Aula 1</title>
   <meta name="description" content="Resumo dos comandos de Linux e Shell Script vistos em aula, pronto para imprimir.">
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='46' fill='%23151f38'/><path d='M71 21A34 34 0 1 0 82 41' fill='none' stroke='%23ffcc33' stroke-width='11' stroke-linecap='round'/><path d='M36 41l11 9-11 9' fill='none' stroke='%23e6ebf5' stroke-width='8' stroke-linecap='round' stroke-linejoin='round'/><path d='M53 61h14' stroke='%23ffcc33' stroke-width='8' stroke-linecap='round'/></svg>">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=JetBrains+Mono:wght@400;700&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
@@ -52,7 +52,7 @@
     <div>
       <p class="kc"><svg class="kc-logo" aria-hidden="true"><use href="#kc-enso"/></svg><span>Kung-Code</span></p>
       <h1>Cola de Comandos: Linux &amp; Shell Script</h1>
-      <p>Tudo o que vimos na aula, em uma página. Na dúvida: <b>man comando</b>.</p>
+      <p>Aula 1 · O terminal Linux: tudo o que vimos, em uma página. Na dúvida: <b>man comando</b>.</p>
     </div>
     <div class="actions"><button type="button" onclick="print()">Imprimir</button><a href="../">Material da aula</a></div>
   </header>
@@ -84,37 +84,11 @@
       <tr><td>head -n 5 arq</td><td>5 primeiras linhas</td></tr>
       <tr><td>tail -n 5 arq</td><td>5 últimas linhas</td></tr>
       <tr><td>wc -l arq</td><td>conta linhas</td></tr>
+      <tr><td>cmd &gt; arq</td><td>grava a saída num arquivo (mais na aula 2)</td></tr>
     </table></section>
 
-    <section><h2>Busca</h2><table>
-      <tr><td>grep txt arq</td><td>linhas que contêm "txt"</td></tr>
-      <tr><td>grep -i</td><td>ignora maiúsc./minúsc.</td></tr>
-      <tr><td>grep -r txt dir</td><td>busca recursiva</td></tr>
-      <tr><td>grep -v · -c · -n</td><td>inverte · conta · nº da linha</td></tr>
-      <tr><td>find . -name "*.txt"</td><td>procura pelo nome</td></tr>
-      <tr><td>find . -type d</td><td>só diretórios (f = arquivos)</td></tr>
-      <tr><td>find . -size +1M</td><td>maiores que 1 MB</td></tr>
-    </table></section>
 
-    <section><h2>Redirecionamento e pipes</h2><table>
-      <tr><td>cmd &gt; arq</td><td>saída para arquivo (sobrescreve)</td></tr>
-      <tr><td>cmd &gt;&gt; arq</td><td>acrescenta ao final</td></tr>
-      <tr><td>cmd 2&gt; arq</td><td>erros para arquivo</td></tr>
-      <tr><td>cmd &lt; arq</td><td>entrada a partir do arquivo</td></tr>
-      <tr><td>a | b</td><td>saída de a vira entrada de b</td></tr>
-      <tr><td>sort | uniq -c</td><td>conta as repetições</td></tr>
-      <tr><td>cut -d: -f1</td><td>extrai colunas</td></tr>
-    </table></section>
 
-    <section><h2>Permissões</h2><table>
-      <tr><td>ls -l</td><td>-rwxr-xr-- = tipo · dono · grupo · outros</td></tr>
-      <tr><td>r=4 w=2 x=1</td><td>some para cada grupo</td></tr>
-      <tr><td>chmod 755 arq</td><td>rwxr-xr-x (scripts)</td></tr>
-      <tr><td>chmod 644 arq</td><td>rw-r--r-- (arquivos comuns)</td></tr>
-      <tr><td>chmod +x arq</td><td>dá permissão de execução</td></tr>
-      <tr><td>chmod u+r,go-w</td><td>forma simbólica</td></tr>
-      <tr><td>sudo cmd</td><td>executa como root (cuidado!)</td></tr>
-    </table></section>
 
     <section><h2>Atalhos</h2><table>
       <tr><td>Tab</td><td>completa comandos e nomes</td></tr>
@@ -125,37 +99,7 @@
       <tr><td>history</td><td>comandos já digitados</td></tr>
     </table></section>
 
-    <section><h2>Shell Script: básico</h2>
-<pre>#!/bin/bash          # shebang
-nome="Ana"           # sem espaços no =
-echo "Olá, $nome"    # "" expande, '' não
-hoje=$(date +%d/%m)  # saída de comando
-soma=$((2 + 3))      # aritmética
-read -p "Idade? " idade
-echo "$1 $# $@ $?"   # args, qtd, todos, status</pre>
-<pre>chmod +x script.sh && ./script.sh arg1</pre>
-    </section>
 
-    <section><h2>Shell Script: controle</h2>
-<pre>if [ "$x" -ge 18 ]; then
-  echo "maior"
-elif [ -z "$x" ]; then
-  echo "vazio"
-else
-  echo "menor"
-fi
-
-for arq in *.txt; do echo "$arq"; done
-for i in $(seq 1 10); do echo $i; done
-
-while [ $c -le 3 ]; do c=$((c+1)); done</pre>
-      <table>
-        <tr><td>-eq -ne -lt -le -gt -ge</td><td>números</td></tr>
-        <tr><td>= != -z -n</td><td>textos</td></tr>
-        <tr><td>-f -d -e -x</td><td>arquivos</td></tr>
-        <tr><td>a &amp;&amp; b · a || b</td><td>se deu certo · se falhou</td></tr>
-      </table>
-    </section>
   </div>
 </main>
 </body>

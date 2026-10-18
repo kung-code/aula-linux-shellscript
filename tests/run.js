@@ -11,6 +11,7 @@ import './gate.test.js';
 import './lab.test.js';
 import './preparacao.test.js';
 import './assinatura.test.js';
+import './aula.test.js';
 import './bundle.test.js';
 
 runAll().then((failed) => { process.exitCode = failed ? 1 : 0; });

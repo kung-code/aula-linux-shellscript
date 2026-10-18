@@ -11,6 +11,7 @@ import { buildSystem } from '../docs/ctf/js/shell/system.js';
 import { Shell } from '../docs/ctf/js/shell/interpreter.js';
 import { commands } from '../docs/ctf/js/shell/commands.js';
 import { stripAnsi } from '../docs/ctf/js/shell/util.js';
+import { AULA } from '../docs/aula.js';
 
 const HTML = fs.readFileSync(new URL('../docs/slides/index.html', import.meta.url), 'utf8');
 
@@ -67,7 +68,7 @@ test('sumário: agrupa por seção, filtra sem acento e salta por número', () =
 
 test('sumário dos slides: todas as seções da aula viram grupos', () => {
   const sections = (HTML.match(/class="slide (?:divider|ctf-slide)[^"]*"|data-toc-group="[^"]+"/g) || []).length;
-  assert.ok(sections >= 6, 'seções encontradas: ' + sections);
+  assert.ok(sections >= 4, 'seções encontradas: ' + sections);
   assert.ok(/id="toggle-toc"/.test(HTML) && /id="toc-input"/.test(HTML));
   const titles = (HTML.match(/<section class="slide[^"]*" data-title="/g) || []).length;
   const sectionsTotal = (HTML.match(/<section class="slide/g) || []).length;
@@ -143,8 +144,8 @@ test('cada slide com terminal tem passos e todos os ícones usados existem no sp
 // Roda TODOS os exemplos dos slides no simulador, na ordem, como o navegador faz.
 test('todos os exemplos animados dos slides executam sem erro no simulador', async () => {
   const specs = demoSpecs(HTML);
-  assert.ok(specs.filter((s) => s.kind === 'cmds').length >= 15, 'poucos terminais: ' + specs.length);
-  assert.ok(specs.some((s) => s.kind === 'script'));
+  assert.ok(specs.filter((s) => s.kind === 'cmds').length >= 6, 'poucos terminais: ' + specs.length);
+  if (AULA === 2) assert.ok(specs.some((s) => s.kind === 'script'), 'a aula 2 tem scripts animados');
   const io = makeDemoIo();
   const shell = new Shell({ vfs: buildSystem(), io, commands });
   const results = await runDemos(specs, shell, io);
@@ -171,8 +172,13 @@ test('todos os exemplos animados dos slides executam sem erro no simulador', asy
   // conferências de conteúdo: a saída é real
   const flat = results.map((r) => (r.steps ? r.steps.map((s) => s.cmd + '\n' + stripAnsi(s.out)).join('\n') : stripAnsi(r.out || ''))).join('\n');
   assert.ok(flat.includes('/home/aluno'));
-  assert.ok(flat.includes('Você tem 20 anos'));
-  assert.ok(flat.includes('Maior de idade'));
-  assert.ok(flat.includes('Backup: 1 arquivo(s)'));
-  assert.ok(/Bom dia|Boa tarde|Boa noite/.test(flat) && flat.includes('Ana!'));
+  if (AULA === 2) {
+    assert.ok(flat.includes('Você tem 20 anos'));
+    assert.ok(flat.includes('Maior de idade'));
+    assert.ok(flat.includes('Backup: 1 arquivo(s)'));
+    assert.ok(/Bom dia|Boa tarde|Boa noite/.test(flat) && flat.includes('Ana!'));
+  } else {
+    assert.ok(flat.includes('Minha primeira linha'));
+    assert.ok(/projeto\/tests/.test(flat), 'gabarito do exercício 1 renomeia testes para tests');
+  }
 });

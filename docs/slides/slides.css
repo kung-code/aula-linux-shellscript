@@ -613,7 +613,7 @@ pre.code:hover .copy, .copy:focus { opacity: 1; }
 
 /* ---------- assinatura Kung-Code (símbolo Ensō) ---------- */
 .kc-logo { width: 1.4em; height: 1.4em; flex: none; }
-.kc-cover, .kc-thanks { display: inline-flex; align-items: center; gap: .55em; margin: 0 0 .5em; font: 700 .72em 'Space Grotesk', var(--sans); letter-spacing: .22em; color: var(--accent); }
+.kc-cover, .kc-thanks { display: inline-flex; align-items: center; gap: .55em; margin: 1.1em 0 .4em; font: 700 .72em 'Space Grotesk', var(--sans); letter-spacing: .22em; color: var(--accent); }
 .kc-cover .kc-logo { width: 2.6em; height: 2.6em; }
 .kc-thanks { margin-top: 1.4em; opacity: .9; }
 .kc-thanks .kc-logo { width: 2em; height: 2em; }
@@ -624,3 +624,4 @@ pre.code:hover .copy, .copy:focus { opacity: 1; }
 .hud-brand:has(+ .step-hint[hidden]) { margin-right: auto; }
 h1, h2, .kicker { font-family: 'Space Grotesk', var(--sans); }
 @media (max-width: 860px) { .hud-brand span { display: none; } }
+.cover .cover-art + .kc-cover { margin-top: 2em; }

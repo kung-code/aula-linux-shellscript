@@ -70,7 +70,7 @@ function start() {
   });
   window.addEventListener('beforeunload', () => saveNow(app));
 
-  term.write(C.bcyan + 'PinguimOS 24.04 LTS · terminal de prática' + C.reset + '\n');
+  term.write(C.bcyan + 'PinguimOS 24.04 LTS · terminal de prática · Aula ' + AULA + ': ' + AULAS[AULA].titulo + C.reset + '\n');
   term.write(C.gray + 'Simulador no navegador: os comandos funcionam como no bash. Digite "help" para ver a lista.' + C.reset + '\n');
   term.write(saved ? 'Seus arquivos e o histórico foram restaurados.\n\n'
     : 'Acompanhe a aula digitando aqui. Comece com: ' + C.bold + 'pwd' + C.reset + '\n\n');

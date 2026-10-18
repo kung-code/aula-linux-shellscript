@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Aula de Linux &amp; Shell Script</title>
+  <title>Linux &amp; Shell Script · Aula 1</title>
   <meta name="description" content="Material da aula: slides, CTF com terminal simulado no navegador e cola de comandos.">
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='46' fill='%23151f38'/><path d='M71 21A34 34 0 1 0 82 41' fill='none' stroke='%23ffcc33' stroke-width='11' stroke-linecap='round'/><path d='M36 41l11 9-11 9' fill='none' stroke='%23e6ebf5' stroke-width='8' stroke-linecap='round' stroke-linejoin='round'/><path d='M53 61h14' stroke='%23ffcc33' stroke-width='8' stroke-linecap='round'/></svg>">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=JetBrains+Mono:wght@400;700&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
@@ -27,6 +27,10 @@
     .kc { display: flex; align-items: center; gap: 12px; margin: 0 0 14px; font: 700 .8rem 'Space Grotesk', 'Inter', sans-serif; letter-spacing: .22em; text-transform: uppercase; color: var(--accent); }
     .kc-logo { width: 44px; height: 44px; }
     h1 { font-family: 'Space Grotesk', 'Inter', sans-serif; letter-spacing: -.02em; }
+    .aula { margin: 0 0 .6em; font: 600 1.1rem 'Space Grotesk', 'Inter', sans-serif; color: var(--accent2); }
+    .card .ico { width: 44px; height: 44px; border-radius: 12px; display: grid; place-items: center; background: #1a2645; color: var(--accent); border: 1px solid var(--line); font-size: 1rem; }
+    .card .ico svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+    .card h2 { font-family: 'Space Grotesk', 'Inter', sans-serif; }
   </style>
 </head>
 <body>
@@ -35,28 +39,29 @@
 <main>
   <p class="kc"><svg class="kc-logo" aria-hidden="true"><use href="#kc-enso"/></svg><span>Kung-Code</span></p>
   <h1>Linux &amp; Shell Script</h1>
-  <p class="lead">Material da aula: do terminal ao primeiro script, com prática num CTF que roda inteiro no navegador. Não precisa instalar nada.</p>
+  <p class="aula">Aula 1 de 2 · O terminal Linux</p>
+  <p class="lead">Navegar, criar, ler e organizar arquivos pelo terminal, com prática num CTF que roda inteiro no navegador. Não precisa instalar nada.</p>
   <div class="grid">
     <a class="card" href="slides/">
-      <div class="ico">🎞️</div>
+      <div class="ico" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="3" y="4.5" width="18" height="12" rx="2"/><path d="M8 20h8M12 16.5V20"/></svg></div>
       <h2>Slides da aula</h2>
       <p>Teoria, exemplos práticos e exercícios com cronômetro. Use as setas para navegar.</p>
       <span class="go">Abrir slides →</span>
     </a>
     <a class="card" href="terminal/">
-      <div class="ico">⌨️</div>
+      <div class="ico" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="2.5" y="4" width="19" height="16" rx="2.5"/><path d="M7 9.5l3 2.5-3 2.5M12.5 15h4.5"/></svg></div>
       <h2>Terminal de prática</h2>
       <p>Um terminal Linux simulado para digitar junto com a aula, com o roteiro de comandos de cada parte.</p>
       <span class="go">Abrir o terminal →</span>
     </a>
     <a class="card" href="ctf/">
-      <div class="ico">🚩</div>
+      <div class="ico" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 21V3.5"/><path d="M5 4h12l-2.5 4.5L17 13H5"/></svg></div>
       <h2>CTF: Missão Servidor Pinguim</h2>
-      <p>8 níveis num terminal Linux simulado: <code>ls -a</code>, <code>find</code>, <code>grep</code>, <code>chmod</code>, pipes e scripts. A senha de acesso é divulgada na aula.</p>
+      <p>7 níveis com o conteúdo da aula: ocultos, nomes com espaço, caminhos, <code>head</code>, <code>wc</code> e <code>mkdir</code>/<code>cp</code>/<code>rm</code>. A senha de acesso é divulgada na aula.</p>
       <span class="go">Começar o CTF →</span>
     </a>
     <a class="card" href="cola/">
-      <div class="ico">📄</div>
+      <div class="ico" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M6 2.5h8l4.5 4.5v14.5H6z"/><path d="M14 2.5V7h4.5M9 12h6M9 15.5h6"/></svg></div>
       <h2>Cola de comandos</h2>
       <p>Resumo de uma página com tudo o que vimos, pronta para imprimir.</p>
       <span class="go">Ver a cola →</span>

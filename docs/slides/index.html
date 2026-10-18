@@ -3,8 +3,8 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Linux &amp; Shell Script · Slides</title>
-  <meta name="description" content="Aula de Linux (terminal) e Shell Script básico: teoria, exemplos animados, exercícios e CTF.">
+  <title>Aula 1 · O terminal Linux · Slides</title>
+  <meta name="description" content="Aula 1 de Linux: o terminal. Teoria, exemplos animados, exercício, CTF e desafio para casa.">
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='46' fill='%23151f38'/><path d='M71 21A34 34 0 1 0 82 41' fill='none' stroke='%23ffcc33' stroke-width='11' stroke-linecap='round'/><path d='M36 41l11 9-11 9' fill='none' stroke='%23e6ebf5' stroke-width='8' stroke-linecap='round' stroke-linejoin='round'/><path d='M53 61h14' stroke='%23ffcc33' stroke-width='8' stroke-linecap='round'/></svg>">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -175,24 +175,22 @@
   </div>
   <p class="kc-cover"><svg class="kc-logo" aria-hidden="true"><use href="#kc-enso"/></svg><span>KUNG-CODE</span></p>
   <h1>Linux &amp; Shell Script</h1>
-  <p class="subtitle">do zero ao primeiro script, em 1 hora</p>
+  <p class="subtitle">Aula 1 de 2 · O terminal Linux</p>
   <p class="hint-keys"><kbd>→</kbd> avança (comando a comando nos terminais) · <kbd>Shift</kbd>+<kbd>→</kbd> pula slide · <kbd>S</kbd> sumário · <kbd>N</kbd> notas · <kbd>F</kbd> tela cheia</p>
   <aside class="notes">Abrir com energia. Pedir para todos deixarem o terminal aberto (ou o simulador: link no chat). Nos slides com terminal, cada → digita o próximo comando.</aside>
 </section>
 
 <section class="slide" data-title="Agenda">
-  <h2>Agenda de hoje</h2>
+  <h2>Agenda da aula 1</h2>
   <div class="agenda">
-    <div><span>00–04</span> Abertura</div>
-    <div><span>04–12</span> Teoria: o que é Linux</div>
-    <div><span>12–24</span> Prática: terminal essencial</div>
-    <div class="ex"><span>24–29</span> Exercício 1</div>
-    <div><span>29–36</span> Superpoderes: pipes, busca, permissões</div>
-    <div><span>36–46</span> Shell Script</div>
-    <div class="ex"><span>46–49</span> Exercício 2</div>
-    <div class="ctf"><span>49–58</span> Capture The Flag</div>
-    <div><span>58–60</span> Encerramento e desafio para casa</div>
+    <div><span>00–05</span> Abertura</div>
+    <div><span>05–15</span> Teoria: o que é Linux</div>
+    <div><span>15–33</span> Prática: terminal essencial</div>
+    <div class="ex"><span>33–40</span> Exercício 1</div>
+    <div class="ctf"><span>40–55</span> Capture The Flag</div>
+    <div><span>55–60</span> Encerramento e desafio para casa</div>
   </div>
+  <p class="callout"><svg class="i"><use href="#i-route"/></svg><span><b>Na aula 2:</b> redirecionamento, pipes, busca, permissões e shell script.</span></p>
   <aside class="notes">O CTF é o bloco elástico: se atrasar, ele continua depois da aula.</aside>
 </section>
 
@@ -226,7 +224,7 @@
     <li><svg class="i"><use href="#i-container"/></svg><span><b>DevOps e nuvem</b>: Docker, Kubernetes e CI/CD são operados por linha de comando</span></li>
     <li><svg class="i"><use href="#i-shield"/></svg><span><b>Segurança</b>, <b>dados</b> e <b>desenvolvimento</b>: as ferramentas vivem no terminal</span></li>
   </ul>
-  <p class="callout"><svg class="i"><use href="#i-target"/></svg><span>Hoje vocês vão escrever um script e capturar 8 flags.</span></p>
+  <p class="callout"><svg class="i"><use href="#i-target"/></svg><span>Hoje: navegar, criar e organizar arquivos só pelo terminal, e depois capturar 7 flags no CTF.</span></p>
 </section>
 
 <!-- ===================== TEORIA ===================== -->
@@ -446,11 +444,11 @@ $ history | tail -n 4</code></pre>
       <li>Acrescente uma 2ª linha com seu nome (sem apagar a 1ª)</li>
       <li>Copie <code>leia-me.txt</code> para <code>src/copia.txt</code></li>
       <li>Renomeie <code>testes</code> para <code>tests</code></li>
-      <li>Mostre a árvore: <code>find projeto</code></li>
+      <li>Mostre a árvore: <code>ls -R projeto</code></li>
     </ol>
     <div>
       <div class="timer" data-seconds="300"></div>
-      <p class="small">Bônus: quantas linhas tem <code>/etc/passwd</code>? Quantas contêm <code>bash</code>?</p>
+      <p class="small">Bônus: quantas linhas tem <code>/etc/passwd</code>? E quais são as 3 últimas?</p>
       <p class="small">Terminou? Cole a saída do último comando no chat.</p>
     </div>
   </div>
@@ -465,298 +463,19 @@ $ echo "Projeto da aula de Linux" > projeto/docs/leia-me.txt
 $ echo "Seu Nome" >> projeto/docs/leia-me.txt
 $ cp projeto/docs/leia-me.txt projeto/src/copia.txt
 $ mv projeto/testes projeto/tests
-$ find projeto
+$ ls -R projeto
 $ wc -l /etc/passwd
-$ grep -c bash /etc/passwd</code></pre>
-</section>
-
-<!-- ===================== SUPERPODERES ===================== -->
-<section class="slide divider" data-title="Superpoderes">
-  <div class="divider-grid">
-    <div>
-      <p class="kicker">Parte 3</p>
-      <h2>Superpoderes</h2>
-      <p class="big muted">redirecionamento · pipes · busca · permissões</p>
-    </div>
-    <div data-art="pipes"></div>
-  </div>
-</section>
-
-<section class="slide" data-title="Redirecionamento">
-  <h2>Redirecionamento: mandando a saída para um arquivo</h2>
-  <div class="two">
-    <div class="redir">
-      <div class="rd-row"><span class="rd-cmd">echo</span><span class="rd-arrow"><code>&gt;</code></span><span class="rd-file">sobrescreve</span></div>
-      <div class="rd-row"><span class="rd-cmd">echo</span><span class="rd-arrow"><code>&gt;&gt;</code></span><span class="rd-file">acrescenta</span></div>
-      <div class="rd-row err"><span class="rd-cmd">ls</span><span class="rd-arrow"><code>2&gt;</code></span><span class="rd-file">só os erros</span></div>
-      <div class="rd-row in"><span class="rd-file">arquivo</span><span class="rd-arrow"><code>&lt;</code></span><span class="rd-cmd">wc</span></div>
-    </div>
-<pre class="code" data-demo="cmds"><code>$ cd ~
-$ echo "linha 1" > teste.txt
-$ echo "linha 2" >> teste.txt
-$ cat teste.txt
-$ ls /nao_existe 2> erros.txt
-$ cat erros.txt
-$ wc -l < teste.txt</code></pre>
-  </div>
-</section>
-
-<section class="slide" data-title="Pipes">
-  <h2>Pipe <code>|</code>: a saída de um vira a entrada do outro</h2>
-  <div class="pipeline">
-    <div class="pl-node"><code>cat /etc/passwd</code><small>11 linhas</small></div>
-    <div class="pl-pipe"><span></span><span></span><span></span></div>
-    <div class="pl-node"><code>grep bash</code><small>4 linhas</small></div>
-    <div class="pl-pipe"><span></span><span></span><span></span></div>
-    <div class="pl-node"><code>wc -l</code><small>conta</small></div>
-    <div class="pl-pipe"><span></span><span></span><span></span></div>
-    <div class="pl-node pl-result"><code>4</code><small>resultado</small></div>
-  </div>
-<pre class="code" data-demo="cmds"><code>$ cat /etc/passwd | grep bash | wc -l
-$ ls -l /etc | grep conf
-$ cut -d: -f1 /etc/passwd | sort | head -n 5</code></pre>
-  <p class="callout"><svg class="i"><use href="#i-blocks"/></svg><span><b>Filosofia Unix</b>: ferramentas pequenas, que fazem uma coisa bem feita e se combinam.</span></p>
-</section>
-
-<section class="slide" data-title="Busca">
-  <h2 class="with-icon"><span class="badge-ico"><svg class="i"><use href="#i-search"/></svg></span>Buscando: <code>grep</code> (conteúdo) e <code>find</code> (arquivos)</h2>
-  <div class="two">
-<pre class="code compact" data-demo="cmds"><code>$ grep "root" /etc/passwd
-$ grep -i "erro" /var/log/syslog | head -n 3
-$ grep -c bash /etc/passwd
-$ grep -rn "Total" ~</code></pre>
-<pre class="code compact" data-demo="cmds"><code>$ find ~ -name "*.txt"
-$ find /etc -name "*.conf"
-$ find ~ -maxdepth 1 -type d</code></pre>
-  </div>
-  <p class="small">grep: <code>-i</code> ignora maiúsculas/minúsculas · <code>-r</code> recursivo · <code>-n</code> número da linha · <code>-v</code> inverte · <code>-c</code> conta</p>
-</section>
-
-<section class="slide" data-title="Permissões">
-  <h2 class="with-icon"><span class="badge-ico"><svg class="i"><use href="#i-lock"/></svg></span>Permissões: quem pode o quê</h2>
-  <div class="perm-anatomy">
-    <div class="pa-str"><span class="pt">-</span><span class="p0">rwx</span><span class="p1">r-x</span><span class="p2">r--</span><span class="rest">1 ana alunos 512 out 16 notas.sh</span></div>
-    <div class="pa-cards">
-      <div class="pt"><b>tipo</b><span>- arquivo · d diretório</span></div>
-      <div class="p0"><b>dono</b><span>rwx: lê, escreve, executa</span></div>
-      <div class="p1"><b>grupo</b><span>r-x: lê e executa</span></div>
-      <div class="p2"><b>outros</b><span>r--: só lê</span></div>
-    </div>
-  </div>
-  <p class="small"><b>r</b> = read (ler) · <b>w</b> = write (escrever) · <b>x</b> = execute (executar; num diretório, permite entrar)</p>
-</section>
-
-<section class="slide" data-title="chmod">
-  <h2>Mudando permissões com <code>chmod</code></h2>
-  <div class="two">
-    <div>
-      <p class="small">Clique nos bits e veja o número mudar (<code>r=4</code> <code>w=2</code> <code>x=1</code>):</p>
-      <div class="perm-builder" data-initial="754"></div>
-    </div>
-<pre class="code compact" data-demo="cmds"><code>$ cd ~
-$ touch script.sh
-$ ls -l script.sh
-$ chmod 755 script.sh
-$ ls -l script.sh
-$ chmod go-rx script.sh
-$ ls -l script.sh</code></pre>
-  </div>
-  <p class="callout"><svg class="i"><use href="#i-key"/></svg><span>Para um script rodar, ele precisa da permissão <b>x</b>!</span></p>
-</section>
-
-<!-- ===================== SHELL SCRIPT ===================== -->
-<section class="slide divider" data-title="Shell Script">
-  <div class="divider-grid">
-    <div>
-      <p class="kicker">Parte 4</p>
-      <h2>Shell Script</h2>
-      <p class="big muted">automatizando o que você faria à mão</p>
-    </div>
-    <div data-art="script"></div>
-  </div>
-</section>
-
-<section class="slide" data-title="Primeiro script">
-  <h2>O primeiro script, em 3 passos</h2>
-  <div class="two">
-    <div>
-<pre class="code" data-demo="file" data-name="ola.sh"><code>#!/bin/bash
-# Meu primeiro script
-echo "Olá, $USER! Hoje é $(date +%d/%m/%Y)."</code></pre>
-      <ul class="icon-list compact">
-        <li><svg class="i"><use href="#i-pencil"/></svg><span><b>1.</b> escrever (<code>nano ola.sh</code>: <kbd>Ctrl</kbd>+<kbd>O</kbd> salva, <kbd>Ctrl</kbd>+<kbd>X</kbd> sai)</span></li>
-        <li><svg class="i"><use href="#i-key"/></svg><span><b>2.</b> dar permissão de execução</span></li>
-        <li><svg class="i"><use href="#i-play"/></svg><span><b>3.</b> executar com <code>./</code>: o diretório atual não está no <code>PATH</code></span></li>
-      </ul>
-    </div>
-<pre class="code" data-demo="cmds"><code>$ ./ola.sh
-$ chmod +x ola.sh
-$ ./ola.sh
-$ bash ola.sh</code></pre>
-  </div>
-  <aside class="notes">O primeiro ./ola.sh falha de propósito (sem permissão x). #!/bin/bash é o shebang: diz qual interpretador usar.</aside>
-</section>
-
-<section class="slide" data-title="Variáveis">
-  <h2>Variáveis e aspas</h2>
-  <div class="two">
-<pre class="code" data-demo="script" data-name="variaveis.sh"><code>nome="Ana"          # SEM espaços no =
-echo "Olá, $nome"
-hoje=$(date +%A)    # substituição de comando
-echo "Hoje é $hoje"
-echo 'Aspas simples: $nome'
-echo "Soma: $((2 + 3))"</code></pre>
-    <ul class="icon-list compact">
-      <li><svg class="i"><use href="#i-alert"/></svg><span><code>nome = "Ana"</code> dá erro: o shell acha que <code>nome</code> é um comando</span></li>
-      <li><svg class="i"><use href="#i-quote"/></svg><span><b>Aspas duplas</b> expandem variáveis; <b>aspas simples</b> não</span></li>
-      <li><svg class="i"><use href="#i-terminal"/></svg><span><code>$(comando)</code> guarda a saída de um comando</span></li>
-      <li><svg class="i"><use href="#i-gear"/></svg><span><code>$(( ))</code> faz contas com números inteiros</span></li>
-    </ul>
-  </div>
-</section>
-
-<section class="slide" data-title="Entrada e argumentos">
-  <h2>Entrada do usuário e argumentos</h2>
-  <div class="two">
-<pre class="code" data-demo="script" data-name="idade.sh" data-input="20"><code>read -p "Qual sua idade? " idade
-echo "Você tem $idade anos"
-echo "Daqui a 10 anos: $((idade + 10))"</code></pre>
-    <table class="tbl">
-      <tr><td><code>$1</code>, <code>$2</code>...</td><td>argumentos (<code>./script.sh a b</code>)</td></tr>
-      <tr><td><code>$#</code></td><td>quantidade de argumentos</td></tr>
-      <tr><td><code>$@</code></td><td>todos os argumentos</td></tr>
-      <tr><td><code>$0</code></td><td>nome do script</td></tr>
-      <tr><td><code>$?</code></td><td>código de saída do último comando</td></tr>
-    </table>
-  </div>
-</section>
-
-<section class="slide" data-title="Condicional">
-  <h2>Condicional: <code>if</code></h2>
-  <div class="two">
-<pre class="code" data-demo="script" data-name="maioridade.sh"><code>idade=20
-if [ "$idade" -ge 18 ]; then
-  echo "Maior de idade"
-else
-  echo "Menor de idade"
-fi</code></pre>
-    <table class="tbl small">
-      <tr><th>Números</th><th>Textos</th><th>Arquivos</th></tr>
-      <tr><td><code>-eq</code> igual</td><td><code>=</code> igual</td><td><code>-f</code> é arquivo</td></tr>
-      <tr><td><code>-ne</code> diferente</td><td><code>!=</code> diferente</td><td><code>-d</code> é diretório</td></tr>
-      <tr><td><code>-lt</code> <code>-le</code> menor</td><td><code>-z</code> vazio</td><td><code>-e</code> existe</td></tr>
-      <tr><td><code>-gt</code> <code>-ge</code> maior</td><td><code>-n</code> não vazio</td><td><code>-x</code> executável</td></tr>
-    </table>
-  </div>
-  <p class="callout warn"><svg class="i"><use href="#i-alert"/></svg><span>Os <b>espaços</b> dentro de <code>[ ]</code> são obrigatórios: <code>[ "$a" -eq 1 ]</code></span></p>
-</section>
-
-<section class="slide" data-title="Laços">
-  <h2 class="with-icon"><span class="badge-ico"><svg class="i"><use href="#i-loop"/></svg></span>Laços: <code>for</code> e <code>while</code></h2>
-  <div class="two">
-<pre class="code" data-demo="script" data-name="for.sh"><code>for i in 1 2 3; do
-  echo "Número $i"
-done
-for arq in *.txt; do
-  echo "Encontrei: $arq"
-done</code></pre>
-<pre class="code" data-demo="script" data-name="while.sh"><code>contador=1
-while [ $contador -le 3 ]; do
-  echo "Volta $contador"
-  contador=$((contador + 1))
-done</code></pre>
-  </div>
-</section>
-
-<section class="slide" data-title="Código de saída">
-  <h2>Código de saída: deu certo?</h2>
-  <div class="two wide-left">
-<pre class="code" data-demo="cmds"><code>$ ls /etc > /dev/null
-$ echo $?
-$ ls /nao_existe 2> /dev/null
-$ echo $?
-$ mkdir -p ~/backup && echo "criado!"
-$ ls /nao_existe 2> /dev/null || echo "falhou!"</code></pre>
-    <ul class="icon-list compact">
-      <li><svg class="i"><use href="#i-target"/></svg><span><code>0</code> = sucesso · qualquer outro número = erro</span></li>
-      <li><svg class="i"><use href="#i-alert"/></svg><span><code>exit 1</code> num script sinaliza falha</span></li>
-      <li><svg class="i"><use href="#i-arrow-out"/></svg><span><code>a &amp;&amp; b</code>: roda <code>b</code> só se <code>a</code> deu certo</span></li>
-      <li><svg class="i"><use href="#i-arrow-out"/></svg><span><code>a || b</code>: roda <code>b</code> só se <code>a</code> falhou</span></li>
-    </ul>
-  </div>
-</section>
-
-<section class="slide" data-title="Demo backup.sh">
-  <h2>Demo: <code>backup.sh</code> junta tudo</h2>
-  <div class="two">
-<pre class="code tall" data-demo="file" data-name="backup.sh"><code>#!/bin/bash
-# Uso: ./backup.sh DIRETORIO
-origem="$1"
-if [ -z "$origem" ]; then
-  echo "Uso: $0 DIRETORIO"; exit 1
-fi
-if [ ! -d "$origem" ]; then
-  echo "Erro: '$origem' não é um diretório."; exit 2
-fi
-destino="backup_$(date +%H%M%S)"
-mkdir -p "$destino"
-total=0
-for arq in "$origem"/*.txt; do
-  [ -f "$arq" ] || continue
-  cp "$arq" "$destino/"
-  echo "Copiado: $arq"
-  total=$((total + 1))
-done
-echo "Backup: $total arquivo(s) em $destino"</code></pre>
-<pre class="code" data-demo="cmds"><code>$ chmod +x backup.sh
-$ ./backup.sh
-$ echo $?
-$ ./backup.sh nao_existe
-$ ./backup.sh aula</code></pre>
-  </div>
-</section>
-
-<section class="slide exercise" data-title="Exercício 2">
-  <h2 class="with-icon"><span class="badge-ico"><svg class="i"><use href="#i-pencil"/></svg></span>Exercício 2 · <code>saudacao.sh</code></h2>
-  <div class="two">
-    <ol class="steps">
-      <li>Receba um <b>nome como argumento</b>: <code>./saudacao.sh Maria</code></li>
-      <li>Se nenhum nome for passado, pergunte com <code>read</code></li>
-      <li>Imprima: <code>Olá, &lt;nome&gt;! Agora são HH:MM.</code></li>
-      <li><b>Bônus</b>: "Bom dia" (antes das 12h), "Boa tarde" (até as 18h) ou "Boa noite"</li>
-    </ol>
-    <div>
-      <div class="timer" data-seconds="180"></div>
-      <p class="small">Dica: <code>date +%H:%M</code> mostra a hora e <code>[ -z "$1" ]</code> testa se o argumento está vazio.</p>
-    </div>
-  </div>
-</section>
-
-<section class="slide" data-title="Gabarito 2">
-  <h2>Gabarito do Exercício 2</h2>
-<pre class="code tall" data-demo="script" data-name="saudacao.sh" data-input="Ana"><code>nome="$1"
-if [ -z "$nome" ]; then
-  read -p "Qual o seu nome? " nome
-fi
-hora=$(date +%H)
-if [ "$hora" -lt 12 ]; then
-  saudacao="Bom dia"
-elif [ "$hora" -lt 18 ]; then
-  saudacao="Boa tarde"
-else
-  saudacao="Boa noite"
-fi
-echo "$saudacao, $nome! Agora são $(date +%H:%M)."</code></pre>
+$ tail -n 3 /etc/passwd</code></pre>
 </section>
 
 <!-- ===================== CTF ===================== -->
 <section class="slide ctf-slide" data-title="CTF">
   <div class="divider-grid">
     <div>
-      <p class="kicker">Parte 5 · hora de praticar</p>
+      <p class="kicker">Hora de praticar</p>
       <h2>Capture The Flag: Missão Servidor Pinguim</h2>
       <ul class="icon-list compact">
-        <li><svg class="i"><use href="#i-flag"/></svg><span><b>8 níveis</b>: ocultos, nomes traiçoeiros, <code>find</code>, <code>grep</code>, <code>chmod</code>, pipes e um <b>script com laço</b></span></li>
+        <li><svg class="i"><use href="#i-flag"/></svg><span><b>7 níveis</b> com o que vimos hoje: arquivos ocultos, nomes com espaço, caminhos com <code>cd</code> e <code>..</code>, <code>head</code>, <code>wc</code> e organização com <code>mkdir</code>, <code>cp</code> e <code>rm</code></span></li>
         <li><svg class="i"><use href="#i-terminal"/></svg><span>Envie as flags com <code>enviar FLAG{...}</code> · comece com <code>cat ~/ctf/LEIA-ME.txt</code></span></li>
         <li><svg class="i"><use href="#i-bulb"/></svg><span>Travou? <code>dica N</code> (custa 25% dos pontos do nível)</span></li>
         <li><svg class="i"><use href="#i-user"/></svg><span>Cada codinome tem <b>flags próprias</b></span></li>
@@ -769,9 +488,10 @@ echo "$saudacao, $nome! Agora são $(date +%H:%M)."</code></pre>
     </div>
     <div class="center">
       <div data-art="flag" class="ctf-flag"></div>
-      <div class="timer" data-seconds="540"></div>
+      <div class="timer" data-seconds="900"></div>
     </div>
   </div>
+  <aside class="notes">Aperte → para revelar a senha. O CTF continua aberto depois da aula.</aside>
 </section>
 
 <!-- ===================== ENCERRAMENTO ===================== -->
@@ -781,37 +501,43 @@ echo "$saudacao, $nome! Agora são $(date +%H:%M)."</code></pre>
     <div><svg class="i"><use href="#i-compass"/></svg><b>Navegar</b><code>pwd cd ls</code></div>
     <div><svg class="i"><use href="#i-folder"/></svg><b>Manipular</b><code>mkdir cp mv rm</code></div>
     <div><svg class="i"><use href="#i-file"/></svg><b>Ler</b><code>cat head tail</code></div>
-    <div><svg class="i"><use href="#i-search"/></svg><b>Buscar</b><code>grep find</code></div>
-    <div><svg class="i"><use href="#i-blocks"/></svg><b>Combinar</b><code>| &gt; &gt;&gt;</code></div>
-    <div><svg class="i"><use href="#i-loop"/></svg><b>Automatizar</b><code>if for while</code></div>
+    <div><svg class="i"><use href="#i-target"/></svg><b>Contar</b><code>wc -l</code></div>
+    <div><svg class="i"><use href="#i-book"/></svg><b>Ajuda</b><code>man --help</code></div>
+    <div><svg class="i"><use href="#i-keyboard"/></svg><b>Atalhos</b><code>Tab ↑ Ctrl+C</code></div>
   </div>
   <p class="center"><a class="link-chip" href="../cola/" target="_blank" rel="noopener"><svg class="i"><use href="#i-notes"/></svg>Cola de comandos (para imprimir) ↗</a></p>
 </section>
 
 <section class="slide" data-title="Desafio para casa">
-  <h2 class="with-icon"><span class="badge-ico"><svg class="i"><use href="#i-home"/></svg></span>Desafio para casa · <code>organizador.sh</code></h2>
+  <h2 class="with-icon"><span class="badge-ico"><svg class="i"><use href="#i-home"/></svg></span>Desafio para casa · Meu primeiro projeto no terminal</h2>
   <div class="two">
+    <ol class="steps">
+      <li>Na sua home, crie <b>com um único comando</b>: <code>estudos/linux/anotacoes</code>, <code>estudos/linux/exercicios</code> e <code>estudos/linux/arquivo-morto</code></li>
+      <li>Em <code>anotacoes</code>, crie <code>comandos.txt</code> com 5 comandos que você aprendeu, um por linha (<code>echo</code> com <code>&gt;</code> e <code>&gt;&gt;</code>)</li>
+      <li>Copie <code>comandos.txt</code> para <code>exercicios/</code> com o nome <code>revisao.txt</code></li>
+      <li>Crie 3 arquivos vazios em <code>arquivo-morto/</code> e depois apague só um deles</li>
+      <li>Mostre o resultado: <code>ls -R estudos</code>, <code>wc -l</code> e <code>head -n 2</code> nos arquivos</li>
+      <li><b>Bônus:</b> descubra no <code>man ls</code> como listar ordenando por tamanho</li>
+    </ol>
     <div>
-      <div data-art="folders"></div>
-      <p>Um script que organiza uma pasta bagunçada, separando os arquivos por tipo.</p>
+      <ul class="icon-list compact">
+        <li><svg class="i"><use href="#i-terminal"/></svg><span>Faça no <a href="../terminal/" target="_blank" rel="noopener">terminal de prática ↗</a> (o desafio está na aba Roteiro)</span></li>
+        <li><svg class="i"><use href="#i-keyboard"/></svg><span>Ou no <b>Git Bash</b>: no Windows, ele vem junto com o Git. No Linux e no macOS, use o próprio terminal</span></li>
+        <li><svg class="i"><use href="#i-chat"/></svg><span>Entrega: copie a saída do passo 5 (ou um print) e envie no canal da turma</span></li>
+      </ul>
     </div>
-    <table class="tbl small">
-      <tr><td><span class="lvl l1">Básico</span></td><td>valida o argumento; move por extensão (imagens, documentos, audio, outros)</td></tr>
-      <tr><td><span class="lvl l2">Intermediário</span></td><td>relatório final; log com data/hora; não sobrescreve arquivos</td></tr>
-      <tr><td><span class="lvl l3">Avançado</span></td><td><code>-n</code> (simulação), <code>-h</code> (ajuda), <code>case</code>, funções, nomes com espaço</td></tr>
-    </table>
   </div>
-  <p class="small">Entrega: repositório no GitHub com o script e um README de exemplo.</p>
 </section>
 
-<section class="slide" data-title="Continue estudando">
-  <h2>Para continuar estudando</h2>
-  <ul class="icon-list">
-    <li><svg class="i"><use href="#i-flag"/></svg><span><b>OverTheWire · Bandit</b>: CTF clássico de Linux via SSH. Meta: chegar ao nível 10</span></li>
-    <li><svg class="i"><use href="#i-book"/></svg><span><b>The Linux Command Line</b>, de William Shotts (gratuito em linuxcommand.org)</span></li>
-    <li><svg class="i"><use href="#i-compass"/></svg><span><code>man</code> é seu melhor amigo: leia o manual dos comandos que você já usa</span></li>
-    <li><svg class="i"><use href="#i-route"/></svg><span>Próximos temas: <code>ps</code>, <code>kill</code>, <code>apt</code>, <code>ssh</code>, <code>crontab</code>, <code>case</code>, funções, <code>awk</code>, <code>sed</code></span></li>
-  </ul>
+<section class="slide" data-title="Próxima aula">
+  <h2>Na próxima aula</h2>
+  <div class="grid cards4">
+    <div class="card"><div class="card-ico"><svg class="i"><use href="#i-arrow-out"/></svg></div><b>Redirecionamento</b><p>guardar a saída em arquivos com <code>&gt;</code>, <code>&gt;&gt;</code> e <code>2&gt;</code></p></div>
+    <div class="card"><div class="card-ico"><svg class="i"><use href="#i-blocks"/></svg></div><b>Pipes</b><p>ligar comandos com <code>|</code> e montar soluções em uma linha</p></div>
+    <div class="card"><div class="card-ico"><svg class="i"><use href="#i-search"/></svg></div><b>Busca e permissões</b><p><code>grep</code>, <code>find</code> e <code>chmod</code></p></div>
+    <div class="card"><div class="card-ico"><svg class="i"><use href="#i-loop"/></svg></div><b>Shell Script</b><p>variáveis, <code>if</code> e laços para automatizar tarefas</p></div>
+  </div>
+  <p class="callout"><svg class="i"><use href="#i-bulb"/></svg><span>Faça o desafio para casa: a aula 2 começa a partir dele.</span></p>
 </section>
 
 <section class="slide cover" data-title="Obrigado">
